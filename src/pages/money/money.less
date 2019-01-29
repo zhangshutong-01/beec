@@ -1,0 +1,723 @@
+@import "../../assets/fz.less";
+.money_wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    color: #000;
+    font-family: PingFangHK-Regular
+}
+
+.tag {
+    width: 5rem;
+    height: 2rem;
+    background: #33BEA3;
+    position: fixed;
+    right: -1%;
+    top: 50%;
+    margin-top: -1rem;
+    text-align: center;
+    line-height: 2rem;
+    color: #fff;
+    border-radius: 8px;
+    font-family: PingFangHK-Regular;
+}
+
+header {
+    width: 100%;
+    position: relative;
+    img {
+        width: 100%;
+        display: block;
+    }
+}
+
+.money_num {
+    width: 84%;
+    height: 13rem;
+    background: #fff;
+    background: url('../../assets/honeybee/tags/jiangjinkuang.png');
+    background-size: 100% 100%;
+    margin: 0 auto;
+    border-radius: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    margin-top: -15%;
+    position: relative;
+    align-items: center;
+    .money_num1 {
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: .5rem;
+        p {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: .5rem;
+            b {
+                font-size: 1.6rem;
+            }
+        }
+        .tip {
+            width: 100%;
+            text-align: center;
+            height: 3rem;
+            line-height: 3rem;
+            color: #fc6313;
+            display: block;
+        }
+    }
+    .money_num_tit {
+        width: 100%;
+        text-align: center;
+        height: 2.5rem;
+        line-height: 2.5rem;
+        font-size: 1.2rem;
+        margin-top: .5rem;
+    }
+    p {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #ff5606;
+        height: 3.5rem;
+    }
+    .money_type {
+        width: 96%;
+        display: flex;
+        margin-top: 1rem;
+        border-top: 1px solid #EAEAEA;
+        margin: 0 auto;
+        flex: 1;
+        li {
+            width: 50%;
+            display: flex;
+            text-align: center;
+            align-items: center;
+            position: relative;
+            &:nth-child(1) {
+                .money_typecons {
+                    border-right: 1px solid #EAEAEA;
+                }
+            }
+            .money_typecons {
+                flex: 7; // span {}
+                b {
+                    font-size: 1.5rem;
+                }
+            }
+        }
+        .icon_more {
+            position: absolute;
+            right: 1rem;
+            img {
+                width: 1rem;
+            }
+        }
+    }
+}
+
+.box1 {
+    width: 84%;
+    display: flex;
+    margin: 0 auto;
+    height: 4rem;
+    justify-content: space-around;
+    margin-top: 1.5rem;
+    div {
+        width: 46%;
+        text-align: center;
+        height: 4rem;
+        background: url('../../assets/honeybee/tags/yaoqingjilu.png');
+        background-size: 100% 100%;
+        color: #ff7006;
+        line-height: 4rem;
+        border-radius: 0.5rem;
+    }
+    .active {
+        background: url('../../assets/honeybee/tags/jiangliguize.png');
+        background-size: 102% 110%;
+        color: #fff;
+        height: 4.2rem;
+    }
+    img {
+        width: 1.5rem;
+    }
+}
+
+.invite {
+    width: 94.9%;
+    margin: 0 auto;
+    position: fixed;
+    bottom: 3%;
+    left: 50%;
+    margin-left: -48%;
+    z-index: 90;
+    animation: shake .5s infinite;
+    img {
+        width: 100%;
+    }
+}
+
+.commit {
+    width: 100%;
+    height: 5rem;
+    margin-top: 1rem;
+    .commit_main {
+        width: 76%;
+        margin: 0 auto;
+        li {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ff9800;
+            padding: 10px 0;
+            .header_img {
+                width: 14%;
+                margin-right: 10px;
+                img {
+                    border-radius: 50%;
+                    width: 100%;
+                }
+            }
+            .tab {
+                color: #7c7c7c !important
+            }
+            .userinfo {
+                flex: 1;
+                color: #ff9800;
+                div {
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    &:nth-child(1) {
+                        height: 1.5rem;
+                        display: flex;
+                        align-items: center;
+                        .userName {
+                            font-size: 1.1rem;
+                        }
+                        .time {
+                            font-size: .6rem;
+                        }
+                    }
+                    &:nth-child(2) {
+                        height: 1.5rem;
+                        display: flex;
+                        align-items: center;
+                        .course {
+                            font-size: .6rem;
+                        }
+                        .shop_status {
+                            font-size: 1rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .rules_box3 {
+        width: 100%;
+        margin-top: 1.5rem;
+        img {
+            width: 100%;
+        }
+    }
+}
+
+.rules {
+    width: 100%;
+    height: 1rem;
+    flex: 1;
+    margin-top: 1rem;
+    padding-bottom: 3rem;
+    .rules_box1 {
+        width: 61.6%;
+        margin: 0 auto;
+        img {
+            width: 100%;
+        }
+    }
+    .rules_box2 {
+        width: 94%;
+        margin: 0 auto;
+        .rules_section {
+            width: 100%;
+            padding: 1rem 0;
+            &:nth-child(even) {
+                h1 {
+                    color: #4A90E2;
+                }
+            }
+            dl {
+                width: 100%;
+                display: flex;
+                dt {
+                    flex: 2;
+                    padding: 0 1rem;
+                    img {
+                        width: 100%;
+                    }
+                }
+                dd {
+                    flex: 7;
+                    h1 {
+                        font-family: PingFangHK-Semibold;
+                        font-size: 1.4rem;
+                        color: #FF4E00;
+                        letter-spacing: 1.9px;
+                        font-weight: bold;
+                        padding-bottom: .5rem;
+                    }
+                    p {
+                        font-family: PingFangHK-Regular;
+                        font-size: 1.2rem;
+                        color: #4A4A4A;
+                        letter-spacing: 1.8px;
+                    }
+                }
+            }
+        }
+    }
+    .rules_box3 {
+        width: 100%;
+        margin-top: 1.5rem;
+        img {
+            width: 100%;
+        }
+    }
+}
+
+.shareMask {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.choseSussBox {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    img {
+        width: 7rem;
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+    }
+}
+
+.choseSuss {
+    width: 70%;
+    height: auto;
+    background: #fff;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-left: -35%;
+    margin-top: -30%;
+    border-radius: .7rem;
+    .choseSussTop {
+        width: 100%;
+        padding-top: 1rem;
+        h2 {
+            width: 100%;
+            text-align: center;
+            font-size: 1.4rem;
+        }
+        p {
+            text-align: center;
+            line-height: 2rem;
+            font-size: 1.1rem;
+            padding-top: .5rem;
+        }
+    }
+    .choseSussBottom {
+        width: 100%;
+        text-align: center;
+        line-height: 3rem;
+        margin-top: 1rem;
+        border-top: 1px solid #EAEAEA;
+        padding-bottom: .6rem;
+        font-size: 1.2rem;
+        color: #FE7738;
+    }
+}
+
+.showTip {
+    width: 70%;
+    height: 23%;
+    background: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -23%;
+    margin-left: -35%;
+    border-radius: .5rem;
+    p {
+        width: 100%;
+        text-align: center;
+        line-height: 5rem;
+    }
+    button {
+        width: 60%;
+        height: 2rem;
+        background: #fc6313;
+        margin: 0 auto;
+        display: block;
+        border-radius: 1rem;
+        color: #fff;
+    }
+}
+
+.recommend {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 70%;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    .recommend_title {
+        width: 100%;
+        height: 4rem;
+        line-height: 4rem;
+        text-align: center;
+        font-size: 1.2rem;
+        position: relative;
+        img {
+            width: 1.4rem;
+            height: 1.4rem;
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+        }
+    }
+    .recommend_main {
+        width: 100%;
+        overflow: auto;
+        display: flex;
+        flex-wrap: wrap;
+        flex: 1;
+        .main_box {
+            width: 44%;
+            box-sizing: border-box;
+            position: relative;
+            margin-top: 1.2rem;
+            margin-left: 1rem;
+            .label {
+                position: relative;
+                span {
+                    position: absolute;
+                    z-index: 9;
+                    top: -1rem;
+                    color: #fff;
+                    display: flex;
+                    align-items: center;
+                    b {
+                        font-size: 1.4rem;
+                    }
+                }
+            }
+            .courseTag {
+                position: absolute;
+                width: 6.5rem;
+                left: -.3rem;
+                top: -.9rem;
+            }
+            .course_img {
+                width: 100%;
+                background: #fc6313;
+                img {
+                    width: 100%;
+                }
+            }
+            .courseName {
+                width: 100%;
+                height: 3rem;
+                display: flex;
+                position: relative;
+                align-items: center;
+                img {
+                    width: 1.3rem;
+                    height: 1.3rem;
+                    padding-right: .5rem;
+                    position: absolute
+                }
+            }
+            .course_name {
+                height: 2rem;
+                line-height: 2rem;
+                color: #000;
+                padding-left: 1.6rem;
+            }
+        }
+    }
+    .recommend_button {
+        width: 80%;
+        background: #FE7738;
+        color: #fff;
+        height: 3rem;
+        margin: 0 auto;
+        font-size: 1.3rem;
+        border-radius: 1.5rem;
+        margin-bottom: 3rem;
+    }
+}
+
+.cashSuss {
+    width: 100%;
+    height: 60%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    .cashSussTop {
+        width: 93%;
+        height: 3rem;
+        border-bottom: 1px solid #EAEAEA;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin: 0 auto;
+        span {
+            b {
+                font-weight: normal;
+            }
+            &:nth-child(1) {
+                b {
+                    color: #FE7738
+                }
+            }
+            &:nth-child(2) {
+                b {
+                    color: cornflowerblue
+                }
+            }
+        }
+    }
+    .cashSussMain {
+        flex: 1;
+        width: 93%;
+        margin: 0 auto;
+        overflow: auto;
+        li {
+            display: flex;
+            height: 4rem;
+            border-bottom: 1px solid #EAEAEA;
+            padding: .5rem 0;
+            align-items: center;
+            justify-content: space-between;
+            .colonel {
+                font-size: .32rem;
+                margin-top: .5rem;
+                display: block;
+            }
+            .cashTime {
+                font-size: .5rem;
+                padding-top: .5rem;
+                color: #888888
+            }
+            b {
+                color: #fc6313;
+                font-weight: normal;
+            }
+        }
+    }
+    .cashSuss_button {
+        width: 80%;
+        height: 3rem;
+        background: #FE7738;
+        color: #000;
+        z-index: 10;
+        margin: 0 auto;
+        margin-top: .5rem;
+        border-radius: 1.5rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        font-size: 1.2rem;
+    }
+}
+
+.save {
+    width: 90%;
+    text-align: center;
+    color: #fff;
+    margin: 0 auto;
+    margin-top: 8%;
+    padding-bottom: .9rem;
+    p {
+        line-height: 1.4rem;
+    }
+    span {
+        color: #FE7738;
+    }
+}
+
+.activeImg {
+    width: 65%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -32%;
+    margin-top: -50%;
+    .active_img {
+        width: 100%;
+        height: auto;
+    }
+    .close {
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        right: -17px;
+        top: -25px;
+    }
+    .close_icon {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.commitMan {
+    width: 100%;
+    height: 60%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    .commitMater {
+        width: 96%;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        margin: 0 auto;
+        box-sizing: border-box;
+        border-bottom: 1px solid #000;
+        .header_img {
+            width: 14%;
+            margin-right: 10px;
+            img {
+                border-radius: 50%;
+                width: 100%;
+            }
+        }
+        .userinfo {
+            flex: 1;
+            .fail_color {
+                color: #7c7c7c;
+            }
+            div {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                &:nth-child(1) {
+                    height: 1.5rem;
+                    display: flex;
+                    align-items: center;
+                    .userName {
+                        font-size: 1.1rem;
+                    }
+                    .time {
+                        font-size: .6rem;
+                    }
+                }
+                &:nth-child(2) {
+                    height: 1.5rem;
+                    display: flex;
+                    align-items: center;
+                    .course {
+                        font-size: .6rem;
+                        padding-top: .5rem;
+                    }
+                    .shop_status {
+                        font-size: 1rem;
+                    }
+                }
+            }
+        }
+    }
+    h2 {
+        width: 95%;
+        height: 1.8rem;
+        line-height: 1.8rem;
+        text-align: center;
+        margin: 0 auto;
+        background: #eee;
+        font-size: .8rem;
+        margin-top: .5rem;
+    }
+    .commitTwo {
+        width: 100%;
+        flex: 1;
+        position: relative;
+        overflow: auto;
+    }
+    .commitPeo {
+        width: 95%;
+        display: flex;
+        padding: 10px;
+        box-sizing: border-box;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0 auto;
+        border-bottom: 1px solid #000;
+        p {
+            font-size: .7rem;
+            height: 1.3rem;
+            &:nth-child(1) {
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                margin-bottom: .5rem;
+                .commitTime {
+                    font-size: .7rem;
+                    margin-left: .6rem;
+                    color: #ccc;
+                }
+            }
+            &:nth-child(2) {
+                color: #aaa
+            }
+        }
+        div:nth-child(2) {
+            font-size: 1.4rem;
+        }
+    }
+    .commitButton {
+        width: 80%;
+        height: 3rem;
+        background: #FE7738;
+        color: #000;
+        z-index: 10;
+        margin: 0 auto;
+        border-radius: 1.5rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        color: #fff;
+        font-size: 1.2rem;
+    }
+}
+
+@keyframes shake {
+    0% {
+        bottom: 10px;
+    }
+    50% {
+        bottom: 25px
+    }
+    100% {
+        bottom: 10px
+    }
+}

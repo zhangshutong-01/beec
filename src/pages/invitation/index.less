@@ -1,0 +1,224 @@
+@import "../../assets/fz.less";
+
+.invitation_newUser {
+  .banner {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    text-align: center;
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .tip {
+      width: 264px;
+      height: 38px;
+      font-size: 11px;
+      font-family: PingFangSC-Regular;
+      color: #333333;
+      background: #ffffff;
+      border-radius: 19px;
+      text-align: center;
+      position: absolute;
+      bottom: 20px;
+      left: 12.5%;
+      display: flex;
+      align-items: center;
+      span {
+        display: inline-block;
+        width: 244px;
+        margin: 0 auto;
+      }
+    }
+  }
+  //.check {
+  //  display: block;
+  //}
+  .beeCheck {
+    width: 331px;
+    height: 40px;
+    border-radius: 20px;
+    //background: #FF5500;
+    background: linear-gradient(-99deg, #FF5500 0%, #FFAF57 100%);
+    margin: 20px auto;
+    text-align: center;
+    font-size: 15px;
+    color: #ffffff;
+    position: relative;
+    display: flex;
+    align-items: center;
+    text-indent: 1.5em;
+    font-family: PingFangSC-Medium;
+    .look {
+      font-size: 12px;
+      position: absolute;
+      right: 20px;
+      top:12px;
+    }
+  }
+  .success_record {
+    .container {
+      margin-top: 30px;
+    }
+    .container .title {
+      font-size: 15px;
+      color: #FF5500;
+      position: relative;
+      text-align: center;
+    }
+    .container .title:before {
+      content: ' ';
+      width: 52px;
+      height: 1px;
+      background: #FF5500;
+      display: block;
+      position: absolute;
+      bottom: 10px;
+      left: 81px;
+    }
+    .container .title:after {
+      content: ' ';
+      width: 52px;
+      height: 1px;
+      background: #FF5500;
+      display: block;
+      position: absolute;
+      bottom: 10px;
+      right: 81px;
+    }
+  }
+  .fail_record{
+    .no_record{
+      font-family: PingFangSC-Medium;
+      font-size: 15px;
+      color: #9B9B9B;
+      letter-spacing: 0;
+      text-align: center;
+    }
+  }
+  .menu {
+    color: #444444;
+    font-size: 14px;
+    a {
+      display: block;
+    }
+    .me_order {
+      width: 331px;
+      margin: 0 auto;
+      border-bottom: 1px solid #E1E1E1;
+      padding: 25px 0;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      position: relative;
+      .suc_icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-left: 18px;
+        //background: url("../../assets/mine/circle.png") no-repeat center;
+        //background-size: 100% 100%;
+        img{
+          display: inline-block;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+        }
+      }
+      .orderName {
+        margin-left: 15px;
+      }
+      .orderArrow {
+        position: absolute;
+        right: 18px;
+      }
+    }
+  }
+  .rule {
+    padding: 0 20px;
+    margin-top: 40px;
+    font-family: PingFangSC-Regular;
+    .ruleTop {
+      position: relative;
+      padding: 0 13px;
+      .ruleTitle {
+        font-size: 14px;
+        color: #FF5500;
+      }
+      .circleBg {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: url("../../assets/mine/circle1.png") no-repeat center;
+        background-size: 100% 100%;
+        position: absolute;
+        top: -4px;
+        left: 0;
+        z-index: -99;
+      }
+    }
+    .ruleContent {
+      font-size: 13px;
+      color: #151515;
+      padding: 0 13px;
+      margin-bottom: 60px;
+      margin-top: 10px;
+      div {
+        display: flex;
+        justify-content: flex-start;
+        p {
+          margin-top: 10px;
+          line-height: 18px;
+        }
+        .tipNum {
+          color: #FF5500;
+          display: inline-block;
+        }
+      }
+    }
+    .invitationBtn {
+      width: 220px;
+      height: 40px;
+      margin: 0 auto;
+      margin-bottom: 30px;
+      background: #FF5500;
+      color: #ffffff;
+      font-size: 18px;
+      border-radius: 20px;
+      text-align: center;
+      line-height: 40px;
+    }
+    .empty{
+      height:30px;
+    }
+  }
+}
+//蒙层
+.shareMask{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  top: 0;
+  left: 0;
+  z-index: 999;
+}
+.shareTip{
+  font-size: 15px;
+  color: #ffffff;
+  font-family: PingFangSC-Regular;
+  margin-top: 138px;
+  text-align: center;
+}
+.shareImg{
+  width: 64px;
+  height: 64px;
+  margin-top: 64px;
+  position: absolute;
+  right: 30px;
+  img{
+    display: inline-block;
+    width: 100%;
+  }
+}

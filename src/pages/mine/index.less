@@ -1,0 +1,241 @@
+@import "../../assets/fz.less";
+
+.clearfix:before, .clearfix:after {
+  content: " ";
+  display: table;
+}
+
+.clearfix:after {
+  clear: both;
+  overflow: hidden;
+}
+
+.clearfix {
+  zoom: 1;
+
+}
+
+.mine {
+  overflow: hidden;
+  padding-top: 20px;
+}
+
+.mine_header {
+  background: #ffffff;
+  width: 331px;
+  height: 209px;
+  margin: 0 auto;
+  box-shadow: rgba(200,200,200,0.30) 0 4px 20px 0;
+  border-radius: 8px;
+}
+
+.header_top {
+  //border: 1px solid;
+}
+
+.photo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 30px 15px;
+  float: left;
+}
+
+.photo .userPhoto {
+  display: inline-block;
+  width: 100%;
+  border-radius: 50%;
+  margin:0 auto;
+}
+
+.infor {
+  color: #444444;
+  float: left;
+  margin-top: 32px;
+  font-size: 15px;
+}
+
+.infor .babyName {
+  display: inline-block;
+  width: 132px;
+  font-size: 22px;
+  font-family: PingFangSC-Medium;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.infor .babyNum {
+  font-family: PingFangSC-Regular;
+  //margin-top: 8px;
+}
+
+.infor .babyAge {
+  display: inline-block;
+  font-size: 15px;
+  font-family: PingFangSC-Regular;
+  margin-left: 15px;
+  position: relative;
+  top: -7px;
+  left: 0;
+}
+
+.header_bot {
+  display: flex;
+  text-align: center;
+  color: #333333;
+  justify-content: space-around;
+  a {
+    display: block;
+  }
+}
+
+.line {
+  height: 40px;
+  width: 2px;
+  background: #E1E1E1;
+  margin-top: 10px;
+}
+
+.bot_left, .bot_right {
+  width: 164px;
+}
+
+.beeDesc, .ticket {
+  font-size: 13px;
+  margin-top: 5px;
+  font-family: PingFangSC-Regular;
+  color: #333333;
+}
+
+.ticketMoney, .beeNum {
+  line-height: 35px;
+  font-family: PingFangSC-Medium;
+  font-size: 25px;
+  color: #FF5500;
+}
+
+.invisite {
+  width: 331px;
+  margin: 0 auto;
+  //height: 64px;
+  //margin-top: 30px;
+  //margin-bottom: 20px;
+  //margin-top: 15px;
+}
+
+.invisite img {
+  display: block;
+  width: 100%;
+}
+
+.menu {
+  color: #444444;
+  font-size: 14px;
+  margin-bottom: 75px;
+  a {
+    display: block;
+  }
+  .me_order {
+    width: 331px;
+    margin: 0 auto;
+    border-bottom: 1px solid #E1E1E1;
+    padding: 25px 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    .orderIcon {
+      width: 15px;
+      margin-left: 18px;
+    }
+    .meOrder {
+      height: 17.5px;
+      background: url("../../assets/mine/order1.png") no-repeat center;
+      background-size: 100% 100%;
+    }
+    .report {
+      height: 13.1px;
+      background: url("../../assets/mine/order3.png") no-repeat center;
+      background-size: 100% 100%;
+    }
+    .teacher {
+      height: 12.5px;
+      background: url("../../assets/mine/order4.png") no-repeat center;
+      background-size: 100% 100%;
+    }
+    .tell {
+      height: 13.5px;
+      background: url("../../assets/mine/order2.png") no-repeat center;
+      background-size: 100% 100%;
+    }
+    .orderName {
+      margin-left: 15px;
+    }
+    .shareBee {
+      font-size: 12px;
+      color: #FF5500;
+      position: absolute;
+      right: 34px;
+    }
+    .orderArrow {
+      width: 12px;
+      height: 14.8px;
+      background: url("../../assets/mine/arrow.png") no-repeat center;
+      position: absolute;
+      right: 18px;
+    }
+  }
+}
+
+//蒙层
+.mask {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  top: 0;
+  left: 0;
+  z-index: 999;
+}
+
+
+.teacherCode {
+  width: 260px;
+  height: 288px;
+  border-radius: 12px;
+  background: #ffffff;
+  background: url("../../assets/mine/teacherbg.png") no-repeat center;
+  margin: 0 auto;
+  margin-top: 160px;
+  overflow: hidden;
+}
+
+.qrCode {
+  width: 176px;
+  height: 176px;
+  margin:0 auto;
+  margin-top: 30px;
+  img{
+    display: inline-block;
+    width: 100%;
+  }
+}
+
+.addTeacher {
+  p {
+    font-family: PingFangSC-Regular;
+    font-size: 15px;
+    color: #FF5500;
+    margin-top: 38px;
+    text-align: center;
+  }
+}
+
+.close {
+  width: 26px;
+  height: 26px;
+  background: url("../../assets/mine/close.png") no-repeat center;
+  background-size: 100% 100%;
+  margin: 0 auto;
+  margin-top: 30px;
+}

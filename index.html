@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="referrer" content="never">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>蜜蜂数学</title>
+  <!--<script  type="text/javascript" src="jquery.js"></script>-->
+  <script type="text/javascript" src="http://test-yunying.coolmath.cn/beec/jquery.js"></script>
+  <script src="http://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <script>
+    window.document.addEventListener("WeixinJSBridgeReady", function () {
+      window.frames[0].postMessage({
+        event: "WeixinJSBridgeReady"
+      }, "*")
+    });
+    //监听事件
+    window.addEventListener('message', function (e) {
+      let result = e.data || {};
+      // console.log(result);
+      $.ajax({
+        type: "POST",
+        url: "http://test-yunying.coolmath.cn/beec/wx/addStudyCompleteInfo",
+        contentType: "application/json; charset=utf-8",
+        data: result,
+        dataType: "json",
+        success: function (res) {
+          let resData = eval('(' + result + ')');
+          // console.log(resData);
+          if (res.statusCode == 200) {
+            // alert("success------------------------");
+            // window.location.href='http://test-yunying.coolmath.cn/beec/studyReport?openid='+resData.openId;
+            var useid3 = '';
+            var params = 'id=' + useid3 + '&three=' + '';
+            $.ajax({
+              type: "GET",
+              url: "http://test-yunying.coolmath.cn/beec/wx/isused?" + params,
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              success: function (res) {
+                console.log(res)
+                if (res.statusCode == 200) {
+                  if (res.result) {
+                    window.location.href = 'http://test-yunying.coolmath.cn/beec/studyReport?openid=' +
+                      resData.openId + '&refresh=' + res.result;
+                  } else {
+                    window.location.href = 'http://test-yunying.coolmath.cn/beec/studyReport?openid=' +
+                      resData.openId;
+                  }
+                  // console.log('http://test-yunying.coolmath.cn/beec/studyReport?openid='+resData.openId+'&refresh='+res.result);
+                } else {
+                  alert('网络出错，请重试');
+                }
+              }
+            });
+          } else {
+            alert('网络出错，请重试');
+          }
+        }
+      });
+
+    }, false);
+
+  </script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+<style>
+  /* html {
+    touch-action: none
+  } */
+
+</style>
+
+</html>
