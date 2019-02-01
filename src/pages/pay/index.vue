@@ -17,7 +17,7 @@
           <em>¥ 9.9</em>
         </div>
         <div class="tishi">
-          确认支付5小时后没有拼团成功，则支付金额原路返回。
+          确认支付24小时后没有拼团成功，则支付金额原路返回。
         </div>
         <!--<div class="cashcoupon" @click="showCoupon">-->
         <!--<tt>现金券：</tt>-->
@@ -100,10 +100,10 @@
         console.log('123', mydata)
         payOrderInfo(mydata).then(res => {
           console.log(res)
+          let payType = res.data.result.outTradeNo
           if (res.data.statusCode == "30") {
             alert("已经支付过此课程");
           } else if (res.data.statusCode == "12007") {
-            console.log(123)
             WeixinJSBridge.invoke(
               'getBrandWCPayRequest', {
                 "appId": res.data.result.appId, //公众号名称，由商户传入
@@ -114,87 +114,78 @@
                 "signType": "MD5", //微信签名方式：
                 "paySign": res.data.result.paySign, //微信签名,
               },
-              function (res) {
+              (res) => {
+                console.log("12312321321", res)
                 if (res.err_msg == "get_brand_wcpay_request:ok") {
-                  if (that.zhijie == 1) {
-                    that.$router.push({
-                      path: '/share',
-                      query: {
-                        groupNo: that.groupNo,
-                        openid: that.openid,
-                        orderid: that.orderid,
-                        orderNo: this.$route.query.orderNo
-                      }
-                    });
-                  } else if (that.zhijie == 2) { //分享的页面进的开团
-                    that.$router.push({
-                      path: '/groupon',
-                      query: {
-                        groupNo: that.groupNo,
-                        openid: that.openid,
-                        orderid: that.orderid,
-                        orderNo: this.$route.query.orderNo
-                      }
-                    });
-                  } else {
-                    if (that.isgroupon) { //团购跳转到分享页面
-                      that.$router.push({
-                        path: '/groupon',
-                        query: {
-                          groupNo: that.groupNo,
-                          openid: that.openid,
-                          orderid: that.orderid,
-                          orderNo: this.$route.query.orderNo
-                        }
-                      });
-                    } else { //到课程解锁页面
-                      that.$router.push({
-                        path: '/moneyDetail',
-                        query: {
-                          openid: that.openid,
-                          flag: true
-                        }
-                      });
+                  //到课程解锁页面
+                  this.$router.push({
+                    path: '/moneyDetail',
+                    query: {
+                      openid: that.openid,
+                      courseid: this.courseId,
+                      payType: payType,
+                      sourceId: this.$route.query.sourceId
                     }
-                  }
+                  });
                 }
               });
           } else if (res.data.statusCode === "12005") {
-            this.$router.push({
-              path: '/tourbuy',
-              query: {
-                openid: that.openid,
-                orderNo: this.orderNo,
-                courseid: this.$route.query.courseId
-              }
-            })
+            console.log(1111)
+            WeixinJSBridge.invoke(
+              'getBrandWCPayRequest', {
+                "appId": res.data.result.appId, //公众号名称，由商户传入
+                //"timeStamp":res.data.timeStamp,         //时间戳，自1970年以来的秒数
+                "timeStamp": String(res.data.result.timeStamp),
+                "nonceStr": res.data.result.nonceStr, //随机串
+                "package": res.data.result.package,
+                "signType": "MD5", //微信签名方式：
+                "paySign": res.data.result.paySign, //微信签名,
+              },
+              (res) => {
+                if (res.err_msg == "get_brand_wcpay_request:ok") {
+                  this.$router.push({
+                    path: '/afterPay',
+                    query: {
+                      openid: that.openid,
+                      sourceId: this.$route.query.sourceId,
+                      courseid: this.courseId,
+                      payType: payType,
+                    }
+                  })
+                }
+              });
+          } else if (res.data.statusCode === "12006") {
+            WeixinJSBridge.invoke(
+              'getBrandWCPayRequest', {
+                "appId": res.data.result.appId, //公众号名称，由商户传入
+                //"timeStamp":res.data.timeStamp,         //时间戳，自1970年以来的秒数
+                "timeStamp": String(res.data.result.timeStamp),
+                "nonceStr": res.data.result.nonceStr, //随机串
+                "package": res.data.result.package,
+                "signType": "MD5", //微信签名方式：
+                "paySign": res.data.result.paySign, //微信签名,
+              },
+              (res) => {
+                if (res.err_msg == "get_brand_wcpay_request:ok") {
+                  this.$router.push({
+                    path: '/afterPay',
+                    query: {
+                      openid: this.openid,
+                      courseid: this.courseId,
+                      sourceId: this.$route.query.sourceId,
+                      payType: payType,
+                    }
+                  });
+                }
+              });
           }
         })
-      },
-      showCoupon() {
-        var mo = function (e) {
-          e.preventDefault();
-        };
-        document.body.style.overflow = 'auto'; //出现滚动条
-        document.removeEventListener("touchmove", mo, false);
-
-        this.$router.push({
-          name: 'Paycoupon',
-          query: {
-            openid: this.openid,
-            groupNo: this.groupNo,
-            courseId: this.courseId,
-            orderid: this.orderid,
-            zhijie: this.zhijie,
-            names: this.names,
-          } //openid
-        })
-        // this.iscoupon = true;
       },
       backItem(isclose) {
         this.iscoupon = isclose;
       },
       wxshare() {
+        let that = this
         //wx是引入的微信sdk
         // wx.config('这里有一些参数');//通过config接口注入权限验证配置
         let mydata = {
@@ -213,12 +204,13 @@
             });
             wx.ready(function () { //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
-              let mytitle = '孩子明年上小学啦，送ta一套蜜蜂数学思维，爱上思考，变聪明！';
-              let mydesc = '蜜蜂数学';
+              let mytitle = '孩子明年上小学啦，送ta一套蜜蜂乐园思维，爱上思考，变聪明！';
+              let mydesc = '蜜蜂乐园';
               let mylink =
-                'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/course'; //分享到首页
+                'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/courseinfo?openid=' +
+                that.$route.query.openid + "%26courseid=" + that.$route.query.courseid; //分享到首页
               //let mylink='http://test-yunying.coolmath.cn/beec/course';//分享到首页
-              let myimgUrl = 'http://test-yunying.coolmath.cn/beec/share.png';
+              let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
               wx.hideMenuItems({
                 menuList: [
                   'menuItem:copyUrl'
@@ -263,6 +255,7 @@
         let mydata = {
           'id': this.courseId
         };
+        console.log('12312321312', mydata)
         this.$nextTick(function () {
           queryCourseById(mydata).then(res => {
             // console.log("11111111111111111111111111333333333333333333333333");
@@ -271,7 +264,7 @@
             if (res.data.statusCode == '200') {
               that.course.coursename = resData.result.courseName;
               that.course.coursedesc = resData.result.courseDescribe;
-              that.course.courseimg = resData.result.imgUrl;
+              that.course.courseimg = resData.result.imgUrlA;
             } else {
               // console.log("11111111111111111112222222222233333333");
             }
@@ -286,10 +279,9 @@
       };
       document.body.style.overflow = 'auto'; //出现滚动条
       document.removeEventListener("touchmove", mo, false);
-
       this.openid = this.$route.query.openid;
       this.groupNo = this.$route.query.groupNo;
-      this.courseId = this.$route.query.courseId;
+      this.courseId = this.$route.query.courseid;
       this.orderid = this.$route.query.orderid;
       this.orderNo = this.$route.query.orderNo;
       console.log(this.orderNo)
@@ -312,10 +304,8 @@
       if (this.$route.query.couponAmount != "" && this.$route.query.couponAmount != undefined) {
         this.couponAmount = this.$route.query.couponAmount;
       }
-
       this.getData();
       this.wxshare();
-
     }
   }
 

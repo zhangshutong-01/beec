@@ -122,7 +122,7 @@
       <p class="shareTip">点击右上角分享好友或朋友圈</p>
     </div>
     <div class="actionMask" v-show="actionMask" @click="actionMaskHide">
-      <p class="action_one">关注“<span>蜜蜂数学</span>”才能正常</p>
+      <p class="action_one">关注“<span>蜜蜂乐园</span>”才能正常</p>
       <p>上课，掌握实时拼团进度</p>
       <img src="../../assets/erweima.png" />
       <p class="changan">长按二维码识别关注</p>

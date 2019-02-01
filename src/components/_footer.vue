@@ -45,15 +45,12 @@
 </template>
 
 <script>
-  import {
-    isused
-  } from '@/api/mine';
+  // import {
+  //   isused
+  // } from '@/api/mine';
   export default {
     data() {
       return {
-        //对应mt-tab-item 的id值
-        // iscourse: true,
-        // ismy:false,
         openid: ''
       }
     },
@@ -70,16 +67,10 @@
           case '课程':
             setTimeout(() => {
               let params = 'id=&three=';
-              isused(params).then(res => {
-                let resData = res.data;
-                if (resData.statusCode == 200) {
-                  this.$router.push({
-                    path: '/course',
-                    query: {
-                      "openid": this.openid,
-                      refresh: resData.result
-                    }
-                  })
+              this.$router.push({
+                path: '/course',
+                query: {
+                  openid: this.openid
                 }
               })
             }, 500);
@@ -87,7 +78,7 @@
           case '我的':
             setTimeout(() => {
               this.$router.push({
-                path: '/mine',
+                path: '/mycourse',
                 query: {
                   "openid": this.openid
                 }
@@ -99,7 +90,7 @@
               this.$router.push({
                 path: '/money',
                 query: {
-                  "openid": this.openid
+                  "openid": this.openid,
                 }
               });
             }, 500);
@@ -110,7 +101,6 @@
     created() {
       this.openid = this.myopenid;
       let openid = this.$route.query.openid;
-      // let openid = 'ojjgp0rRwHT-BtvS4GG_YU1T34Vk';
       if (openid != undefined) {
         this.openid = openid;
       }
@@ -139,12 +129,13 @@
         height: 50px;
         margin: 0 auto;
         text-align: center;
+
         img {
           width: 20px;
           height: 22px;
           margin: 0 auto;
           vertical-align: top;
-          margin-top:.5rem;
+          margin-top: .5rem;
         }
 
         span {

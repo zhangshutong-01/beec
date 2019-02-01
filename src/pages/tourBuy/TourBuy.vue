@@ -1,10 +1,9 @@
 <template lang="html">
   <div class="groupon_haoyou1">
     <div class="groupon2_haoyou1">
-      <!-- <div class="count2_down" v-if="groupState == 1">
+      <div class="count2_down" v-if='groupState'>
         <div class="count2_down_top">
           <p class="touxiang_left">
-            <img src="../../assets/groupon/default.png"/>
             <img :src="faqiUser.userHeadImgUrl" />
           </p>
           <div class="miaoshu_right">
@@ -12,19 +11,19 @@
             <p class="miaoshu_right_two">我发现一个超棒的课程！推荐给你~</p>
           </div>
         </div>
-        <div class="count2_down_bot">
-          <div class="kecheng_left">
-            <img :src="mycourse.imgUrl" />
-          </div>
-          <div class="kecheng_right">
-            <p class="kecheng1">{{mycourse.courseName}}</p>
-            <p class="kecheng2">3人团/¥3</p>
-            <p class="kecheng3">{{mycourse.groupDescribe}}</p>
+        <div class="bottom">
+          <img :src="courseData.imgUrlA" alt="">
+          <div>
+            <h1>{{courseData.courseName}}</h1>
+            <p>{{payType==1?"3人团":"直购"}}/￥{{payType==1?courseData.groupPrice:courseData.originalPrice}}</p>
+            <div>
+              {{courseData.groupDescribe}}
+            </div>
           </div>
         </div>
-      </div> -->
-      <div class="count_down">
-        <div class="group2_count_down">
+      </div>
+      <div class="count_down" v-if="payType==1">
+        <div class="group2_count_down" v-if="!success">
           <div class="remaining_time">还差<span class="shengyuhaoyou">{{remainNumber}}</span>人拼团成功</div>
           <div class="shengyu">
             <div class="shengyutime">剩余时间</div>
@@ -38,7 +37,7 @@
           </div>
         </div>
         <div class="invitation_friends">
-          <div class="myimages">
+          <div class="myimages" v-if="">
             <img v-for="item in users" :src="item.userHeadImgUrl" class="user_img user2_img" />
             <span class="user2_tip">团长</span>
             <!-- <span v-for="item in users">{{item.nickName}}</span> -->
@@ -46,50 +45,69 @@
             <img v-if="users.length < 3" class="add_user" src="../../assets/groupon/nosuccessicon.png" />
           </div>
         </div>
-        <!-- <div class="invitation_friends">
-          <p>拼团成功</p>
-          <div class="myimages">
-            <img v-for="item in users" :src="item.userHeadImgUrl" class="user_img user2_img" />
-            <span class="user2_tip">团长</span>
-            <img v-if="users.length < 2" class="add_user" src="../../assets/groupon/default.png" />
-            <img v-if="users.length < 3" class="add_user" src="../../assets/groupon/default.png" />
-          </div>
-        </div> -->
-
-        <div class="group2_inviteBtn">邀请好友</div>
-        <div class="group2_inviteBtn">一键参团</div>
-        <!-- <div class="successGroup">
+        <div class="group2_inviteBtn" v-if="!groupState&&!success" @click="maskshow">邀请好友</div>
+        <div class="group2_inviteBtn" v-if="groupState&&!success" @click="groupPay">一键参团</div>
+        <div class="successGroup" v-if="success">
           <div class="successTip">
-            <p>该团已拼课成功！自己开团试试吧~</p>
+            <p v-if="!mySuccess">该团已拼课成功！自己开团试试吧~</p>
+            <p v-if="mySuccess">您已拼团成功，可以去上课啦</p>
           </div>
-          <div class="buyBtn">
-            <div class="ninemoney">
-              <p class="oldprice"><span>¥9.9</span><span class="through">¥29.9</span></p>
+          <div class="buyBtn" v-if="!mySuccess">
+            <div class="ninemoney" @click="paynet('199')">
+              <p class="oldprice"><span>¥{{courseData.originalPrice}}</span></p>
               <p class="onlybuy">单独购买</p>
             </div>
-            <div class="threemoney">
-              <p class="pintuan">¥3</p>
+            <div class="threemoney" @click="paynet('99')">
+              <p class="pintuan">¥{{courseData.groupPrice}}</p>
               <p class="group">一键成团（3人团）</p>
             </div>
           </div>
-        </div> -->
+          <div class="buyBtn" v-if="mySuccess">
+            <div class="goCourse" @click="goCourse">
+              去上课
+            </div>
+          </div>
+        </div>
       </div>
-      <!-- <div class="shareMask" v-show="isShareMask" @click="maskHide">
+      <div class="count_down" v-if="payType==2">
+        <div class="invitation_friends">
+          <div class="myimages">
+            <img :src="onePeo.userHeadImgUrl" class="user_img user2_img active">
+            <span class="user2_tip tipactive">直购</span>
+          </div>
+        </div>
+        <div class="successGroup">
+          <div class="buyBtn" v-if="!oneshop">
+            <div class="ninemoney" @click="paynet('199')">
+              <p class="oldprice"><span>¥{{courseData.originalPrice}}</span></p>
+              <p class="onlybuy">单独购买</p>
+            </div>
+            <div class="threemoney" @click="paynet('99')">
+              <p class="pintuan">¥{{courseData.groupPrice}}</p>
+              <p class="group">一键成团（3人团）</p>
+            </div>
+          </div>
+          <div class="buyBtn" v-if="oneshop">
+            <div class="goCourse" @click="goCourse">
+              去上课
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="shareMask" v-show="isShareMask" @click="maskHide">
         <p class="shareImg">
           <img src="../../assets/mine/sharetip.png" />
         </p>
         <p class="shareTip">点击右上角分享好友或朋友圈</p>
-      </div> -->
+      </div>
       <!-- <div class="actionMask" v-show="actionMask" @click="actionMaskHide">
-        <p class="action_one">关注“<span>蜜蜂数学</span>”才能正常</p>
+        <p class="action_one">关注“<span>蜜蜂乐园</span>”才能正常</p>
         <p>上课，掌握实时拼团进度</p>
         <img src="../../assets/erweima.png" />
         <p class="changan">长按二维码识别关注</p>
       </div> -->
     </div>
     <div class="coursedetails" style="width:100%;margin:0 auto;margin-top:20px;">
-      <!-- 课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情 -->
-      <!--课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情课程详情-->
       <div class="courseInfo">
         <div class="banner">
           <mt-swipe :auto="2000">
@@ -107,11 +125,11 @@
             </mt-swipe-item>
           </mt-swipe>
         </div>
-        <!-- <div class="courserDesc">
+        <div class="courserDesc">
           <div class="desc_top">
-            <p>¥{{courseData.activityPrice}}</p>
+            <p>¥{{courseData.groupPrice}}</p>
             <div class="desc_line">
-              <span>{{courseData.sectionTotal}}节课</span>
+              <span>{{courseData.courseTote}}节课</span>
               <span class="line"></span>
               <span>{{courseData.courseDescribe | changeAge}}岁</span>
               <span class="line"></span>
@@ -124,32 +142,32 @@
             </p>
             <p>等{{courseData.perNumber}}已参加</p>
           </div>
-        </div> -->
+        </div>
         <div class="information">
           <div class="tabcContent">
             <div class="headerCont tabHeader">
               <ul>
-                <!-- <a href="#a" :class="mynum==1?'active':''" @click="courseInfor(1)">课程详情</a>
-                <a href="#b" :class="mynum==2?'active':''" @click="courseList(2)">课程目录</a>
-                <a href="#c" :class="mynum==3?'active':''" @click="courseBuy(3)">购买须知</a> -->
+                <li :class="mynum==1?'active':''" @click="courseInfor(1)">课程详情</li>
+                <li :class="mynum==2?'active':''" @click="courseInfor(2)">产品展示</li>
+                <li :class="mynum==3?'active':''" @click="courseInfor(3)">购买须知</li>
               </ul>
             </div>
             <div class="classDetail">
-              <div class="tabcContent" id="a">
+              <div class="tabcContent">
                 <img src="../../assets/courseinfo/11.png" alt="">
-                <img src="../../assets/courseinfo/22.png" alt="">
+                <img src="../../assets/courseinfo/22.png" class="img22" alt="">
               </div>
               <div class="tabDetails_nine">
                 <h1>【课程动画视频】</h1>
                 <video src="../../assets/courseinfo/WeChat_20190125150648.mp4" controls></video>
               </div>
-              <div class="tabDetails_ten" id="b">
+              <div class="tabDetails_ten">
                 <img src="../../assets/courseinfo/33.png" alt="">
                 <img src="../../assets/courseinfo/44.png" alt="">
                 <img src="../../assets/courseinfo/55.png" alt="">
                 <div class="classDetail">
                   <img src="../../assets/courseinfo/66.png" alt="">
-                  <img src="../../assets/courseinfo/77.png" class="img18" id="c">
+                  <img src="../../assets/courseinfo/77.png" class="img18">
                 </div>
               </div>
             </div>
@@ -179,26 +197,116 @@
   import {
     queryCourseById
   } from '@/api/course'
-
+  import {
+    queryUserInfo
+  } from '@/api/honey'
+  import {
+    checkTradingstate
+  } from '@/api/course'
   export default {
     data() {
       return {
         openid: '',
-        groupNo: '',
+        sourceId: '',
+        invited: '',
         hour: '',
         minute: '',
         second: '',
         groupDetail: [],
         users: [],
         remainNumber: '', //成团所差人数
-        courseid: this.$route.query.courseid
+        courseid: this.$route.query.courseid,
+        courseData: {},
+        isShareMask: false,
+        mynum: 1,
+        randomNum: parseInt(Math.random() * 10) + 15,
+        faqiUser: [],
+        list: [],
+        gogroup: false,
+        groupState: false,
+        hasBuyId: [],
+        success: false,
+        mySuccess: false,
+        payType: '',
+        onePeo: {},
+        oneshop: null
       }
     },
-
+    filters: {
+      changeAge(data) {
+        if (data) {
+          let babyage = data.substring(2, 5);
+          return babyage;
+        }
+      },
+    },
     methods: {
+      courseInfor(num) {
+        this.mynum = num
+        if (num === 1) {
+          var h = $('.tabcContent').offset().top - 50;
+          $("html, body").animate({
+            scrollTop: h
+          }, 500)
+        } else if (num === 2) {
+          var h = $('.tabDetails_nine').offset().top - 100;
+          $("html, body").animate({
+            scrollTop: h
+          }, 500)
+        } else if (num === 3) {
+          var h = $('.img18').offset().top - 50;
+          $("html, body").animate({
+            scrollTop: h
+          }, 500)
+        }
+      },
+
+      goCourse() {
+        this.$router.push({
+          path: '/moneyDetail',
+          query: {
+            openid: this.$route.query.openid,
+            courseid: this.$route.query.courseid,
+            sourceId: this.$route.query.sourceId,
+            payType: this.$route.query.payType
+          }
+        })
+      },
+      groupPay() {
+        const parmas = {
+          openId: this.openid,
+          orderSource: 3,
+          administrationId: this.groupDetail.administrationId,
+          invitationId: this.invited,
+          sourceId: this.sourceId
+        }
+        createOrderInfo(parmas).then(res => {
+          console.log(res)
+          if (res.data.statusCode === "200") {
+            this.$router.push({
+              path: '/pay',
+              query: {
+                orderNo: res.data.result.orderNo,
+                courseid: this.$route.query.courseid,
+                names: 99,
+                zhijie: 1,
+                sourceId: this.sourceId,
+                openid: this.openid
+              }
+            })
+          }
+        })
+      },
+      maskshow() {
+        console.log(1111)
+        this.isShareMask = true
+      },
+      maskHide() {
+        this.isShareMask = false
+      },
       getGroupDetail() {
         const parmas = {
-          id: this.$route.query.orderNo
+          id: this.$route.query.sourceId
         }
         queryGroupDetails(parmas).then(res => {
           console.log(res)
@@ -206,6 +314,19 @@
           this.users = res.data.result.userList
           this.remainNumber = 3 - this.users.length
           this.countDown(this.groupDetail.times)
+          this.faqiUser = this.users[0]
+          this.users.forEach(element => {
+            this.hasBuyId.push(element.openId)
+          });
+          if (this.hasBuyId.indexOf(this.$route.query.openid) >= 0) {
+            this.mySuccess = true
+            this.groupState = false
+          } else {
+            this.groupState = true
+          }
+          if (this.groupDetail.times === 0) {
+            this.success = true
+          }
         })
       },
       getCourseDetail() {
@@ -215,13 +336,14 @@
         }
         queryCourseById(parmas).then(res => {
           console.log('1233333', res)
+          this.courseData = res.data.result
         })
       },
       scrollChange() {
         //设置滑动距离
         $(window).scroll(function () {
           // console.log($(window).scrollTop());
-          if ($(window).scrollTop() >= 200) {
+          if ($(window).scrollTop() >= 700) {
             $(".headerCont").addClass("activeTabHeader");
           } else {
             $(".headerCont").removeClass("activeTabHeader");
@@ -244,7 +366,7 @@
               timestamp: res.data.result.timestamp, // 必填，生成签名的时间戳
               nonceStr: res.data.result.noncestr, // 必填，生成签名的随机串
               signature: res.data.result.signature, // 必填，调用js签名，
-              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'] // 必填，需要使用的JS接口列表，这里只写支付的
+              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'] // 必填，需要使用的JS接口列表，这里只写支付的
             });
             wx.ready(function () { //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
@@ -252,14 +374,18 @@
               let mytitle = that.randomNum + '个朋友在拼→孩子的第一堂理财课，小蜜蜂逛超市！';
               let mydesc = '27个问题教会孩子：统筹规划、分类判断、计算推理';
               let mylink =
-                'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?orderNo=' +
-                that.$route.query.orderNo; //分享购买 团id
-              let myimgUrl = 'http://test-yunying.coolmath.cn/beec/share.png';
-              wx.hideMenuItems({
-                menuList: [
-                  'menuItem:copyUrl'
-                ]
-              });
+                'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?sourceId=' +
+                that.$route.query.sourceId + '%26courseid=' + that.$route.query.courseid + '%26invited=' + that
+                .$route
+                .query.openid + '%26payType=' + that
+                .$route
+                .query.payType; //分享购买 团id
+              let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
+              // wx.hideMenuItems({
+              //   menuList: [
+              //     'menuItem:copyUrl'
+              //   ]
+              // });
               wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用
                 title: mytitle, // 分享标题
                 desc: mydesc, // 分享描述
@@ -323,12 +449,107 @@
           clearInterval(timer);
         }
       },
+      paynet(names) {
+        if (names == "99") {
+          let that = this;
+          let mydata = {
+            openId: this.openid,
+            orderSource: 1,
+            administrationId: this.courseData.administrationId
+          };
+          createOrderInfo(mydata).then(res => {
+            console.log(res)
+            if (res.data.statusCode == "200") {
+              that.$router.push({
+                path: "/pay",
+                query: {
+                  openid: this.openid,
+                  groupNo: res.data.result.groupNo,
+                  courseid: this.courseid,
+                  zhijie: 0, //到确认支付，再到分享页面
+                  orderid: res.data.result.id,
+                  names: 99,
+                  sourceId: res.data.result.sourceId,
+                  orderNo: res.data.result.orderNo
+                }
+              });
+            } else if (res.data.statusCode == "29") {
+              alert(
+                "您已参与此课程的拼团，5小时后没有拼团成功，则支付金额原路返回。"
+              );
+            }
+          });
+        } else {
+          console.log(123)
+          let that = this;
+          let mydata = {
+            openId: this.openid,
+            orderSource: 2,
+            administrationId: this.courseData.administrationId,
+            invitationId: this.$route.query.invited
+          };
+          console.log('2222222', mydata)
+          createOrderInfo(mydata).then(res => {
+            console.log('222', res)
+            if (res.data.statusCode == "200") {
+              this.$router.push({
+                path: "/pay",
+                query: {
+                  openid: this.openid,
+                  groupNo: this.groupNo,
+                  courseid: this.courseid,
+                  zhijie: 0, //到确认支付，再到分享页面
+                  orderid: res.data.result.id,
+                  names: 199,
+                  orderNo: res.data.result.orderNo
+                }
+              });
+            } else {
+              alert(
+                "您已参与此课程的拼团，5小时后没有拼团成功，则支付金额原路返回。"
+              );
+            }
+          });
+        }
+      },
     },
     created() {
       this.openid = this.$route.query.openid;
-      this.groupNo = this.$route.query.groupNo;
+      this.sourceId = this.$route.query.sourceId;
+      this.invited = this.$route.query.invited
+      this.payType = this.$route.query.payType
+      if (this.payType == 2) {
+        checkTradingstate({
+          openId: this.openid,
+          courseId: this.$route.query.courseid
+        }).then(res => {
+          console.log(res)
+          if (res.data.result) {
+            this.oneshop = true
+            queryUserInfo({
+              openId: this.openid
+            }).then(res => {
+              console.log(res)
+              this.onePeo = res.data.result
+              this.faqiUser = this.onePeo
+              this.groupState = false
+            })
+          } else {
+            this.oneshop = false
+            queryUserInfo({
+              openId: this.invited
+            }).then(res => {
+              console.log(res)
+              this.onePeo = res.data.result
+              this.faqiUser = this.onePeo
+              this.groupState = true
+            })
+          }
+        })
+      } else {
+        this.getGroupDetail()
+      }
       this.scrollChange()
-      this.getGroupDetail()
       this.getCourseDetail()
       this.wxshare()
     }
@@ -540,6 +761,16 @@
         justify-content: space-around;
         margin: 0 auto;
 
+        .goCourse {
+          width: 6rem;
+          height: 2rem;
+          color: #fff;
+          background: #FE7738;
+          border-radius: 1rem;
+          line-height: 2rem;
+
+        }
+
         .ninemoney {
           background: #FE7738;
           border-radius: 50px;
@@ -603,6 +834,7 @@
         width: 250px;
         margin: 0 auto;
         position: relative;
+        display: flex;
 
         img {
           width: 60px;
@@ -626,6 +858,15 @@
         .user2_img {
           border: 2px solid #00C1FF;
           border-radius: 50%;
+        }
+
+        .active {
+          display: block;
+          margin: 0 auto;
+        }
+
+        .tipactive {
+          left: 100px !important;
         }
 
         .user2_tip {
@@ -948,6 +1189,46 @@
           }
         }
       }
+
+      .bottom {
+        width: 96%;
+        height: 7rem;
+        background: #fff;
+        margin: .5rem auto .5rem auto;
+        border-radius: .3rem;
+        border: 1px solid #c3c3c3;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+
+        img {
+          width: 8rem;
+          margin: 0 .8rem;
+        }
+
+        >div {
+          width: 100%;
+
+          h1 {
+            font-weight: bold;
+            font-size: 1.1rem;
+          }
+
+          p {
+            font-size: 1rem;
+            color: #8E8E8E;
+          }
+
+          div {
+            font-size: .9rem;
+            color: #9E9E9E;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+          }
+        }
+      }
     }
 
     .count3_down {
@@ -1076,6 +1357,7 @@
         font-size: 17px;
         font-family: PingFangSC-Medium !important;
         color: #666666;
+        margin-bottom: 1rem;
 
         ul {
           display: flex;
@@ -1084,7 +1366,7 @@
           /*align-items: center;*/
         }
 
-        ul a {
+        ul li {
           display: block;
           height: 45px;
           flex: 1;
@@ -1093,6 +1375,11 @@
           line-height: 45px;
           width: 100%;
           text-align: center;
+          border-right: 1px solid #c3c3c3;
+
+          &:nth-child(3) {
+            border-right: none;
+          }
         }
 
         .active {
@@ -1111,7 +1398,10 @@
       .tabcContent {
         width: 100%;
         overflow: hidden;
-        padding-top: 2rem;
+
+        .img22 {
+          padding: 1rem 0;
+        }
       }
 
       .tabDetails_nine {

@@ -66,3 +66,13 @@ export function addBabyInfo(params) { //usable
     data: params
   })
 }
+
+// 用户付款订单信息分页查询
+
+export function queryOrderInfo(params) { //usable
+  return request({
+    url: '/beec/wx/queryOrderInfo',
+    method: 'post',
+    data: params
+  })
+}

@@ -1,16 +1,19 @@
 <template>
   <div class="afterPay">
     <div class="top">
-      <h1>还差<span>2</span>人拼团成功</h1>
+      <h1 v-if="!change">还差<span>{{remainNumber}}</span>人拼团成功</h1>
+      <h1 v-if="change">拼团成功</h1>
       <p>
         剩余时间 <span>{{hour}}</span> : <span>{{minute}}</span> : <span>{{second}}</span>
       </p>
       <div class='member'>
-        <div v-for="(item,index) in member" :key="index">
-          <img :src="item" alt="">
-        </div>
+        <img v-for="(item,index) in users" :key="index" :src="item.userHeadImgUrl" class="user_img user2_img" />
+        <!-- <span v-for="item in users">{{item.nickName}}</span> -->
+        <img v-if="users.length < 2" class="add_user" src="../../assets/groupon/nosuccessicon.png" />
+        <img v-if="users.length < 3" class="add_user" src="../../assets/groupon/nosuccessicon.png" />
       </div>
-      <button @click="share">邀请好友</button>
+      <button v-if="!change" @click="share">邀请好友</button>
+      <button v-if="change" @click="goCourse">去上课</button>
     </div>
     <main>
       <p>扫码关注<span>“蜜蜂乐园”</span><br>才能<span>正常上课</span>，掌握实时<span>拼团进度</span></p>
@@ -18,10 +21,10 @@
       <p>若拼团失败，48小时立即退款</p>
     </main>
     <div class="bottom">
-      <img :src="list.imgUrl" alt="">
+      <img :src="list.imgUrlA" alt="">
       <div>
         <h1>{{list.courseName}}</h1>
-        <p>{{list.activityPrice}}人团/￥{{list.activityPrice}}</p>
+        <p>3人团/￥{{list.groupPrice}}</p>
         <div>
           包括《购物清单》、《逛超市》、《购物结账》
         </div>
@@ -44,6 +47,12 @@
   import {
     queryCourseById
   } from "@/api/course"
+  import {
+    queryGroupDetails
+  } from '@/api/groupon'
+  import {
+    share
+  } from '@/api/wx'
   import Time from '@/utils/time';
   export default {
     data() {
@@ -51,8 +60,14 @@
         hour: '',
         minute: '',
         second: '',
+        openid: '',
         list: [],
         isShareMask: false,
+        remainNumber: 0,
+        groupDetail: [],
+        users: [],
+        randomNum: parseInt(Math.random() * 10) + 15,
+        change: false,
         member: [
           'http://b-ssl.duitang.com/uploads/item/201510/14/20151014001324_8R3QB.jpeg',
           'http://b-ssl.duitang.com/uploads/item/201510/14/20151014001324_8R3QB.jpeg',
@@ -60,19 +75,46 @@
         ]
       }
     },
-    mounted() {
-      this.countDown(1000)
-    },
     created() {
       const params = {
-        id: "d58ab14473f7425f8fbee38b8a0297c5"
+        id: this.$route.query.courseid
       }
+      this.openid = this.$route.query.openid
       queryCourseById(params).then(res => {
         console.log(res)
         this.list = res.data.result
       })
+      this.times()
+      this.wxshare()
+
     },
     methods: {
+      goCourse() {
+        this.$router.push({
+          path: '/moneyDetail',
+          query: {
+            openid: this.$route.query.openid,
+            courseid: this.$route.query.courseid,
+            sourceId: this.$route.query.sourceId,
+            payType: this.$route.query.payType
+          }
+        })
+      },
+      times() {
+        const parmas = {
+          id: this.$route.query.sourceId
+        }
+        queryGroupDetails(parmas).then(res => {
+          console.log(res)
+          this.groupDetail = res.data.result
+          this.users = res.data.result.userList
+          this.remainNumber = 3 - this.users.length
+          this.countDown(this.groupDetail.times)
+          if (this.groupDetail.times === 0) {
+            this.change = true
+          }
+        })
+      },
       countDown(times) {
         var timer = null;
         var that = this
@@ -107,7 +149,78 @@
       },
       maskHide() {
         this.isShareMask = false
-      }
+      },
+      wxshare() {
+        let that = this;
+        //wx是引入的微信sdk
+        // wx.config('这里有一些参数');//通过config接口注入权限验证配置
+        let mydata = {
+          'url': window.location.href
+        };
+        share(mydata).then(res => {
+          console.log(res)
+          if (res.data.statusCode == '200') {
+            wx.config({
+              debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+              appId: res.data.result.appId, // 必填，公众号的唯一标识
+              timestamp: res.data.result.timestamp, // 必填，生成签名的时间戳
+              nonceStr: res.data.result.noncestr, // 必填，生成签名的随机串
+              signature: res.data.result.signature, // 必填，调用js签名，
+              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'] // 必填，需要使用的JS接口列表，这里只写支付的
+            });
+            wx.ready(function () { //通过ready接口处理成功验证
+              // config信息验证成功后会执行ready方法
+              // let mytitle= that.mycourse.courseName;
+              let mytitle = that.randomNum + '个朋友在拼→孩子的第一堂理财课，小蜜蜂逛超市！';
+              let mydesc = '27个问题教会孩子：统筹规划、分类判断、计算推理';
+              let mylink =
+                'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?sourceId=' +
+                that.$route.query.sourceId + '%26courseid=' + that.$route.query.courseid + '%26invited=' + that
+                .$route
+                .query.openid + '%26payType=' + that.$route.query.payType; //分享购买 团id
+              let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
+              // wx.hideMenuItems({
+              //   menuList: [
+              //     'menuItem:copyUrl'
+              //   ]
+              // });
+              wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用
+                title: mytitle, // 分享标题
+                desc: mydesc, // 分享描述
+                link: mylink, // 分享链接
+                imgUrl: myimgUrl, // 分享图标
+                type: '', // 分享类型,music、video或link，不填默认为link
+                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                success: function () {
+                  // 用户确认分享后执行的回调函数
+                  that.maskHide();
+                },
+                cancel: function () {
+                  // 用户取消分享后执行的回调函数
+                }
+              });
+              wx.onMenuShareTimeline({ //分享朋友圈
+                title: mytitle, // 分享标题
+                link: mylink, // 分享链接
+                imgUrl: myimgUrl, // 分享图标分享图标
+                success: function () {
+                  // 用户确认分享后执行的回调函数
+                  that.maskHide();
+                },
+                cancel: function () {
+                  // 用户取消分享后执行的回调函数
+                }
+              });
+            });
+            wx.error(function (res) { //通过error接口处理失败验证
+              // config信息验证失败会执行error函数
+            });
+          } else {
+
+          }
+        })
+      },
+
     }
   }
 
@@ -168,6 +281,7 @@
 
         img {
           width: 4rem;
+          height: 4rem;
           border-radius: 50%;
           border: 1px solid #ccc;
         }

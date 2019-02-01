@@ -42,7 +42,27 @@ export function submitGrade(params) {
     data: params
   });
 }
-//检验是否购买了某课程
+
+
+// 查询课程小节
+export function querySectionInfo(params) {
+  return request({
+    url: '/beec/wx/querySectionInfo',
+    method: 'post',
+    data: params
+  });
+}
+
+// 提交反馈
+export function addfeedback(params) {
+  return request({
+    url: '/beec/wx/addfeedback',
+    method: 'post',
+    data: params
+  });
+}
+
+// 检验是否买过某课程
 export function checkTradingstate(params) {
   return request({
     url: '/beec/wx/checkTradingstate',

@@ -36,7 +36,7 @@
 </template>
 <script>
   import { Indicator, Toast} from 'mint-ui';
-  import { isused } from '@/api/mine';
+  // import { isused } from '@/api/mine';
 
   export default {
     name: 'mehoney',
@@ -53,21 +53,21 @@
       changeStatus(item1,item2){
         let params ='id='+this.useid+'&three='+'';
         Indicator.open();
-        isused(params).then(res => {
-          // console.log(res);
-          let resData = res.data;
-          Indicator.close();
-          if(resData.statusCode == 200){
-            // console.log(resData);
-            this.$router.push({
-              name:'invitation',
-              query:{honey:item1, money:item2,openid:this.honeyData.openId,refresh:resData.result}
-            })
-          }else {
-            Indicator.close();
-            Toast(resData.message);
-          }
-        })
+        // isused(params).then(res => {
+        //   // console.log(res);
+        //   let resData = res.data;
+        //   Indicator.close();
+        //   if(resData.statusCode == 200){
+        //     // console.log(resData);
+        //     this.$router.push({
+        //       name:'invitation',
+        //       query:{honey:item1, money:item2,openid:this.honeyData.openId,refresh:resData.result}
+        //     })
+        //   }else {
+        //     Indicator.close();
+        //     Toast(resData.message);
+        //   }
+        // })
       },
       initData(){
         this.honeyData = Object.assign({}, this.$route.query);

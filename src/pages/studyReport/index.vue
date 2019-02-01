@@ -40,7 +40,7 @@
       <!--<img src="../../assets/studyReport/qrcode1.png"/>-->
       <!--</div>-->
       <!--<div class="qrCodeCont">-->
-      <!--<p class="qrtit">蜜蜂数学</p>-->
+      <!--<p class="qrtit">蜜蜂乐园</p>-->
       <!--<p class="qrcont">扫码进入公众号,点击左下角"思维课程"</p>-->
       <!--</div>-->
       <!--</div>-->
@@ -122,8 +122,7 @@
   } from '@/api/mine';
   import {
     honeyAndMoneyInfo,
-    newPoster,
-    isused
+    newPoster
   } from '@/api/mine';
   import {
     share
@@ -179,21 +178,21 @@
       changeStatus() {
         let params = 'id=' + this.useid + '&three=' + '';
         Indicator.open();
-        isused(params).then(res => {
-          let resData = res.data;
-          Indicator.close();
-          if (resData.statusCode == 200) {
-            // console.log(resData.result);
-            let params = 'id=' + this.useid + '&three=' + 'three';
-            Indicator.open();
-            isused(params).then(res => {
-              window.location.reload();
-            })
-          } else {
-            Indicator.close();
-            Toast(resData.message);
-          }
-        })
+        // isused(params).then(res => {
+        //   let resData = res.data;
+        //   Indicator.close();
+        //   if (resData.statusCode == 200) {
+        //     // console.log(resData.result);
+        //     let params = 'id=' + this.useid + '&three=' + 'three';
+        //     Indicator.open();
+        //     isused(params).then(res => {
+        //       window.location.reload();
+        //     })
+        //   } else {
+        //     Indicator.close();
+        //     Toast(resData.message);
+        //   }
+        // })
       },
       jump() {
         this.$router.push({
@@ -322,12 +321,12 @@
             });
             wx.ready(function () { //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
-              let mytitle = '孩子明年上小学啦，送ta一套蜜蜂数学思维，爱上思考，变聪明！';
-              let mydesc = '蜜蜂数学';
+              let mytitle = '孩子明年上小学啦，送ta一套蜜蜂乐园思维，爱上思考，变聪明！';
+              let mydesc = '蜜蜂乐园';
               let mylink =
                 'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/studyReport?inviterId=' +
                 me.openid + '%26isShare=1'; //分享到首页
-              let myimgUrl = 'http://test-yunying.coolmath.cn/beec/share.png';
+              let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
               wx.hideMenuItems({
                 menuList: [
                   'menuItem:copyUrl'

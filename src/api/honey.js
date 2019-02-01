@@ -8,7 +8,7 @@ export function toExchangeHoney(params) {
     data: params
   });
 }
-//兑换蜂蜜
+// 获取人员信息
 export function queryUserInfo(params) {
   return request({
     url: '/beec/wx/queryUserInfo',

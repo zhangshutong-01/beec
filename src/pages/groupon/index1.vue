@@ -187,7 +187,7 @@
             wx.ready(function() { //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
               let mytitle = that.mycourse.courseName;
-              let mydesc ='【蜜蜂数学】儿童思维启蒙，这个课程很有意思！你也来看看';
+              let mydesc ='【蜜蜂乐园】儿童思维启蒙，这个课程很有意思！你也来看看';
               let mylink ='http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/share?groupNo='+that.groupNo;//分享购买 团id
               let myimgUrl = that.mycourse.imgUrl;
 

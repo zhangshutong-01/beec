@@ -8,14 +8,14 @@
     <div class="money_num">
       <div class="money_num_tit">奖学金累计</div>
       <div class="money_num1">
-        <p><b>￥</b>100</p>
-        <ul class="money_type">
+        <p><b>￥</b>{{schoolMoney.totalAmount}}</p>
+        <ul class="money_type" v-if="schoolMoney.totalAmount!==0">
           <li @click="cashSussess">
             <div class="money_typecons">
               <div>已提现</div>
               <span>
                 ￥
-                <b>0</b>
+                <b>{{schoolMoney.cashWithdrawalAmount}}</b>
               </span>
             </div>
             <div class="icon_more">
@@ -27,7 +27,7 @@
               <div>去提现</div>
               <span>
                 ￥
-                <b>40</b>
+                <b>{{schoolMoney.surplusAmount}}</b>
               </span>
             </div>
             <div class="icon_more">
@@ -36,10 +36,9 @@
           </li>
         </ul>
       </div>
-      <!-- <div class="money_num1">
-        <p><b>￥</b>0</p>
+      <div class="money_num1" v-if="schoolMoney.totalAmount===0">
         <span class="tip">马上邀请好友赚取奖学金吧</span>
-      </div> -->
+      </div>
     </div>
     <section class="box1">
       <div :class="[rules_show?'active':'box1_left']" @click="tab(1)">
@@ -115,39 +114,26 @@
       </div>
     </section>
     <section class="commit" v-if="commit_show">
-      <ul class="commit_main">
-        <li @click="commitMan()">
+      <ul class="commit_main" v-if='commitPeo.length>0'>
+        <li v-for="(item,index) in commitPeo" :key="index" @click="commitMan(item)">
           <div class="header_img">
-            <img src="http://b-ssl.duitang.com/uploads/item/201510/14/20151014001324_8R3QB.jpeg">
+            <img :src="item.headUrl">
           </div>
-          <div :class="[isSuss?'userinfo':'userinfo tab']">
+          <div :class="[item.successFlag===1?'userinfo':'userinfo tab']">
             <div>
-              <span class="userName">夏荣</span>
-              <span>总收益：40</span>
-              <span class="time">2018-12-28</span>
+              <span class="userName">{{item.nickName}}</span>
+              <span>总收益：{{item.totalAmount}}</span>
+              <span class="time">{{item.getTime}}</span>
             </div>
             <div>
-              <span class="course">课程:《超市购物系列》</span>
-              <span class="shop_status">团购成功</span>
+              <span class="course">课程:《{{item.courseName}}》</span>
+              <span class="shop_status">{{item.successFlag===1?'团购成功':'团购失败'}}</span>
             </div>
           </div>
         </li>
-        <li>
-          <div class="header_img">
-            <img src="http://b-ssl.duitang.com/uploads/item/201510/14/20151014001324_8R3QB.jpeg">
-          </div>
-          <div :class="[!isSuss?'userinfo':'userinfo tab']">
-            <div class="fail_color">
-              <span class="userName">夏荣</span>
-              <span>收益：0</span>
-              <span class="time">2018-12-28</span>
-            </div>
-            <div class="fail_color">
-              <span class="course">课程:《超市购物系列》</span>
-              <span class="shop_status">团购失败</span>
-            </div>
-          </div>
-        </li>
+      </ul>
+      <ul class="commit_main" v-if='commitPeo.length<=0'>
+        <p class="noCommit">您还没有邀请好友哦</p>
       </ul>
       <div class="rules_box3">
         <img src="../../assets/honeybee/tags/bottom banner.png" alt="">
@@ -157,7 +143,8 @@
       专属海报
     </div>
     <div class="invite" @click="choseCourse">
-      <img src="../../assets/honeybee/tags/yaoqing button.png">
+      <img src="../../assets/button.png">
+      <p>邀请好友，赚<span>30</span>元</p>
     </div>
     <div class="shareMask" v-if="isShareMask" @click="maskHide()">
       <div class="choseSussBox">
@@ -188,11 +175,11 @@
         <div class="recommend_main">
           <div class="main_box" v-for="(item,index) in courseDetail" :key="index" @click="select(index,item)">
             <div class="label">
-              <span>可赚<i>￥</i><b>40</b></span>
+              <span>可赚<i>￥</i><b>30</b></span>
               <img src="../../assets/honeybee/tags/label.png" alt="" class="courseTag">
             </div>
             <div class="course_img">
-              <img :src="item.imgUrl" alt="">
+              <img :src="item.imgUrlA" alt="">
             </div>
             <div class="courseName">
               <img src="../../assets/honeybee/tags/NO SL.png" alt="">
@@ -233,51 +220,59 @@
       <div class="save">
         <p>已经为您生成专属海报，</p>
         <p><span>98%的家长</span>转发后成功获得奖学金，</p>
-        <p><span>长按图片保存海报室系列</span></p>
+        <p><span>长按图片保存海报</span></p>
       </div>
       <div class="activeImg">
         <span class="close" @click="close">
           <img class="close_icon" src="../../assets/honeybee/tags/close.png">
         </span>
-        <img class="active_img" src="../../assets/honeybee/tags/big pop.png">
+        <div>
+          <img class="active_img" :src="posterList.imgUrl">
+          <div class="userInfo">
+            <img :src="posterList.headUrl" alt="" class="header_img">
+            <div class="name">
+              <p>我是 {{posterList.nickName}}</p>
+              <p>我发现一个超棒的课程！推荐给你~</p>
+            </div>
+          </div>
+          <div class="posterBottom">
+            <div>
+              <h1>限时特价<span>￥29.9</span></h1>
+              <p>(9节精品课程 永久有效)</p>
+              <p>长按二维码，了解详情</p>
+            </div>
+            <img :src="posterList.codeUrl" alt="">
+          </div>
+        </div>
       </div>
     </div>
     <div class="shareMask" v-if="showCommit">
       <div class="commitMan">
         <div class="commitMater">
           <div class="header_img">
-            <img src="http://b-ssl.duitang.com/uploads/item/201510/14/20151014001324_8R3QB.jpeg">
+            <img :src="secondPeo.headUrl">
           </div>
-          <div :class="[isSuss?'userinfo':'userinfo tab']">
+          <div :class="[secondPeo.successFlag===1?'userinfo':'userinfo tab']">
             <div>
-              <span class="userName">夏荣</span>
-              <span>总收益：40</span>
-              <span class="time">2018-12-28</span>
+              <span class="userName">{{secondPeo.nickName}}</span>
+              <span>总收益：{{secondPeo.totalAmount}}</span>
+              <span class="time">{{secondPeo.getTime}}</span>
             </div>
             <div>
-              <span class="course">课程:《超市购物系列》</span>
-              <span class="shop_status">团购成功</span>
+              <span class="course">课程:《{{secondPeo.courseName}}》</span>
+              <span class="shop_status">{{secondPeo.successFlag===1?'团购成功':'团购失败'}}</span>
             </div>
           </div>
         </div>
-        <div class="commitPeo">
-          <div>
-            <p>夏荣<span class="commitTime">2019-01-03 18:31:56</span></p>
-            <p>《超市购物系列》团购成功</p>
-          </div>
-          <div>
-            +40
-          </div>
-        </div>
-        <h2>夏荣所邀请的小伙伴</h2>
+        <h2>{{secondPeo.nickName}}所邀请的小伙伴</h2>
         <div class="commitTwo">
-          <div class="commitPeo">
+          <div class="commitPeo" v-for="(value,key) in secondPeo.invitedList" :key="key">
             <div>
-              <p>夏荣<span class="commitTime">2019-01-03 18:31:56</span></p>
-              <p>《超市购物系列》团购成功</p>
+              <p>{{value.nickName}}<span class="commitTime">{{value.getTime}}</span></p>
+              <p>《{{value.courseName}}》<span>{{secondPeo.successFlag===1?'团购成功':'团购失败'}}</span></p>
             </div>
             <div>
-              +40
+              +{{value.thisAmount}}
             </div>
           </div>
         </div>
@@ -297,7 +292,10 @@
     MessageBox
   } from 'mint-ui';
   import {
-    queryAllCourseByPayStatus
+    queryAllCourseByPayStatus,
+    queryAccountAmount,
+    queryAmountList,
+    queryPostInfo
   } from '@/api/money'
   // import ElasticFrame from '@/components/_ElasticFrame';
   export default {
@@ -316,8 +314,12 @@
         isSelect2: false,
         courseName: '',
         openid: '',
-        course: '', // 课程id
-        courseDetail: ''
+        courseid: '', // 课程id
+        courseDetail: '',
+        schoolMoney: [],
+        commitPeo: [],
+        secondPeo: [],
+        posterList: {}
       };
     },
     created() {
@@ -331,54 +333,60 @@
         location.href =
           'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/money'
       }
-      // if (!localStorage.getItem('open')) {
-      //   location.href =
-      //     'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/money';
-      //   window.localStorage.setItem('open', this.openid)
-      //   this.openid = localStorage.getItem('open')
-      // }
-      // if (this.openid !== localStorage.getItem('open')) {
-      //   location.href =
-      //     'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/money';
-      //   // this.openid = localStorage.getItem('open')
-      //   // window.localStorage.setItem('open', this.openid)
-      //   this.openid = localStorage.getItem('open')
-      // }
       queryAllCourseByPayStatus({
         pageNum: '',
         pageSize: '',
         openId: this.openid
       }).then(res => {
-        console.log('123',res)
+        console.log('123', res)
         if (res.data.result.length === 0) {
           this.isShop = true
         } else {
           this.courseDetail = res.data.result
         }
       })
-    },
-    mounted() {
-      // 开启微信分享
+      queryAccountAmount({
+          openId: this.openid
+        }).then(res => {
+          console.log(res)
+          this.schoolMoney = res.data.result
+        }),
+        queryAmountList({
+          openId: this.openid
+        }).then(res => {
+          console.log('peple', res)
+          this.commitPeo = res.data.result
+        })
+
     },
     methods: {
       closeCommit() {
         this.showCommit = false
       },
-      commitMan() {
+      commitMan(item) {
         this.showCommit = true
+        this.secondPeo = item
       },
       select(index, item) {
+        console.log(item)
         if (index === 0) {
           this.isSelect = true
           this.isSelect2 = false
           this.courseName = item.courseName
-          this.course = item.id
+          this.courseid = item.id
           // this.course = item.id
+          queryPostInfo({
+            openId: this.$route.query.openid,
+            courseId: this.courseid
+          }).then(res => {
+            console.log(res.data.result)
+            this.posterList = res.data.result
+          })
         } else if (index === 1) {
           this.isSelect2 = true
           this.isSelect = false
           this.courseName = item.courseName
-          this.course = item.id
+          this.courseid = item.id
           // this.course = item.id
         }
       },
@@ -440,7 +448,7 @@
       shareMask() { // 邀请好友 开启蒙层 添加滑动限制
         this.stop();
       },
-      choseCourse() { 
+      choseCourse() {
         this.isRecommend = true;
         this.isSelect = false;
         this.isSelect2 = false
@@ -490,12 +498,12 @@
             wx.ready(function () { //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
               let mytitle = '分享得奖学金';
-              let mydesc = '蜜蜂数学';
+              let mydesc = '蜜蜂乐园';
               let mylink =
                 'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/money?share=1%26inviterid=' +
-                _this.openid + '%26course=' + _this.course; //分享到首页
-              //let mylink='http://test-yunying.coolmath.cn/beec/course';//分享到首页
-              let myimgUrl = 'http://test-yunying.coolmath.cn/beec/share.png';
+                _this.openid + '%26course=' + _this.course; //分享到奖学金页面
+              //let mylink='http://test-yunying.coolmath.cn/beec/course';//分享到奖学金页面
+              let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
               // wx.hideMenuItems({  //隐藏复制链接功能
               //   menuList: [
               //     'menuItem:copyUrl'

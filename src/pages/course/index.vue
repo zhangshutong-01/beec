@@ -15,7 +15,7 @@
       </div>
     </div> -->
     <div class="background" id="background">
-      <img src="http://thyrsi.com/t6/661/1548209903x2890174202.png" class="bj" />
+      <img src="http://thyrsi.com/t6/665/1548857508x2890174076.png" class="bj" />
       <div :class="[shopshow?'shop active':'shop']" @click="jump(courselist[0])">
         <img :src="courselist[0].imgUrl" />
         <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[0].status===0" />
@@ -39,6 +39,12 @@
         <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[3].status===0" />
         <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[3].status===1" />
         <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[3].status===2" />
+      </div>
+      <div :class="[expressshow?'express active':'express']" @click="jump(courselist[4])">
+        <img :src="courselist[4].imgUrl" />
+        <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[4].status===0" />
+        <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[4].status===1" />
+        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[4].status===2" />
       </div>
     </div>
     <v-footer :myopenid='openid' :iscourse='isCourse' :ismy='isMy' :ismoney='ismoney' />
@@ -64,18 +70,18 @@
         animation: scale 0.5s alternate;
       }
 
-      .shop {
+      .rocket {
         position: absolute;
         right: 13%;
-        bottom: 9.6%;
-        width: 30%;
+        bottom: 8.7%;
+        width: 40%;
         text-align: center;
 
         img {
           width: 100%;
 
           &:nth-child(2) {
-            width: 80%;
+            width: 70%;
             margin-left: .5rem;
           }
         }
@@ -85,18 +91,18 @@
         }
       }
 
-      .rocket {
+      .shop {
         position: absolute;
         left: 8%;
-        bottom: 21.8%;
-        width: 30%;
+        bottom: 22.3%;
+        width: 25%;
         text-align: center;
 
         img {
           width: 130%;
 
           &:nth-child(2) {
-            width: 80%;
+            width: 90%;
             margin-left: 1rem;
           }
         }
@@ -130,7 +136,28 @@
       .car {
         position: absolute;
         left: 14%;
-        top: 37%;
+        top: 38%;
+        width: 30%;
+        text-align: center;
+
+        img {
+          width: 100%;
+
+          &:nth-child(2) {
+            width: 80%;
+            margin-left: .5rem;
+          }
+        }
+
+        .gomoney {
+          width: 70% !important;
+        }
+      }
+
+      .express {
+        position: absolute;
+        right: 14.3%;
+        top: 20.4%;
         width: 30%;
         text-align: center;
 
@@ -196,7 +223,6 @@
   } from "mint-ui";
   import {
     queryCourse,
-    checkTradingstate,
     querySystemResources
   } from "@/api/course";
   import {
@@ -229,21 +255,33 @@
         shopshow: false,
         rocketshow: false,
         clockshow: false,
-        carshow: false
+        carshow: false,
+        expressshow: false
       };
     },
     methods: {
-      jump(item, index) {
+      jump(item) {
         console.log(item)
         if (item.isEnable === 0) {
-          if (item.id === '10002') {
-            this.rocketshow = true
-            MessageBox.alert('', {
-              message: '敬请期待'
-            })
-            setInterval(() => {
-              this.rocketshow = false
-            }, 500);
+          if (item.id === '10001') {
+            if (item.isOldUser === 0) {
+              this.shopshow = true
+              MessageBox.alert('', {
+                message: '敬请期待'
+              })
+              setInterval(() => {
+                this.shopshow = false
+              }, 500);
+            } else {
+              this.shopshow = true
+              MessageBox.alert('', {
+                message: '课件升级中'
+              })
+              setInterval(() => {
+                this.shopshow = false
+              }, 500);
+            }
+
           } else if (item.id === '10003') {
             this.clockshow = true
             MessageBox.alert('', {
@@ -260,6 +298,14 @@
             setInterval(() => {
               this.carshow = false
             }, 500);
+          } else if (item.id === '10005') {
+            this.expressshow = true
+            MessageBox.alert('', {
+              message: '敬请期待'
+            })
+            setInterval(() => {
+              this.expressshow = false
+            }, 500);
           }
         } else {
           let mydata = {
@@ -267,11 +313,11 @@
             courseId: item.id
           };
           console.log('23456', mydata)
-          this.shopshow = true;
+          this.rocketshow = true;
           setTimeout(() => {
             console.log('12333333', item.status)
             //查看是否购买成功；购买成功：5003，购买未拼团成功(拼团中)：5002，未购买：5001
-            this.shopshow = false;
+            this.rocketshow = false;
             if (item.status == 2) {
               //已购买 ==》跳转到章节列表
               this.$router.push({
@@ -279,66 +325,33 @@
                 query: {
                   openid: this.openid,
                   courseid: item.id,
-                  name: item.courseName
+                  sourceId: item.groupId,
+                  payType: item.payType
                 }
               });
             } else if (item.status == 1) {
-              //购买未拼团成功==》跳转拼团详情页面
-              // this.groupNum = item.groupNo;
-              // this.orderid = item.id;
-              // console.log(this.groupNum);
-              // console.log(this.orderid);
               this.$router.push({
                 path: "/tourbuy",
                 query: {
                   openid: this.openid,
-                  orderNo: item.groupId,
-                  courseid: item.id
+                  courseid: item.id,
+                  sourceId: item.groupId,
+                  payType: item.payType
                 }
               });
             } else if (item.status == 0) {
-              //未购买 ==>跳转到课程详情
-              // this.$router.push({
-              //   path: '/courseInfo',
-              //   query: {
-              //     openid: this.openid,
-              //     courseid: item.id,
-              //     isShare: 0,
-              //     inviterId:''
-              //     // name: item.courseName,
-              //   }
-              // })
-              this.changeReport(item);
+              this.$router.push({
+                path: "/courseInfo",
+                query: {
+                  openid: this.openid,
+                  courseid: item.id
+                }
+              });
             } else {
               Toast("拉取失败");
             }
           }, 500);
         }
-      },
-      changeReport(item) {
-        let params = "id=" + this.useid1 + "&three=" + "";
-        Indicator.open();
-        isused(params).then(res => {
-          let resData = res.data;
-          Indicator.close();
-          if (resData.statusCode == 200) {
-            this.$router.push({
-              path: "/courseInfo",
-              query: {
-                openid: this.openid,
-                courseid: item.id,
-                isShare: 0,
-                inviterId: "",
-                refresh: resData.result,
-                courseName: item.courseName
-                // name: item.courseName,
-              }
-            });
-          } else {
-            Indicator.close();
-            // Toast(resData.message);
-          }
-        });
       },
       getList() {
         // let that = this;
@@ -349,20 +362,13 @@
           openId: this.openid
         };
         queryCourse(mydata).then(res => {
-          console.log("mememememe=====================");
-          console.log('123', res);
           if (res.data.statusCode == "200") {
             this.courselist = res.data.result;
-            console.log(this.courselist);
-            console.log('12333333', this.courselist.groupId)
           } else {
             this.$message.error("拉取失败");
             this.courselist = [];
           }
         });
-        // querySystemResources().then(res => {
-        //   console.log('456', res)
-        // })
       },
       wxshare() {
         //wx是引入的微信sdk
@@ -383,21 +389,28 @@
               jsApiList: [
                 "onMenuShareAppMessage",
                 "onMenuShareTimeline",
+                'hideMenuItems'
               ] // 必填，需要使用的JS接口列表，这里只写支付的
             });
+
             wx.ready(function () {
               //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
               let mytitle =
-                "孩子明年上小学啦，送ta一套蜜蜂数学思维，爱上思考，变聪明！";
-              let mydesc = "蜜蜂数学";
+                "孩子明年上小学啦，送ta一套蜜蜂乐园思维，爱上思考，变聪明！";
+              let mydesc = "蜜蜂乐园";
               let mylink =
                 "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/course"; //分享到首页
               //let mylink='http://test-yunying.coolmath.cn/beec/course';//分享到首页
-              let myimgUrl = "http://test-yunying.coolmath.cn/beec/share.png";
+              let myimgUrl = "http://thyrsi.com/t6/665/1548835210x2728279033.png";
               // wx.hideMenuItems({
               //   menuList: ["menuItem:copyUrl"]
               // });
+              wx.hideMenuItems({
+                menuList: [
+                  'menuItem:copyUrl'
+                ]
+              });
               wx.onMenuShareAppMessage({
                 // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用
                 title: mytitle, // 分享标题
@@ -467,35 +480,17 @@
           onBridgeReady();
         }
       },
-      changeStatus() {
-        let params = "id=" + this.useid + "&three=" + "";
-        isused(params).then(res => {
-          let resData = res.data;
-          if (resData.statusCode == 200) {
-            // console.log(resData.result);
-            let params = "id=" + this.useid + "&three=" + "three";
-            isused(params).then(res => {
-              window.location.reload();
-            });
-          }
-        });
-      },
       scrollToBottom() {
         var container = this.$refs.course;
-        console.log("11111111111111");
-        console.log(container);
         try {
           var container = this.$refs.course;
           container.scrollTop = container.scrollHeight;
-          console.log("22222222222");
-          console.log(container.scrollTop, container.scrollHeight);
         } catch (e) {}
         container.scrollTop = container.scrollHeight;
         // console.log(container.scrollTop, container.scrollHeight + 100);
       }
     },
     mounted() {
-      this.changeStatus();
       setTimeout(() => {
         this.scrollToBottom();
       }, 500);
@@ -505,7 +500,6 @@
     },
     created: function () {
       this.showshare();
-      //location.href="http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/course"
       this.useid = this.$route.query.refresh;
       let openid = this.$route.query.openid;
       let flag = this.$route.query.flag;
@@ -513,19 +507,6 @@
       this.openid = openid;
       this.wxshare();
       this.getList();
-      //	是否首次登录（true：首次登录，false非首次登录）
-      // if (flag == "true") {
-      //   //首次登陆跳转到 宝宝信息注册页面
-      //   // this.$router.push({
-      //   //   path: "/register",
-      //   //   query: {
-      //   //     openid: openid,
-      //   //     inviterId: inviterId
-      //   //   }
-      //   // });
-      // } else {
-
-      // }
     }
   };
 

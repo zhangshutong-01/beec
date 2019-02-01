@@ -74,9 +74,9 @@
   import {
     share
   } from '@/api/wx'
-  import {
-    isused
-  } from '@/api/mine';
+  // import {
+  //   isused
+  // } from '@/api/mine';
   import {
     Indicator,
     Toast
@@ -397,12 +397,12 @@
             });
             wx.ready(function () { //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
-              let mytitle = '孩子明年上小学啦，送ta一套蜜蜂数学思维，爱上思考，变聪明！';
-              let mydesc = '蜜蜂数学';
+              let mytitle = '孩子明年上小学啦，送ta一套蜜蜂乐园思维，爱上思考，变聪明！';
+              let mydesc = '蜜蜂乐园';
               let mylink =
                 'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/course'; //分享到首页
               //let mylink='http://test-yunying.coolmath.cn/beec/course';//分享到首页
-              let myimgUrl = 'http://test-yunying.coolmath.cn/beec/share.png';
+              let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
 
               wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用
                 title: mytitle, // 分享标题

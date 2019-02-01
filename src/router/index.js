@@ -258,7 +258,7 @@ const router = new Router({
       name: 'moneyDetail',
       component: MoneyDetail,
       meta: {
-        title: "邀请详情"
+        title: "购买详情"
       }
     }, {
       path: '/login',

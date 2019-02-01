@@ -8,7 +8,7 @@
   import { Indicator, Toast} from 'mint-ui';
   import { submitGrade } from '@/api/course'
   import { authorize, share } from '@/api/wx'
-  import { isused } from '@/api/mine';
+  // import { isused } from '@/api/mine';
 
   export default {
     data(){
@@ -74,16 +74,16 @@
       // },
       changeStatus() {
         let params = 'id=' + this.useid + '&three=' + '';
-        isused(params).then(res => {
-          let resData = res.data;
-          if (resData.statusCode == 200) {
-            // console.log(resData.result);
-            let params = 'id=' + this.useid + '&three=' + 'three';
-            isused(params).then(res => {
-              window.location.reload();
-            })
-          }
-        })
+        // isused(params).then(res => {
+        //   let resData = res.data;
+        //   if (resData.statusCode == 200) {
+        //     // console.log(resData.result);
+        //     let params = 'id=' + this.useid + '&three=' + 'three';
+        //     isused(params).then(res => {
+        //       window.location.reload();
+        //     })
+        //   }
+        // })
       },
     },
   }

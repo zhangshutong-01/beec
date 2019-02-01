@@ -11,7 +11,7 @@
       <div class="form" action="">
         <label>
           <div>
-            <input type="tel" name="number" maxlength="11" placeholder="请输入手机号" v-model="phone" @input="checkPhone"
+            <input type="tel" name="text" maxlength="11" placeholder="请输入手机号" v-model="phone" @input="checkPhone"
               @focus="focus" @blur="blur">
           </div>
         </label>
@@ -48,6 +48,7 @@
       return {
         phone: '',
         identifying_code: '',
+        courseid: '',
         isTime: false,
         time: '',
         timer: null,
@@ -55,6 +56,9 @@
         ckeckVal: true,
         isFooter: true
       }
+    },
+    created() {
+      this.courseid = this.$route.query.courseid
     },
     mounted() {
       this.watchKeybord()
@@ -92,6 +96,20 @@
                 MessageBox.alert("", {
                   message: "验证码发送成功"
                 });
+                clearInterval(this.timer);
+                this.isTime = true
+                this.time = 60
+                this.$refs.time.disabled = true
+                this.timer = setInterval(() => {
+                  if (this.time > 0) {
+                    this.time = this.time
+                    this.time--
+                  } else if (this.time === 0) {
+                    this.isTime = false
+                    this.$refs.time.disabled = false
+                    clearInterval(this.timer)
+                  }
+                }, 1000);
               } else {
                 MessageBox.alert("", {
                   message: "验证码发送失败，稍后重试"
@@ -100,20 +118,7 @@
             }
           })
           console.log(this.phone)
-          clearInterval(this.timer);
-          this.isTime = true
-          this.time = 60
-          this.$refs.time.disabled = true
-          this.timer = setInterval(() => {
-            if (this.time > 0) {
-              this.time = this.time
-              this.time--
-            } else if (this.time === 0) {
-              this.isTime = false
-              this.$refs.time.disabled = false
-              clearInterval(this.timer)
-            }
-          }, 1000);
+
         }
       },
 
@@ -153,7 +158,9 @@
               this.$router.push({
                 path: '/babyinfo',
                 query: {
-                  openid: this.$route.query.openid
+                  openid: this.$route.query.openid,
+                  courseid: this.courseid,
+                  sourceId: this.$route.query.sourceId
                 }
               })
             } else if (res.data.statusCode === "13005") {

@@ -76,7 +76,7 @@
 <script>
   import Footer from '@/components/_footer.vue';
   import { Indicator, Toast} from 'mint-ui';
-  import { honeyAndMoneyInfo ,isused } from '@/api/mine';
+  import { honeyAndMoneyInfo} from '@/api/mine';
 
   export default {
     name: 'mine',
@@ -111,38 +111,38 @@
       changeStatus(item1,item2){
         let params ='id='+this.useid+'&three='+'';
         Indicator.open();
-        isused(params).then(res => {
-          // console.log(res);
-          let resData = res.data;
-          Indicator.close();
-          if(resData.statusCode == 200){
-            // console.log(resData);
-            this.$router.push({
-              name:'invitation',
-              query:{honey:item1, money:item2,openid:this.openid,refresh:resData.result}
-            })
-          }else {
-            Indicator.close();
-            // Toast(resData.message);
-          }
-        })
+        // isused(params).then(res => {
+        //   // console.log(res);
+        //   let resData = res.data;
+        //   Indicator.close();
+        //   if(resData.statusCode == 200){
+        //     // console.log(resData);
+        //     this.$router.push({
+        //       name:'invitation',
+        //       query:{honey:item1, money:item2,openid:this.openid,refresh:resData.result}
+        //     })
+        //   }else {
+        //     Indicator.close();
+        //     // Toast(resData.message);
+        //   }
+        // })
       },
       changeReport(item1,item2){
         let params ='id='+this.useid+'&three='+'';
         Indicator.open();
-        isused(params).then(res => {
-          let resData = res.data;
-          Indicator.close();
-          if(resData.statusCode == 200){
-            this.$router.push({
-              name:'studyReport',
-              query:{openid:item1, isShare:item2,refresh:resData.result}
-            })
-          }else {
-            Indicator.close();
-            // Toast(resData.message);
-          }
-        })
+        // isused(params).then(res => {
+        //   let resData = res.data;
+        //   Indicator.close();
+        //   if(resData.statusCode == 200){
+        //     this.$router.push({
+        //       name:'studyReport',
+        //       query:{openid:item1, isShare:item2,refresh:resData.result}
+        //     })
+        //   }else {
+        //     Indicator.close();
+        //     // Toast(resData.message);
+        //   }
+        // })
       },
       initData(){
         let params = {

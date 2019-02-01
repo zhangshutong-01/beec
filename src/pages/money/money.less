@@ -161,6 +161,15 @@ header {
     img {
         width: 100%;
     }
+    p {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        text-align: center;
+        line-height: 52.5px;
+        font-size: 1.5rem;
+        color: chocolate
+    }
 }
 
 .commit {
@@ -170,6 +179,11 @@ header {
     .commit_main {
         width: 76%;
         margin: 0 auto;
+        .noCommit {
+            width: 100%;
+            text-align: center;
+            font-size: 1.3rem;
+        }
         li {
             width: 100%;
             display: flex;
@@ -199,7 +213,11 @@ header {
                         display: flex;
                         align-items: center;
                         .userName {
+                            width: 4rem;
                             font-size: 1.1rem;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
                         }
                         .time {
                             font-size: .6rem;
@@ -565,15 +583,74 @@ header {
 }
 
 .activeImg {
-    width: 65%;
+    width: 75%;
     position: fixed;
     top: 50%;
     left: 50%;
-    margin-left: -32%;
+    margin-left: -36%;
     margin-top: -50%;
-    .active_img {
+    div {
         width: 100%;
-        height: auto;
+        height: 100%;
+        position: relative;
+        .active_img {
+            width: 100%;
+            height: auto;
+        }
+        .userInfo {
+            position: absolute;
+            width: 96%;
+            height: 3rem;
+            top: .5rem;
+            left: .5rem;
+            color: #000;
+            display: flex;
+            .header_img {
+                width: 3rem;
+                height: 3rem;
+                border-radius: 50%;
+                margin-right: .5rem;
+            }
+            .name {
+                width: 100%;
+                height: 3rem;
+                line-height: 1.5rem;
+                p {
+                    font-size: .7rem;
+                    color: #000;
+                }
+            }
+        }
+        .posterBottom {
+            position: absolute;
+            bottom: 5%;
+            left: 0;
+            display: flex;
+            width: 100%;
+            padding: 0 1rem;
+            box-sizing: border-box;
+            height: 5rem;
+            >div {
+                width: 100%;
+                margin-right: .5rem;
+                h1 {
+                    color: #fff;
+                    font-size: 1.4rem;
+                    span {
+                        color: #F6EC71;
+                    }
+                }
+                p {
+                    color: #fff;
+                    font-size: .8rem;
+                    line-height: 1.5rem;
+                }
+            }
+            img {
+                width: 5rem;
+                height: 5rem;
+            }
+        }
     }
     .close {
         width: 20px;
@@ -627,7 +704,11 @@ header {
                     display: flex;
                     align-items: center;
                     .userName {
+                        width: 4rem;
                         font-size: 1.1rem;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
                     }
                     .time {
                         font-size: .6rem;

@@ -4,20 +4,20 @@
       <div class="GroupShop">
         <h1>您已购课成功</h1>
       </div>
-      <span class="tag" @click="courseDetail({id:'10001',courseName:'超市购物系列'})">课程介绍</span>
+      <span class="tag" @click="courseDetail()">课程介绍</span>
       <section class="member">
-        <div class="menyShop" v-if="data.length===3">
-          <div v-for="(item,index) in data" :key="index">
-            <img :src="item.img">
-            <span v-if="item.identity===1">{{item.status}}</span>
-            <p>{{item.name}}</p>
+        <div class="menyShop" v-if="payType==1">
+          <div v-for="(item,index) in user" :key="index">
+            <img :src="item.userHeadImgUrl">
+            <span v-if="item.ranking===1">团长</span>
+            <p>{{item.nickName}}</p>
           </div>
         </div>
-        <div class="menyShop" v-if="data.length===1">
-          <div v-for="(item,index) in data" :key="index">
-            <img :src="item.img">
-            <span v-if="item.identity===1">{{item.status}}</span>
-            <p>{{item.name}}</p>
+        <div class="menyShop" v-if="payType==2">
+          <div>
+            <img :src="shopPeo.userHeadImgUrl">
+            <span>直购</span>
+            <p>{{shopPeo.nickName}}</p>
           </div>
         </div>
       </section>
@@ -34,10 +34,10 @@
         <img src="../../assets/honeybee/tags/banner.png">
       </div>
       <div class="money_num">
-        <div class="money_num_tit">本课已得奖学金</div>
-        <p><b>￥</b>0</p>
+        <div class="money_num_tit">已得奖学金</div>
+        <p><b>￥</b>{{schoolMoney.totalAmount}}</p>
         <div>
-          已提现：<span>￥0</span>
+          已提现：<span>￥{{schoolMoney.cashWithdrawalAmount}}</span>
         </div>
       </div>
       <section class="rules">
@@ -106,7 +106,8 @@
         </div>
       </section>
       <div class="invite" @click="choseCourse">
-        <img src="../../assets/honeybee/tags/yaoqing button.png">
+        <img src="../../assets/button.png">
+        <p>邀请好友，赚<span>30</span>元</p>
       </div>
     </div>
     <div class="shareMask" v-if="isShareMask" @click="maskHide()">
@@ -123,13 +124,30 @@
       <div class="save">
         <p>已经为您生成专属海报，</p>
         <p><span>98%的家长</span>转发后成功获得奖学金，</p>
-        <p><span>长按图片保存海报室系列</span></p>
+        <p><span>长按图片保存海报</span></p>
       </div>
       <div class="activeImg">
         <span class="close" @click="close">
           <img class="close_icon" src="../../assets/honeybee/tags/close.png">
         </span>
-        <img class="active_img" src="../../assets/honeybee/tags/big pop.png">
+        <div>
+          <img class="active_img" :src="posterList.imgUrl">
+          <div class="userInfo">
+            <img :src="posterList.headUrl" alt="" class="header_img">
+            <div class="name">
+              <p>我是 {{posterList.nickName}}</p>
+              <p>我发现一个超棒的课程！推荐给你~</p>
+            </div>
+          </div>
+          <div class="posterBottom">
+            <div>
+              <h1>限时特价<span>￥29.9</span></h1>
+              <p>(9节精品课程 永久有效)</p>
+              <p>长按二维码，了解详情</p>
+            </div>
+            <img :src="posterList.codeUrl" alt="">
+          </div>
+        </div>
       </div>
     </div>
     <div class="shareMask" v-if="actionMask" @click="actionMaskHide">
@@ -144,35 +162,78 @@
   import {
     checkConcerned
   } from '@/api/pay'
+  import {
+    queryGroupDetails
+  } from '@/api/groupon'
+  import {
+    queryAccountAmount,
+    queryPostInfo
+  } from '@/api/money'
+  import {
+    queryUserInfo
+  } from '@/api/honey'
+  import {
+    share
+  } from '@/api/wx'
+  import html2canvas from "html2canvas";
   export default {
     data() {
       return {
-        data: [{
-            img: "http://b-ssl.duitang.com/uploads/item/201510/14/20151014001324_8R3QB.jpeg",
-            name: "冯瑞",
-            identity: 1,
-            status: "团长"
-          },
-          {
-            img: "http://b-ssl.duitang.com/uploads/item/201510/14/20151014001324_8R3QB.jpeg",
-            name: "冯瑞",
-            identity: 0,
-            status: "团购"
-          },
-          {
-            img: "http://b-ssl.duitang.com/uploads/item/201510/14/20151014001324_8R3QB.jpeg",
-            name: "冯瑞",
-            identity: 0,
-            status: "团购"
-          }
-        ],
         openid: '',
+        courseid: '',
         isShareMask: false,
         activeImg: false,
-        actionMask: false
+        actionMask: false,
+        user: [],
+        schoolMoney: [],
+        shopPeo: {},
+        payType: '',
+        posterList: {}
       };
     },
+    created() {
+      this.courseid = this.$route.query.courseid
+      this.openid = this.$route.query.openid
+      this.payType = this.$route.query.payType
+      console.log(this.payType)
+      console.log(this.$route.query.openid)
+      if (this.payType == 1) {
+        this.getGroupDetails()
+      } else {
+        this.getshop()
+      }
+
+      this.getMoney()
+      this.wxshare()
+    },
     methods: {
+      getshop() {
+        queryUserInfo({
+          openId: this.openid
+        }).then(res => {
+          console.log(res)
+          this.shopPeo = res.data.result
+        })
+      },
+      getMoney() {
+        const parmas = {
+          openId: this.openid
+        }
+        console.log(this.openid)
+        queryAccountAmount(parmas).then(res => {
+          console.log('1111', res)
+          this.schoolMoney = res.data.result
+        })
+      },
+      getGroupDetails() {
+        const parmas = {
+          id: this.$route.query.sourceId
+        }
+        queryGroupDetails(parmas).then(res => {
+          console.log(res)
+          this.user = res.data.result.userList
+        })
+      },
       actionMaskHide() {
         this.actionMask = false;
       },
@@ -184,8 +245,7 @@
           path: "/courseinfo",
           query: {
             openid: this.openid,
-            courseid: item.id,
-            name: item.courseName,
+            courseid: this.courseid,
             isShow: true
           }
         })
@@ -197,17 +257,28 @@
         console.log('22222222', params)
         checkConcerned(params).then(res => {
           console.log('333333333', res)
-          if (res.data.result.concerned && res.data.result.concerned.hasPhone) {
+          if (!res.data.result.concerned) {
+            this.actionMask = true
+          } else if (!res.data.result.hasPhone) {
+            this.$router.push({
+              path: "/login",
+              query: {
+                openid: this.openid,
+                courseid: this.courseid,
+                sourceId: this.$route.query.sourceId
+              }
+            })
+          } else {
             this.$router.push({
               path: "/courselist2",
               query: {
                 openid: this.openid,
-                courseid: '10001',
+                courseid: this.courseid,
+                sourceId: this.$route.query.sourceId,
+                payType: this.$route.query.payType,
                 isShow: false
               }
             })
-          } else {
-            this.actionMask = true
           }
         })
 
@@ -221,10 +292,129 @@
       },
       poster() {
         this.activeImg = true
+        queryPostInfo({
+          openId: this.$route.query.openid,
+          courseId: this.$route.query.courseid
+        }).then(res => {
+          console.log(res.data.result)
+          this.posterList = res.data.result
+          this.screenshots()
+        })
       },
       close() {
         this.activeImg = false
-      }
+      },
+      wxshare() {
+        let that = this
+        //wx是引入的微信sdk
+        // wx.config('这里有一些参数');//通过config接口注入权限验证配置
+        let mydata = {
+          url: location.href
+        };
+        console.log(mydata)
+        share(mydata).then(res => {
+          console.log('123456', res);
+          if (res.data.statusCode == "200") {
+            wx.config({
+              debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+              appId: res.data.result.appId, // 必填，公众号的唯一标识
+              timestamp: res.data.result.timestamp, // 必填，生成签名的时间戳
+              nonceStr: res.data.result.noncestr, // 必填，生成签名的随机串
+              signature: res.data.result.signature, // 必填，调用js签名， // 必填，调用js签名，
+              jsApiList: [
+                "onMenuShareAppMessage",
+                "onMenuShareTimeline",
+                'hideMenuItems'
+              ] // 必填，需要使用的JS接口列表，这里只写支付的
+            });
+
+            wx.ready(function () {
+              //通过ready接口处理成功验证
+              // config信息验证成功后会执行ready方法
+              let mytitle =
+                "孩子明年上小学啦，送ta一套蜜蜂乐园思维，爱上思考，变聪明！";
+              let mydesc = "蜜蜂乐园";
+              let mylink =
+                "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?invited=" +
+                that.$route.query.openid + "%26courseid=" + that.$route.query.courseid + "%26payType=" + that.$route
+                .query.payType + "%26sourceId=" + that.$route.query.sourceId; //分享到首页
+              let myimgUrl = "http://thyrsi.com/t6/665/1548835210x2728279033.png";
+              // wx.hideMenuItems({
+              //   menuList: ["menuItem:copyUrl"]
+              // });
+              wx.hideMenuItems({
+                menuList: [
+                  'menuItem:copyUrl'
+                ]
+              });
+              wx.onMenuShareAppMessage({
+                // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用
+                title: mytitle, // 分享标题
+                desc: mydesc, // 分享描述
+                link: mylink, // 分享链接
+                imgUrl: myimgUrl, // 分享图标
+                type: "", // 分享类型,music、video或link，不填默认为link
+                dataUrl: "", // 如果type是music或video，则要提供数据链接，默认为空
+                success: function () {
+                  // 用户确认分享后执行的回调函数
+                  console.log(1)
+                },
+                cancel: function () {
+                  // 用户取消分享后执行的回调函数
+                  console.log(2)
+                }
+              });
+              wx.onMenuShareTimeline({
+                //分享朋友圈
+                title: mytitle, // 分享标题
+                link: mylink, // 分享链接
+                imgUrl: myimgUrl, // 分享图标分享图标
+                success: function () {
+                  // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                  // 用户取消分享后执行的回调函数
+                }
+              });
+              // wx.onMenuCopyUrl({
+              //   title: mytitle, // 分享标题
+              //   link: mylink, // 分享链接
+              //   imgUrl: myimgUrl,
+              //   success: function () {
+              //     // 用户确认分享后执行的回调函数
+              //     console.log(123)
+              //   },
+              //   cancel: function () {
+              //     console.log(456)
+              //   }
+              // })
+            });
+            wx.error(function (res) {
+              //通过error接口处理失败验证
+              // config信息验证失败会执行error函数
+            });
+          } else {}
+        });
+      },
+      screenshots() { //生成图片；
+        let b64;
+        html2canvas(this.$refs.reportImg, {
+          useCORS: true
+        }).then(canvas => {
+          try {
+            b64 = canvas.toDataURL("image/png");
+            // console.log(b64);
+          } catch (err) {
+            console.log(err)
+            // alert(err)
+          }
+          this.state = {
+            imgUrl: b64,
+            isDownloadImg: true,
+          };
+          this.isStudyReport = false;
+        });
+      },
     }
   };
 
@@ -307,6 +497,9 @@
             position: absolute;
             bottom: -2rem;
             color: #ec9539;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
           }
         }
       }
@@ -478,6 +671,16 @@
         img {
           width: 100%;
         }
+
+        p {
+          position: absolute;
+          top: 0;
+          width:100%;
+          text-align: center;
+          line-height: 52.5px;
+          font-size: 1.5rem;
+          color:chocolate
+        }
       }
 
       .posterTag {
@@ -510,7 +713,6 @@
         display: block;
         width: 116px;
         margin: 0 auto;
-        margin-top: 30px;
       }
 
       .action_one {
@@ -579,16 +781,86 @@
     }
 
     .activeImg {
-      width: 65%;
+      width: 75%;
       position: fixed;
       top: 50%;
       left: 50%;
-      margin-left: -32%;
-      margin-top: -55%;
+      margin-left: -36%;
+      margin-top: -50%;
 
-      .active_img {
+      div {
         width: 100%;
-        height: auto;
+        height: 100%;
+        position: relative;
+
+        .active_img {
+          width: 100%;
+          height: auto;
+        }
+
+        .userInfo {
+          position: absolute;
+          width: 96%;
+          height: 3rem;
+          top: .5rem;
+          left: .5rem;
+          color: #000;
+          display: flex;
+
+          .header_img {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            margin-right: .5rem;
+          }
+
+          .name {
+            width: 100%;
+            height: 3rem;
+            line-height: 1.5rem;
+
+            p {
+              font-size: .7rem;
+              color: #000;
+            }
+          }
+        }
+
+        .posterBottom {
+          position: absolute;
+          bottom: 5%;
+          left: 0;
+          display: flex;
+          width: 100%;
+          padding: 0 1rem;
+          box-sizing: border-box;
+          height: 5rem;
+
+          >div {
+            width: 100%;
+            margin-right: .5rem;
+
+            h1 {
+              color: #fff;
+              font-size: 1.4rem;
+
+              span {
+                color: #F6EC71;
+              }
+            }
+
+            p {
+              color: #fff;
+              font-size: .8rem;
+              line-height: 1.5rem;
+            }
+          }
+
+          img {
+            width: 5rem;
+            height: 5rem;
+          }
+        }
       }
 
       .close {

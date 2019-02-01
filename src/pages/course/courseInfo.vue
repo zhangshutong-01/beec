@@ -29,7 +29,7 @@
           <span class="line"></span>
           <span>{{courseData.courseDescribe | changeAge}}岁</span>
           <span class="line"></span>
-          <span class="lastChild">买完即看</span>
+          <span class="lastChild">买完即学</span>
         </div>
       </div>
       <div class="desc_bot">
@@ -43,8 +43,8 @@
       <div class="headerCont tabHeader">
         <ul>
           <li :class="mynum==1?'active':''" @click="courseInfor(1)"><span>课程详情</span> </li>
-          <li :class="mynum==2?'active':''" @click="courseList(2)"><span> 课程目录</span></li>
-          <li :class="mynum==3?'active':''" @click="courseBuy(3)"><span>购买须知</span> </li>
+          <li :class="mynum==2?'active':''" @click="courseInfor(2)"><span>课程展示</span></li>
+          <li :class="mynum==3?'active':''" @click="courseInfor(3)"><span>购买须知</span> </li>
         </ul>
       </div>
       <div class="classDetail">
@@ -77,7 +77,7 @@
         <p class="onlybuy">单独购买</p>
       </div>
       <div class="threemoney" @click="paynet('99')">
-        <p class="pintuan">¥ {{courseData. groupPrice}}</p>
+        <p class="pintuan">¥ {{courseData.groupPrice}}</p>
         <p class="group">一键成团（3人团）</p>
       </div>
     </div>
@@ -92,12 +92,9 @@
   } from "mint-ui";
   import Footer from "@/components/_footer.vue";
   import {
-    queryCourse,
     querySectionForC,
     queryCourseById,
-    checkTradingstate
   } from "@/api/course";
-  // import {queryCourse, checkTradingstate} from '@/api/course'
   import {
     createOrderInfo
   } from "@/api/pay";
@@ -105,9 +102,9 @@
     authorize,
     share
   } from "@/api/wx";
-  import {
-    isused
-  } from "@/api/mine";
+  // import {
+  //   isused
+  // } from "@/api/mine";
 
   export default {
     components: {
@@ -132,26 +129,15 @@
         administrationId: ''
       };
     },
-    // beforeRouteEnter(to, from, next) {
-    //   console.log('beforRouteEnter')
-    //   //console.log(window.url)
-    //   next((this) => { //参数this就是当前组件的实例。
-    //     console.log(this.$route.query)
-
-    //   })
-    // },
     mounted() {
       this.wxshare();
       this.getCourseData();
       this.scrollChange();
-      this.scrollChangeTab();
-      this.changeStatus();
     },
     created: function () {
       this.course.courseid = this.$route.query.courseid;
       this.useid = this.$route.query.refresh;
       this.isShare = this.$route.query.isShare;
-      console.log(this.$route.query.isShow)
       if (this.$route.query.isShow) {
         this.isShow = !this.$route.query.isShow
       } else {
@@ -159,87 +145,6 @@
       }
       if (this.isShare === '1') {
         this.openid = this.$route.query.openid;
-        let mydata = {
-          pageSize: "",
-          pageNum: "",
-          openId: this.openid
-        };
-        queryCourse(mydata).then(res => {
-          console.log("mememememe=====================");
-          console.log(res);
-          if (res.data.statusCode == "200") {
-            this.courselist = res.data.result;
-            let mydata = {
-              openId: this.openid,
-              courseId: this.$route.query.courseid
-            };
-            checkTradingstate(mydata).then(res => {
-              // 查看是否购买成功；购买成功：5003，购买未拼团成功(拼团中)：5002，未购买：5001
-              console.log(res);
-              if (res.data.statusCode == 5003) {
-                // 已购买 ==》跳转到章节列表
-                // console.log(this.courselist[0])
-                this.$router.push({
-                  path: "/courselist",
-                  query: {
-                    openid: this.openid,
-                    courseid: this.$route.query.courseid,
-                    name: this.$route.query.courseName
-                  }
-                });
-              } else if (res.data.statusCode == 5002) {
-                // 购买未拼团成功==》跳转拼团详情页面
-                this.groupNum = res.data.result.groupNo;
-                this.orderid = res.data.result.id;
-                // console.log(this.groupNum);
-                // console.log(this.orderid);
-                this.$router.push({
-                  path: "/share",
-                  query: {
-                    groupNo: this.groupNum,
-                    openid: this.openid,
-                    orderid: this.orderid
-                  }
-                });
-              } else if (res.data.statusCode == 5001) {
-                // 未购买 ==>跳转到课程详情
-                // this.$router.push({
-                //   path: '/courseInfo',
-                //   query: {
-                //     openid: this.openid,
-                //     courseid: item.id,
-                //     isShare: 0,
-                //     inviterId:''
-                //     // name: item.courseName,
-                //   }
-                // })
-                // this.changeReport(this.courselist[0]);
-                let params = "id=" + this.useid1 + "&three=" + "";
-                Indicator.open();
-                isused(params).then(res => {
-                  let resData = res.data;
-                  Indicator.close();
-                  if (resData.statusCode == 200) {
-                    this.$router.push({
-                      path: "/courseInfo",
-                      query: {
-                        openid: this.openid,
-                        courseid: this.courselist[0].id,
-                        isShare: 0,
-                        inviterId: "",
-                        refresh: resData.result
-                        // name: item.courseName,
-                      }
-                    });
-                  } else {
-                    Indicator.close();
-                    // Toast(resData.message);
-                  }
-                });
-              }
-            });
-          }
-        });
       } else {
         this.openid = this.$route.query.openid;
       }
@@ -256,26 +161,6 @@
       }
     },
     methods: {
-      scrollChangeTab() {},
-      changeStatus() {
-        let params = "id=" + this.useid + "&three=" + "";
-        Indicator.open();
-        isused(params).then(res => {
-          let resData = res.data;
-          Indicator.close();
-          if (resData.statusCode == 200) {
-            // console.log(resData.result);
-            let params = "id=" + this.useid + "&three=" + "three";
-            Indicator.open();
-            isused(params).then(res => {
-              window.location.reload();
-            });
-          } else {
-            Indicator.close();
-            Toast(resData.message);
-          }
-        });
-      },
       getCourseData() {
         //获取课程详情数据；
         var me = this;
@@ -308,13 +193,23 @@
         });
       },
       courseInfor(num) {
-        this.mynum = num;
-      },
-      courseList(num) {
-        this.mynum = num;
-      },
-      courseBuy(num) {
-        this.mynum = num;
+        this.mynum = num
+        if (num === 1) {
+          var h = $('.tabcContent').offset().top - 50;
+          $("html, body").animate({
+            scrollTop: h
+          }, 500)
+        } else if (num === 2) {
+          var h = $('.tabDetails_nine').offset().top - 100;
+          $("html, body").animate({
+            scrollTop: h
+          }, 500)
+        } else if (num === 3) {
+          var h = $('.img18').offset().top - 50;
+          $("html, body").animate({
+            scrollTop: h
+          }, 500)
+        }
       },
       paynet(names) {
         console.log(names)
@@ -333,10 +228,11 @@
                 query: {
                   openid: this.openid,
                   groupNo: res.data.result.groupNo,
-                  courseId: this.course.courseid,
+                  courseid: this.course.courseid,
                   zhijie: 0, //到确认支付，再到分享页面
                   orderid: res.data.result.id,
                   names: 99,
+                  sourceId: res.data.result.sourceId,
                   orderNo: res.data.result.orderNo
                 }
               });
@@ -344,31 +240,6 @@
               alert(
                 "您已参与此课程的拼团，5小时后没有拼团成功，则支付金额原路返回。"
               );
-              //如果是29 这跳转到结果页
-              let groupNo = res.data.result.groupNo;
-              let zhifuopenid = res.data.result.openId;
-              // let sourceId = res.data.result.sourceId;
-              // let faqirenopenid = '';
-              // if(sourceId==null || sourceId==undefined || sourceId==""){
-              //   faqirenopenid = zhifuopenid;
-              // }else{
-              //   faqirenopenid = sourceId;
-              // }
-              let params = "id=&three=";
-              isused(params).then(res2 => {
-                // console.log(res);
-                let resData = res2.data;
-                if (resData.statusCode == 200) {
-                  that.$router.push({
-                    path: "/share",
-                    query: {
-                      openid: zhifuopenid,
-                      groupNo: groupNo,
-                      useid: resData.result
-                    }
-                  });
-                }
-              });
             }
           });
         } else {
@@ -379,8 +250,6 @@
             orderSource: 2,
             administrationId: this.courseData.administrationId
           };
-
-          console.log('2222222', mydata)
           createOrderInfo(mydata).then(res => {
             console.log('222', res)
             if (res.data.statusCode == "200") {
@@ -389,7 +258,7 @@
                 query: {
                   openid: this.openid,
                   groupNo: this.groupNo,
-                  courseId: this.course.courseid,
+                  courseid: this.course.courseid,
                   zhijie: 0, //到确认支付，再到分享页面
                   orderid: res.data.result.id,
                   names: 199,
@@ -437,23 +306,7 @@
                 me.openid +
                 "%26isShare=1%26courseid=" +
                 me.course.courseid; //分享到首页
-              let myimgUrl = "http://test-yunying.coolmath.cn/beec/share.png";
-
-              // let mylink='http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/courseInfo?inviterId=ojjgp0gZHR5sCUL6mKXUo1z3MI_g%26isShare=1%26courseid=d58ab14473f7425f8fbee38b8a0297c5';
-              // let mylink='http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/courseInfo?inviterId=ojjgp0gZHR5sCUL6mKXUo1z3MI_g%26isShare=1%26courseid=d58ab14473f7425f8fbee38b8a0297c5%26channelcode=1';
-
-              // wx.updateAppMessageShareData({
-              //   title: mytitle, // 分享标题
-              //   desc: mydesc, // 分享描述
-              //   link: mylink, // 分享链接
-              //   imgUrl: myimgUrl, // 分享图标
-              // }, function(res) {
-              //   console.log(res);
-              //   console.log(res.errMsg);
-              //   alert(11111);
-              //     //这里是回调函数
-              // });
-
+              let myimgUrl = "http://thyrsi.com/t6/665/1548835210x2728279033.png";
               wx.hideMenuItems({
                 menuList: [
                   'menuItem:copyUrl'
@@ -467,22 +320,7 @@
                 imgUrl: myimgUrl, // 分享图标
                 type: "", // 分享类型,music、video或link，不填默认为link
                 dataUrl: "", // 如果type是music或video，则要提供数据链接，默认为空
-                success: function (res) {
-                  // 用户确认分享后执行的回调函数
-                  // alert(res.errMsg);
-                  // if(res.errMsg.sendAppMessage == 'ok'){
-                  // me.share();
-                  // me.isShareMask= false;
-                  // me.$router.push({
-                  //   name:'mine',
-                  //   query:{
-                  //     openid : me.openid
-                  //   }
-                  // });
-                  // }else{
-                  //   Toast('取消分享')
-                  // }
-                },
+                success: function (res) {},
                 fail: function (res) {
                   alert("分享失败");
                 },
@@ -496,22 +334,7 @@
                 title: mytitle, // 分享标题
                 link: mylink, // 分享链接
                 imgUrl: myimgUrl, // 分享图标分享图标
-                success: function (res) {
-                  // 用户确认分享后执行的回调函数
-                  // alert(res.errMsg+'--------');
-                  // if(res.errMsg.shareTimeline == 'ok'){
-                  // me.share();
-                  // me.isShareMask= false;
-                  // me.$router.push({
-                  //   name:'mine',
-                  //   query:{
-                  //     openid : me.openid
-                  //   }
-                  // });
-                  // }else{
-                  //   Toast('取消分享');
-                  // }
-                },
+                success: function (res) {},
                 fail: function (res) {
                   alert("分享失败");
                 },
@@ -520,16 +343,6 @@
                   alert("取消操作失败");
                 }
               });
-              // wx.updateTimelineShareData({
-              //   title: mytitle, // 分享标题
-              //   link: mylink, // 分享链接
-              //   imgUrl: myimgUrl, // 分享图标
-              // }, function(res) {
-              //     //这里是回调函数
-              //   console.log(res);
-              //   console.log(res.errMsg);
-              //   alert(22222);
-              // });
             });
             wx.error(function (res) {
               //通过error接口处理失败验证
@@ -672,6 +485,11 @@
           line-height: 45px;
           width: 100%;
           text-align: center;
+          border-right: 1px solid #c3c3c3;
+
+          &:nth-child(3) {
+            border-right: none;
+          }
         }
 
         .active {

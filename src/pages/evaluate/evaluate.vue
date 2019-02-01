@@ -26,13 +26,16 @@
       <span>{{num}}/100</span>
     </form>
     <div>
-      <img class="btn" src="../../assets/evaluate/assets/TIJIAO button.png" alt="">
+      <img class="btn" src="../../assets/evaluate/assets/TIJIAO button.png" alt="" @click="push">
     </div>
   </div>
 </template>
 
 <script>
   import '../../assets/evaluate/assets/yellow star.png';
+  import {
+    addfeedback
+  } from '@/api/course'
   export default {
     data() {
       return {
@@ -43,11 +46,13 @@
         xing: 0,
         Star: 0,
         openid: '',
-        num: 0
+        num: 0,
+        courseid: ''
       }
     },
     created() {
-      this.openid = this.$route.openid
+      this.openid = this.$route.query.openid
+      this.courseid = this.$route.query.courseid
     },
     methods: {
       key() {
@@ -63,7 +68,27 @@
         this.$router.push({
           path: '/course',
           query: {
-            openid: this.openid,
+            openid: this.openid
+          }
+        })
+      },
+      push() {
+        const parmas = {
+          id: this.$route.query.recordsId,
+          feedback: this.$refs.text.value,
+          firstQuestion: this.xing,
+          secondQuestion: this.Star
+        }
+        addfeedback(parmas).then(res => {
+          if (res.data.statusCode === '200') {
+            alert(this.openid, this.courseid)
+            this.$router.push({
+              path: '/courselist2',
+              query: {
+                openid: this.openid,
+                courseid: this.courseid
+              }
+            })
           }
         })
       }

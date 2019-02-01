@@ -3,7 +3,8 @@
     <header>
       <div>
         <img src="http://thyrsi.com/t6/659/1547801985x2728278811.png" alt="">
-        <p>微信昵称</p>
+        <img :src="userInfo.userHeadImgUrl" alt="">
+        <p>{{userInfo.nickName}} </p>
       </div>
     </header>
     <main>
@@ -27,7 +28,7 @@
             </select>
           </div>
         </li>
-        <li>
+        <li v-show="cityShow">
           <span>
             所在城市
           </span>
@@ -58,6 +59,9 @@
   import {
     addBabyInfo
   } from "@/api/mine";
+  import {
+    queryUserInfo
+  } from "@/api/honey";
   export default {
     data() {
       return {
@@ -78,7 +82,9 @@
         sex: '1',
         nowYear: '',
         nowMonth: '',
-        couponSelected: ''
+        couponSelected: '',
+        cityShow: false,
+        userInfo: []
       }
     },
     created() {
@@ -90,7 +96,13 @@
       for (let i = 0; i < 12; i++) {
         this.years.push(year--)
       }
-
+      const parmas = {
+        openId: this.$route.query.openid
+      }
+      queryUserInfo(parmas).then(res => {
+        console.log(res)
+        this.userInfo = res.data.result
+      })
     },
     methods: {
       select(item) {
@@ -117,9 +129,11 @@
           console.log(res)
           if (res.data.statusCode === "200") {
             this.$router.push({
-              path: '/moneyDetail',
+              path: '/courselist2',
               query: {
-                openid: this.$route.query.openid
+                openid: this.$route.query.openid,
+                courseid: this.$route.query.courseid,
+                sourceId: this.$route.query.sourceId
               }
             })
           }
@@ -148,21 +162,41 @@
         margin: 0 auto;
         position: relative;
 
+
         img {
           width: 100%;
           margin: 0 auto;
           text-align: center;
           line-height: 5rem;
+          position: relative;
+          z-index: 25;
+        }
+
+        img:nth-child(2) {
+          position: absolute;
+          width: 5rem;
+          height: 5rem;
+          ;
+          top: 50%;
+          left: 50%;
+          margin-top: -2.5rem;
+          margin-left: -2.5rem;
+          z-index: 1;
         }
 
         p {
           position: absolute;
-          width: 100%;
+          width: 80%;
           height: 1.5rem;
           line-height: 1.5rem;
           text-align: center;
+          left: 1rem;
           bottom: .4rem;
           color: #fff;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          z-index: 29;
         }
       }
     }

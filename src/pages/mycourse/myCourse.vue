@@ -1,56 +1,125 @@
 <template>
   <div class="mycourse">
-    <main>
+    <main v-if="this.list.length!==0">
       <section v-for="(item,index) in list" :key="index">
         <div class="top">
-          <img :src="item.imgUrl">
+          <img :src="item.imgUrlG">
           <div>
             <div class="describe">
               <h1>
                 {{item.courseName}}
                 <p>
-                  <span>{{item.courseTote}}人团</span>
-                  <span>￥{{item.coursePrice}}</span>
+                  <span>{{item.orderSource===1?'3人团':'直购'}}</span>
+                  <span>￥{{item.orderAmount}}</span>
                 </p>
               </h1>
               <p>{{item.courseDescribe}}</p>
+              <span v-if="item.orderSource===1&&item.status===1">成团日期:{{item.endTime}}</span>
+              <span v-if="item.status===0">剩余时间:{{hour}}:{{minute}}:{{second}}</span>
+              <span v-if="item.orderSource===2">购买日期:{{item.endTime}}</span>
             </div>
           </div>
         </div>
         <div class="bottom">
           <p>
-            <span>拼课成功</span>
-            <span>成团日期:2019.1.16</span>
+            <span v-if="item.status===1">{{item.orderSource===1?'拼团成功':'直购成功'}}</span>
+            <span v-if="item.status===0">拼团中</span>
           </p>
-          <button>赚奖金</button>
+          <button @click="jump(item)">{{item.status===0?"拼团详情":"赚奖金"}}</button>
         </div>
       </section>
     </main>
+    <main v-if="this.list.length===0">
+      <p class="nocourse">你还没有购买课程哦</p>
+    </main>
+    <v-footer :myopenid='openid' :iscourse='isCourse' :ismy='isMy' />
   </div>
 </template>
 
 <script>
+  import Footer from '@/components/_footer.vue';
   import {
-    queryAllCourseByPayStatus
-  } from '@/api/money';
+    queryOrderInfo
+  } from '@/api/mine';
   export default {
     data() {
       return {
-        list: []
+        list: [],
+        openid: '',
+        isCourse: false,
+        isMy: true,
+        hour: '',
+        minute: '',
+        second: ''
       }
     },
+    components: {
+      "v-footer": Footer
+    },
     created() {
-      queryAllCourseByPayStatus({
-        pageNum: '',
-        pageSize: '',
-        openId: 'ogdrw0vW21b0E1mCoONNUP4nZK24'
+      queryOrderInfo({
+        openId: this.$route.query.openid
       }).then(res => {
         this.list = res.data.result
-        console.log(this.list)
+        console.log(res)
+        this.list.forEach(element => {
+          if (element.surplusSecond) {
+            this.countDown(element.surplusSecond)
+          }
+        })
       })
     },
     methods: {
-
+      jump(item) {
+        if (item.status === 1) {
+          this.$router.push({
+            path: '/moneyDetail',
+            query: {
+              openid: item.openId,
+              courseid: item.courseId,
+              sourceId: item.sourceId,
+              payType: item.orderSource
+            }
+          })
+        }else if(item.status===0){
+           this.$router.push({
+            path: '/tourbuy',
+            query: {
+              openid: item.openId,
+              courseid: item.courseId,
+              sourceId: item.sourceId,
+              payType: item.orderSource
+            }
+          })
+        }
+      },
+      countDown(times) {
+        var timer = null;
+        var that = this
+        timer = setInterval(() => {
+          var day = 0,
+            hour = 0,
+            minute = 0,
+            second = 0; //时间默认值
+          if (times > 0) {
+            day = Math.floor(times / (60 * 60 * 24));
+            hour = Math.floor(times / (60 * 60)) - (day * 24);
+            minute = Math.floor(times / 60) - (day * 24 * 60) - (hour * 60);
+            second = Math.floor(times) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
+          }
+          if (day <= 9) day = '0' + day;
+          if (hour <= 9) hour = '0' + hour;
+          if (minute <= 9) minute = '0' + minute;
+          if (second <= 9) second = '0' + second;
+          times--;
+          this.hour = hour
+          this.minute = minute
+          this.second = second
+        }, 1000);
+        if (times <= 0) {
+          clearInterval(timer);
+        }
+      },
     }
   }
 
@@ -72,6 +141,11 @@
       margin: 0 auto;
       margin-top: 1rem;
 
+      .nocourse {
+        width: 100%;
+        text-align: center;
+      }
+
       section {
         flex: 1;
         width: 100%;
@@ -83,7 +157,6 @@
         padding: .5rem;
         display: flex;
         flex-direction: column;
-        box-shadow: 0 2px 4px 0;
 
         .top {
           width: 100%;
@@ -93,8 +166,7 @@
           padding-bottom: .5rem;
 
           img {
-            width: 30%;
-            height: 6rem;
+            width:35%;
             display: block;
             margin-right: .5rem;
           }
@@ -107,9 +179,10 @@
 
             .describe {
               width: 100%;
-              height: 4rem;
+              height: 100%;
               padding: 0 .5rem;
               box-sizing: border-box;
+              position: relative;
 
               h1 {
                 margin-bottom: .3rem;
@@ -129,6 +202,12 @@
               p {
                 font-size: .9rem;
                 color: #c3c3c3;
+              }
+
+              >span {
+                position: absolute;
+                bottom: 0;
+                font-size: .9rem;
               }
             }
           }
