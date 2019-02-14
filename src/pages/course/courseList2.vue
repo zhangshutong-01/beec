@@ -16,7 +16,6 @@
           </span>
         </div>
       </div>
-
     </main>
     <div class="shareMask" v-if="activeImg">
       <div class="save">
@@ -28,10 +27,10 @@
         <span class="close" @click="close">
           <img class="close_icon" src="../../assets/honeybee/tags/close.png">
         </span>
-        <div>
-          <img class="active_img" :src="posterList.imgUrl">
+        <div ref="reportImg">
+          <img class="active_img" :src="posterList.imgUrl+'?'+new Date().getTime()"  crossOrigin="anonymous">
           <div class="userInfo">
-            <img :src="posterList.headUrl" alt="" class="header_img">
+            <img :src="posterList.headUrl+'?'+new Date().getTime()" alt="" class="header_img"  crossOrigin="anonymous">
             <div class="name">
               <p>{{posterList.nickName}}</p>
               <p>我发现一个超棒的课程！推荐给你~</p>
@@ -39,12 +38,18 @@
           </div>
           <div class="posterBottom">
             <div>
-              <h1>限时特价<span>￥29.9</span></h1>
+              <h1>限时特价<span>￥29</span></h1>
               <p>(9节精品课程 永久有效)</p>
               <p>长按二维码，了解详情</p>
             </div>
-            <img :src="posterList.codeUrl" alt="">
+            <img :src="posterList.codeUrl+'?'+new Date().getTime()" alt=""  crossOrigin="anonymous">
           </div>
+        </div>
+        <div class="report_after" :style="{display: state.isDownloadImg ? 'block':'none'}">
+          <!-- <span class="close" @click="close">
+          <img class="close_icon" src="../../assets/honeybee/tags/close.png">
+        </span> -->
+          <img :src="state.imgUrl" id="saveImg" />
         </div>
       </div>
     </div>
@@ -86,6 +91,7 @@
   import {
     share
   } from "@/api/wx";
+  import html2canvas from "html2canvas";
   export default {
     data() {
       return {
@@ -98,7 +104,12 @@
         starb: require('../../assets/evaluate/assets/brown star.png'), //暗星星
         xing: 0,
         Star: 0,
-        posterList: {}
+        posterList: {},
+        state: {
+          isDownloadImg: false,
+          imgUrl: ''
+        },
+        activess: true
       }
     },
     created() {
@@ -114,6 +125,26 @@
       this.wxshare()
     },
     methods: {
+      screenshots() { //生成图片；
+        let b64;
+        html2canvas(this.$refs.reportImg, {
+          useCORS: true
+        }).then(canvas => {
+          try {
+            b64 = canvas.toDataURL("image/png");
+            // console.log(b64);
+          } catch (err) {
+            console.log(err)
+            // alert(err)
+          }
+          this.state = {
+            imgUrl: b64,
+            isDownloadImg: true,
+          };
+          console.log(this.state)
+          this.activess = false
+        });
+      },
       jump(item) {
         if (item.isUnlock == 0) {
           alert("请先完成之前的课程哦")
@@ -138,6 +169,7 @@
         }).then(res => {
           console.log(res.data.result)
           this.posterList = res.data.result
+          this.screenshots()
         })
       },
       close() {
@@ -145,10 +177,12 @@
       },
       wantShare() {
         this.ifShare = true
+
       },
       maskHide() {
         this.ifShare = false
         this.activeImg = true
+        this.poster()
       },
       wxshare() {
         let that = this
@@ -250,11 +284,12 @@
     overflow: auto;
     display: flex;
     flex-direction: column;
+    font-size: .32rem;
 
     header {
       width: 100%;
-      height: 5rem;
-      padding-top: 1rem;
+      // height: 5rem;
+      margin-top: .5rem;
       text-align: center;
 
       img {
@@ -265,15 +300,13 @@
 
     main {
       width: 100%;
-      height: 30rem;
-      display: flex;
-      align-items: center;
+      height: auto;
       margin-top: .5rem;
+      margin-bottom: .5rem;
 
       .courselists {
         width: 100%;
-        display: flex;
-        flex-wrap: wrap;
+        height: auto;
         justify-content: space-between;
         position: relative;
 
@@ -286,8 +319,9 @@
 
         .mainCourse {
           width: 30%;
-          height: 9rem;
+          height: auto;
           position: absolute;
+          padding-bottom: .5rem;
 
           p {
             width: 100%;
@@ -328,11 +362,11 @@
             width: 70%;
             display: flex;
             text-align: center;
-            margin-top: 1rem;
+            margin-top: .3rem;
 
             img {
-              width: 1.5rem;
-              height: 1.5rem;
+              width: .5rem;
+              height: .5rem;
             }
           }
         }
@@ -383,8 +417,6 @@
           left: 35%
         }
       }
-
-
     }
 
     footer {
@@ -392,8 +424,6 @@
       text-align: center;
       position: fixed;
       bottom: 1rem;
-      opacity: .7;
-
       animation: shake .5s infinite;
 
       >img {
@@ -401,22 +431,28 @@
       }
 
       .footerCon {
-        height: 2.7rem;
         width: 90%;
+        height: .8rem;
         display: flex;
         position: absolute;
         top: 0;
         left: 50%;
         margin-left: -45%;
-        padding: 0 .8rem;
+        padding: 0 .1rem;
         justify-content: space-between;
         box-sizing: border-box;
         color: #fff;
         align-items: center;
 
         .footerConLeft {
+          padding-left: .2rem;
+
+          span {
+            font-size: .32rem;
+          }
+
           img {
-            width: 4rem;
+            width: 1.2rem;
           }
         }
 
@@ -426,14 +462,19 @@
 
           div {
             height: 30px;
-            padding: 0 .5rem;
+            padding: 0 .2rem;
 
-            img {
-              width: 1rem;
+            p {
+              font-size: 0;
+
+              img {
+                width: .4rem;
+                height: .4rem;
+              }
             }
 
             span {
-              font-size: .4rem;
+              font-size: .2rem;
             }
           }
         }
@@ -453,7 +494,7 @@
         position: absolute;
         right: 4%;
         top: 3%;
-        width: 8rem;
+        width: 2rem;
       }
     }
 
@@ -463,10 +504,9 @@
       color: #fff;
       margin: 0 auto;
       margin-top: 8%;
-      padding-bottom: .9rem;
 
       p {
-        line-height: 1.4rem;
+        line-height: .5rem;
       }
 
       span {
@@ -495,27 +535,32 @@
         .userInfo {
           position: absolute;
           width: 96%;
-          height: 3rem;
-          top: .5rem;
-          left: .5rem;
+          height: 2rem;
+          top: .2rem;
+          left: .2rem;
           color: #000;
           display: flex;
 
           .header_img {
-            width: 3rem;
-            height: 3rem;
+            width: .8rem;
+            height: .8rem;
             border-radius: 50%;
-            margin-right: .5rem;
+            margin-right: .1rem;
           }
 
           .name {
             width: 100%;
-            height: 3rem;
-            line-height: 1.5rem;
+            height: .4rem;
+            line-height: .4rem;
+            font-size: .4rem;
 
             p {
-              font-size: .7rem;
+              font-size: .26rem;
               color: #000;
+
+              &:nth-child(2) {
+                font-size: .14rem;
+              }
             }
           }
         }
@@ -526,17 +571,17 @@
           left: 0;
           display: flex;
           width: 100%;
-          padding: 0 1rem;
+          padding: 0 .3rem;
           box-sizing: border-box;
-          height: 5rem;
+          height: 1.5rem;
 
           >div {
             width: 100%;
-            margin-right: .5rem;
+            margin-right: .1rem;
 
             h1 {
               color: #fff;
-              font-size: 1.4rem;
+              font-size: .4rem;
 
               span {
                 color: #F6EC71;
@@ -545,14 +590,20 @@
 
             p {
               color: #fff;
-              font-size: .8rem;
-              line-height: 1.5rem;
+              font-size: .26rem;
+              line-height: .5rem;
+              margin-top: .1rem;
+              margin-left: .5rem;
+
+              &:nth-child(3) {
+                margin-left: 0;
+              }
             }
           }
 
           img {
-            width: 5rem;
-            height: 5rem;
+            width: 1.5rem;
+            height: 1.5rem;
           }
         }
       }
@@ -571,18 +622,35 @@
       }
     }
 
+    .report_after {
+      width: 100%;
+      height: 100%;
+      position: relative;
+
+      img {
+        width: 75%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-left: -36%;
+        margin-top: -50%;
+        z-index: 99
+      }
+    }
+
     .choseSussBottom {
       width: 60%;
-      height: 5rem;
+      // height: 5rem;
       background: #fff;
       text-align: center;
-      line-height: 5rem;
-      border-radius: 1rem;
+      // line-height: 5rem;
+      padding: .5rem;
+      border-radius: .2rem;
       position: absolute;
       left: 50%;
       top: 50%;
-      margin-left: -30%;
-      margin-top: -5rem;
+      margin-left: -35%;
+      margin-top: -20%;
     }
   }
 

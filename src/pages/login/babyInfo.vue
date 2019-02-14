@@ -62,6 +62,9 @@
   import {
     queryUserInfo
   } from "@/api/honey";
+  import {
+    share
+  } from "@/api/wx";
   export default {
     data() {
       return {
@@ -88,6 +91,7 @@
       }
     },
     created() {
+      this.noshare()
       var myDate = new Date();
       let year = myDate.getFullYear()
       let month = myDate.getMonth()
@@ -103,6 +107,7 @@
         console.log(res)
         this.userInfo = res.data.result
       })
+      this.wxshare()
     },
     methods: {
       select(item) {
@@ -138,7 +143,92 @@
             })
           }
         })
-      }
+      },
+      wxshare() {
+        let that = this;
+        //wx是引入的微信sdk
+        // wx.config('这里有一些参数');//通过config接口注入权限验证配置
+        let mydata = {
+          'url': window.location.href
+        };
+        share(mydata).then(res => {
+          console.log(res)
+          if (res.data.statusCode == '200') {
+            wx.config({
+              debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+              appId: res.data.result.appId, // 必填，公众号的唯一标识
+              timestamp: res.data.result.timestamp, // 必填，生成签名的时间戳
+              nonceStr: res.data.result.noncestr, // 必填，生成签名的随机串
+              signature: res.data.result.signature, // 必填，调用js签名，
+              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'] // 必填，需要使用的JS接口列表，这里只写支付的
+            });
+            wx.ready(function () { //通过ready接口处理成功验证
+              // config信息验证成功后会执行ready方法
+              // let mytitle= that.mycourse.courseName;
+              let mytitle = '点击领取让孩子受用一生的数理思维课程';
+              let mydesc = '学完9节课让小朋友爱上思考';
+              let mylink =
+                'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/course'
+              let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
+              wx.hideMenuItems({
+                menuList: [
+                  'menuItem:copyUrl'
+                ]
+              });
+              wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用
+                title: mytitle, // 分享标题
+                desc: mydesc, // 分享描述
+                link: mylink, // 分享链接
+                imgUrl: myimgUrl, // 分享图标
+                type: '', // 分享类型,music、video或link，不填默认为link
+                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                success: function () {
+                  // 用户确认分享后执行的回调函数
+                  that.maskHide();
+                },
+                cancel: function () {
+                  // 用户取消分享后执行的回调函数
+                }
+              });
+              wx.onMenuShareTimeline({ //分享朋友圈
+                title: mytitle, // 分享标题
+                link: mylink, // 分享链接
+                imgUrl: myimgUrl, // 分享图标分享图标
+                success: function () {
+                  // 用户确认分享后执行的回调函数
+                  that.maskHide();
+                },
+                cancel: function () {
+                  // 用户取消分享后执行的回调函数
+                }
+              });
+            });
+            wx.error(function (res) { //通过error接口处理失败验证
+              // config信息验证失败会执行error函数
+            });
+          } else {
+
+          }
+        })
+      },
+      noshare() {
+        function onBridgeReady() {
+          console.log('禁用微信分享')
+          WeixinJSBridge.call('hideOptionMenu');
+        }
+
+        if (typeof WeixinJSBridge == "undefined") {
+          if (document.addEventListener) {
+            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+          } else if (document.attachEvent) {
+            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+          }
+        } else {
+          onBridgeReady();
+        }
+      },
+
     }
   }
 
@@ -151,14 +241,15 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    font-size: .32rem;
 
     header {
       width: 100%;
-      height: 7rem;
-      margin-top: 2rem;
+      height: 3rem;
+      margin-top: 1rem;
 
       >div {
-        width: 9rem;
+        width: 2rem;
         margin: 0 auto;
         position: relative;
 
@@ -167,31 +258,31 @@
           width: 100%;
           margin: 0 auto;
           text-align: center;
-          line-height: 5rem;
+          line-height: 2rem;
           position: relative;
           z-index: 25;
         }
 
         img:nth-child(2) {
           position: absolute;
-          width: 5rem;
-          height: 5rem;
-          ;
+          width: 1.2rem;
+          height: 1.2rem;
           top: 50%;
           left: 50%;
-          margin-top: -2.5rem;
-          margin-left: -2.5rem;
+          margin-top: -.6rem;
+          margin-left: -.6rem;
           z-index: 1;
         }
 
         p {
           position: absolute;
-          width: 80%;
-          height: 1.5rem;
-          line-height: 1.5rem;
+          width: 72%;
+          height: .5rem;
+          font-size: .24rem;
+          line-height: .5rem;
           text-align: center;
-          left: 1rem;
-          bottom: .4rem;
+          left: .3rem;
+          bottom: .03rem;
           color: #fff;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -202,40 +293,38 @@
     }
 
     main {
-      height: 13rem;
-      margin-top: 2rem;
+      margin-top: .5rem;
 
       ul {
-        width: 70%;
-        height: 15rem;
+        width: 80%;
         margin: 0 auto;
 
         li {
-          margin-bottom: 1.5rem;
+          margin-bottom: .5rem;
           width: 100%;
-          height: 2rem;
+          height: 1rem;
 
           span {
-            width: 5rem;
+            width: 25%;
             display: inline-block;
           }
 
           &:nth-child(1) {
             width: 100%;
-            height: 2rem;
+            height: 1rem;
 
             label {
-              height: 2rem;
+              height: 1rem;
               width: 100%;
               display: flex;
               align-items: center;
 
               input {
                 flex: 1;
-                height: 2rem;
+                height: .8rem;
                 border-bottom: 1px solid #c3c3c3;
-                // padding-left: 1rem;
                 box-sizing: border-box;
+                font-size: .3rem;
               }
             }
           }
@@ -249,8 +338,8 @@
 
               select {
                 border-radius: .5rem;
-                padding: .5rem .4rem;
-                width: 5rem;
+                padding: .1rem .2rem;
+                width: 1.7rem;
               }
             }
           }
@@ -282,17 +371,14 @@
 
               &:nth-child(2) {
                 img {
-                  width: .7rem;
+                  width: .3rem;
                 }
               }
 
               img {
-                width: 1rem;
+                width: .5rem;
               }
             }
-
-
-
           }
         }
       }
@@ -300,11 +386,11 @@
 
     .add {
       width: 80%;
-      height: 3rem;
-      margin: 2rem auto;
+      height: 1rem;
+      margin: 1rem auto;
       display: block;
       background: coral;
-      margin-bottom: 3rem;
+      margin-bottom: 1rem;
       color: #fff;
       border-radius: 1.5rem;
     }

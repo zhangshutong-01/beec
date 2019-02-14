@@ -42,6 +42,8 @@ import TourBuy from '@/pages/tourBuy/TourBuy';
 
 import Protocol from '@/pages/protocol/protocol';
 
+import logins from '@/pages/logins';
+
 
 Vue.use(Router)
 const router = new Router({
@@ -258,7 +260,7 @@ const router = new Router({
       name: 'moneyDetail',
       component: MoneyDetail,
       meta: {
-        title: "购买详情"
+        title: "邀请详情"
       }
     }, {
       path: '/login',
@@ -266,6 +268,13 @@ const router = new Router({
       component: Login,
       meta: {
         title: "绑定手机号"
+      }
+    }, {
+      path: '/logins',
+      name: 'logins',
+      component: logins,
+      meta: {
+        title: "登录"
       }
     }, {
       path: '/babyInfo',
@@ -293,7 +302,7 @@ const router = new Router({
       name: 'TourBuy',
       component: TourBuy,
       meta: {
-        title: "拼团详情"
+        title: "购买详情"
       }
     },
     {

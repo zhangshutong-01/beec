@@ -36,40 +36,41 @@
         <p class="head_img">
           <img src="../../assets/course/head.png">
         </p>
-        <p>等{{courseData.perNumber}}已参加</p>
+        <p>等{{courseData.perNumber}}人已参加</p>
       </div>
     </div>
     <div class="information">
       <div class="headerCont tabHeader">
         <ul>
           <li :class="mynum==1?'active':''" @click="courseInfor(1)"><span>课程详情</span> </li>
-          <li :class="mynum==2?'active':''" @click="courseInfor(2)"><span>课程展示</span></li>
+          <li :class="mynum==2?'active':''" @click="courseInfor(2)"><span>产品展示</span></li>
           <li :class="mynum==3?'active':''" @click="courseInfor(3)"><span>购买须知</span> </li>
         </ul>
       </div>
       <div class="classDetail">
         <div class="tabcContent">
-          <img src="../../assets/courseinfo/11.png" alt="">
-          <img src="../../assets/courseinfo/22.png" alt="">
+          <img src="../../assets/courseinfo/11.png">
+          <img src="../../assets/courseinfo/22.png">
         </div>
         <div class="tabDetails_nine">
           <h1>【课程动画视频】</h1>
           <video src="../../assets/courseinfo/WeChat_20190125150648.mp4" controls></video>
         </div>
         <div class="tabDetails_ten">
-          <img src="../../assets/courseinfo/33.png" alt="">
-          <img src="../../assets/courseinfo/44.png" alt="">
-          <img src="../../assets/courseinfo/55.png" alt="">
-          <div class="classDetail">
-            <img src="../../assets/courseinfo/66.png" alt="">
+          <img src="../../assets/courseinfo/33.png">
+          <img src="../../assets/courseinfo/44.png">
+          <img src="../../assets/courseinfo/55.png">
+          <div>
+            <img src="../../assets/courseinfo/66.png">
           </div>
 
         </div>
         <img src="../../assets/courseinfo/77.png" class="img18">
-        <div class="empty"></div>
+        <img src="../../assets/courseinfo/18.png" class="img18">
+        <div class="empty" v-if="isShow"></div>
       </div>
     </div>
-    <div class="fixedBtn" v-if="isShow">
+    <div class="fixedBtn" v-if="isShow&&shopThisCourse===3||shopThisCourse===2">
       <div class="ninemoney" @click="paynet('199')">
         <p class="oldprice">
           <span>¥ {{courseData.originalPrice}}</span>
@@ -80,6 +81,9 @@
         <p class="pintuan">¥ {{courseData.groupPrice}}</p>
         <p class="group">一键成团（3人团）</p>
       </div>
+    </div>
+    <div class="gocourse" v-if="shopThisCourse===1" @click="gocourse">
+      去上课
     </div>
   </div>
 </template>
@@ -102,10 +106,9 @@
     authorize,
     share
   } from "@/api/wx";
-  // import {
-  //   isused
-  // } from "@/api/mine";
-
+  import {
+    checkTradingstate
+  } from '@/api/course'
   export default {
     components: {
       "mt-swipe": Swipe,
@@ -126,7 +129,10 @@
         courselist: [],
         useid1: "",
         isShow: true,
-        administrationId: ''
+        administrationId: '',
+        shopThisCourse: null,
+        payType: '',
+        sourceId: ''
       };
     },
     mounted() {
@@ -151,6 +157,16 @@
       if (this.$route.query.courseid != undefined) {
         this.course.courseid = this.$route.query.courseid;
       }
+      checkTradingstate({
+        openId: this.openid,
+        courseId: this.course.courseid
+      }).then(res => {
+        console.log('21312321', res)
+        this.shopThisCourse = res.data.result.isPay
+        this.payType = res.data.result.payType
+        this.sourceId = res.data.result.sourceId
+      })
+
     },
     filters: {
       changeAge(data) {
@@ -161,6 +177,18 @@
       }
     },
     methods: {
+      gocourse() {
+        console.log(123)
+        this.$router.push({
+          path: "/moneyDetail",
+          query: {
+            openid: this.openid,
+            courseid: this.course.courseid,
+            sourceId: this.sourceId,
+            payType: this.payType
+          }
+        });
+      },
       getCourseData() {
         //获取课程详情数据；
         var me = this;
@@ -227,18 +255,15 @@
                 path: "/pay",
                 query: {
                   openid: this.openid,
-                  groupNo: res.data.result.groupNo,
                   courseid: this.course.courseid,
-                  zhijie: 0, //到确认支付，再到分享页面
-                  orderid: res.data.result.id,
-                  names: 99,
                   sourceId: res.data.result.sourceId,
-                  orderNo: res.data.result.orderNo
+                  orderNo: res.data.result.orderNo,
+                  orderSource: res.data.result.orderSource
                 }
               });
             } else if (res.data.statusCode == "29") {
               alert(
-                "您已参与此课程的拼团，5小时后没有拼团成功，则支付金额原路返回。"
+                "您已参与此课程的拼团，24小时后没有拼团成功，则支付金额原路返回。"
               );
             }
           });
@@ -257,18 +282,11 @@
                 path: "/pay",
                 query: {
                   openid: this.openid,
-                  groupNo: this.groupNo,
                   courseid: this.course.courseid,
-                  zhijie: 0, //到确认支付，再到分享页面
-                  orderid: res.data.result.id,
-                  names: 199,
-                  orderNo: res.data.result.orderNo
+                  orderNo: res.data.result.orderNo,
+                  orderSource: res.data.result.orderSource
                 }
               });
-            } else {
-              alert(
-                "您已参与此课程的拼团，5小时后没有拼团成功，则支付金额原路返回。"
-              );
             }
           });
         }
@@ -302,9 +320,7 @@
               let mytitle = "和小蜜蜂一起逛超市，情景动画教理财哦！";
               let mydesc = "27个问题教会孩子：统筹规划、分类判断、计算推理！";
               let mylink =
-                "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/courseInfo?inviterId=" +
-                me.openid +
-                "%26isShare=1%26courseid=" +
+                "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/courseInfo?isShare=1%26courseid=" +
                 me.course.courseid; //分享到首页
               let myimgUrl = "http://thyrsi.com/t6/665/1548835210x2728279033.png";
               wx.hideMenuItems({
@@ -348,7 +364,7 @@
               //通过error接口处理失败验证
               // config信息验证失败会执行error函数
             });
-          } else {}
+          }
         });
       }
     },
@@ -474,21 +490,29 @@
           display: flex;
           height: 45px;
           justify-content: space-around;
-          /*align-items: center;*/
+          text-align: center;
+          align-items: center;
         }
 
         ul li {
-          height: 45px;
+          // height: 45px;
           flex: 1;
-          list-style: none;
-          float: left;
-          line-height: 45px;
-          width: 100%;
-          text-align: center;
-          border-right: 1px solid #c3c3c3;
+          // list-style: none;
+          // float: left;
+          // line-height: 45px;
+          // width: 100%;
+
+          >span {
+            border-right: 1px solid #949494;
+            width: 99%;
+            height: 100%;
+            display: inline-block;
+          }
 
           &:nth-child(3) {
-            border-right: none;
+            span {
+              border-right: none;
+            }
           }
         }
 
@@ -508,24 +532,24 @@
       .tabcContent {
         width: 100%;
         overflow: hidden;
-        padding-top: 2rem;
+        padding-top: .4rem;
 
         img {
           &:nth-child(2) {
-            padding: .5rem 0;
+            padding: .4rem 0 .2rem 0;
           }
         }
       }
 
       .tabDetails_nine {
-        margin-top: .5rem;
+        margin-top: .1rem;
 
         h1 {
           width: 100%;
           background: #fff;
           text-align: center;
-          font-size: 1.3rem;
-          padding: 1rem 0;
+          font-size: .4rem;
+          padding: .2rem 0;
         }
 
         video {
@@ -538,9 +562,25 @@
 
         img {
           display: block;
-          width: 90%;
+          width: 96%;
           margin: 0 auto;
-          margin-top: 20px;
+          margin-top: 30px;
+
+          &:nth-child(2) {
+            width: 100%;
+            margin-top: 30px;
+          }
+
+          &:nth-child(3) {
+            width: 100%;
+            margin-top: 30px;
+          }
+        }
+
+        >div {
+          img {
+            margin-top: -.5rem;
+          }
         }
 
         .classDetail {
@@ -609,6 +649,20 @@
           font-size: 13px;
         }
       }
+    }
+
+    .gocourse {
+      width: 100%;
+      height: 53.5px;
+      color: #ffffff;
+      text-align: center;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      text-align: center;
+      font-size: .36rem;
+      background: #f85430;
+      line-height: 53.5px;
     }
   }
 

@@ -8,7 +8,7 @@
       <section class="member">
         <div class="menyShop" v-if="payType==1">
           <div v-for="(item,index) in user" :key="index">
-            <img :src="item.userHeadImgUrl">
+            <img :src="item.userHeadImgUrl ||'../../assets/groupon/nosuccessicon.png'">
             <span v-if="item.ranking===1">团长</span>
             <p>{{item.nickName}}</p>
           </div>
@@ -85,7 +85,7 @@
               </dt>
               <dd>
                 <h1>第四步：奖金到账</h1>
-                <p>好友购买成功后，成为你的学弟或学妹，奖学金到账。若有延迟请耐心等待，每人每天可以提现10次。</p>
+                <p>好友购买成功后，成为你的学弟或学妹，奖学金到账。若有延迟请耐心等待，每人每天可以提现5次或500元。</p>
               </dd>
             </dl>
           </div>
@@ -130,10 +130,10 @@
         <span class="close" @click="close">
           <img class="close_icon" src="../../assets/honeybee/tags/close.png">
         </span>
-        <div>
-          <img class="active_img" :src="posterList.imgUrl">
+        <div ref="reportImg" v-show="activess">
+          <img class="active_img" :src="posterList.imgUrl+'?'+new Date().getTime()" crossOrigin="anonymous">
           <div class="userInfo">
-            <img :src="posterList.headUrl" alt="" class="header_img">
+            <img :src="posterList.headUrl+'?'+new Date().getTime()" alt="" class="header_img" crossOrigin="anonymous">
             <div class="name">
               <p>我是 {{posterList.nickName}}</p>
               <p>我发现一个超棒的课程！推荐给你~</p>
@@ -141,14 +141,21 @@
           </div>
           <div class="posterBottom">
             <div>
-              <h1>限时特价<span>￥29.9</span></h1>
+              <h1>限时特价<span>￥29</span></h1>
               <p>(9节精品课程 永久有效)</p>
               <p>长按二维码，了解详情</p>
             </div>
-            <img :src="posterList.codeUrl" alt="">
+            <img :src="posterList.codeUrl+'?'+new Date().getTime()" alt="" crossOrigin="anonymous">
           </div>
         </div>
+        <div class="report_after" :style="{display: state.isDownloadImg ? 'block':'none'}">
+          <!-- <span class="close" @click="close">
+          <img class="close_icon" src="../../assets/honeybee/tags/close.png">
+        </span> -->
+          <img :src="state.imgUrl" id="saveImg" />
+        </div>
       </div>
+
     </div>
     <div class="shareMask" v-if="actionMask" @click="actionMaskHide">
       <p class="action_one">关注"你拍一蜜蜂乐园"<br>才能正常上课</p>
@@ -188,7 +195,12 @@
         schoolMoney: [],
         shopPeo: {},
         payType: '',
-        posterList: {}
+        posterList: {},
+        state: {
+          isDownloadImg: false,
+          imgUrl: ''
+        },
+        activess: true
       };
     },
     created() {
@@ -202,7 +214,6 @@
       } else {
         this.getshop()
       }
-
       this.getMoney()
       this.wxshare()
     },
@@ -268,6 +279,15 @@
                 sourceId: this.$route.query.sourceId
               }
             })
+          } else if (!res.data.result.hasBabyInfo) {
+            this.$router.push({
+              path: "/login",
+              query: {
+                openid: this.openid,
+                courseid: this.courseid,
+                sourceId: this.$route.query.sourceId
+              }
+            })
           } else {
             this.$router.push({
               path: "/courselist2",
@@ -303,6 +323,9 @@
       },
       close() {
         this.activeImg = false
+        this.state = {
+          isDownloadImg: false,
+        };
       },
       wxshare() {
         let that = this
@@ -332,8 +355,8 @@
               //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
               let mytitle =
-                "孩子明年上小学啦，送ta一套蜜蜂乐园思维，爱上思考，变聪明！";
-              let mydesc = "蜜蜂乐园";
+                "点击领取让孩子受用一生的数理思维课程";
+              let mydesc = " 学完9节课让小朋友爱上思考";
               let mylink =
                 "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?invited=" +
                 that.$route.query.openid + "%26courseid=" + that.$route.query.courseid + "%26payType=" + that.$route
@@ -412,7 +435,8 @@
             imgUrl: b64,
             isDownloadImg: true,
           };
-          this.isStudyReport = false;
+          console.log(this.state)
+          this.activess = false
         });
       },
     }
@@ -428,15 +452,16 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    font-size: .24rem;
 
     .GroupShop {
       width: 100%;
       text-align: center;
-      line-height: 3rem;
+      line-height: .5rem;
       color: #ff4700;
-      font-size: 1.2rem;
+      font-size: .32rem;
       font-weight: bolder;
-      margin-top: 1rem;
+      margin-top: .6rem;
 
       h1 {
         font-weight: bold;
@@ -449,17 +474,17 @@
       top: 8%;
       display: block;
       background: #ff4906;
-      padding: 0.2rem 0.3rem 0.2rem 1rem;
+      padding: 0.1rem 0.2rem 0.1rem .2rem;
       color: #fff;
       border-top-left-radius: 1.5rem;
       border-bottom-left-radius: 1.5rem;
       z-index: 99;
+      font-size: .32rem;
     }
 
     .member {
       width: 100%;
-
-      margin-top: 1rem;
+      margin-top: .5rem;
 
       .menyShop {
         width: 100%;
@@ -480,14 +505,15 @@
           }
 
           span {
-            width: 70%;
+            width: 1.3rem;
+            height: .5rem;
+            line-height: .5rem;
             display: block;
             position: absolute;
             background: #fd8a00;
             color: #fff;
-            bottom: -0.5rem;
             left: 50%;
-            margin-left: -35%;
+            margin-left: -38%;
             border-radius: 0.3rem;
           }
 
@@ -495,7 +521,7 @@
             width: 100%;
             text-align: center;
             position: absolute;
-            bottom: -2rem;
+            bottom: -1rem;
             color: #ec9539;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -506,25 +532,28 @@
     }
 
     .moneyTags {
-      margin-top: 3rem;
+      margin-top: 1.5rem;
       width: 100%;
       display: flex;
-      justify-content: space-around;
-      padding: 0 2rem;
+      justify-content: space-between;
+      padding: 0 1.7rem;
       box-sizing: border-box;
 
       .getCourse {
         background: #ff8e4e;
-        width: 30%;
+        height: .7rem;
+        line-height: .7rem;
         text-align: center;
-        padding: 0.5rem;
         border-radius: 1.2rem;
         color: #fff;
+        padding: 0 .3rem;
       }
 
       .getMoney {
         background: #ff6c1b;
-        padding: 0.5rem 1rem;
+        height: .7rem;
+        line-height: .7rem;
+        padding: 0 .2rem;
         border-radius: 1.2rem;
         color: #fff;
       }
@@ -533,7 +562,7 @@
     .moneyBottom {
       width: 100%;
       flex: 1;
-      margin-top: 2rem;
+      margin-top: .5rem;
 
       .banner {
         width: 100%;
@@ -545,7 +574,7 @@
 
       .money_num {
         width: 84%;
-        height: 10rem;
+        height: 3rem;
         background: #fff;
         background: url('../../assets/honeybee/tags/jiangjinkuang.png');
         background-size: 100% 100%;
@@ -560,10 +589,14 @@
         .money_num_tit {
           width: 100%;
           text-align: center;
-          height: 2.5rem;
-          line-height: 2.5rem;
-          font-size: 1.2rem;
-          margin-top: 1rem;
+          height: 1rem;
+          line-height: 1rem;
+          font-size: .4rem;
+          margin-top: .5rem;
+        }
+
+        div {
+          font-size: .32rem;
         }
 
         p {
@@ -571,13 +604,13 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: .5rem;
+          margin-bottom: .2rem;
           color: #F95600;
-          font-size: 1.6rem;
+          font-size: .4rem;
           font-weight: bold;
 
           b {
-            font-size: 1rem;
+            font-size: .4rem;
           }
         }
       }
@@ -586,7 +619,7 @@
         width: 100%;
         height: 1rem;
         flex: 1;
-        margin-top: 1rem;
+        margin-top: .5rem;
         padding-bottom: 3rem;
 
         .rules_box1 {
@@ -604,7 +637,7 @@
 
           .rules_section {
             width: 100%;
-            padding: 1rem 0;
+            padding: .2rem 0;
 
             &:nth-child(even) {
               h1 {
@@ -618,7 +651,7 @@
 
               dt {
                 flex: 2;
-                padding: 0 1rem;
+                padding: 0 .2rem;
 
                 img {
                   width: 100%;
@@ -630,16 +663,16 @@
 
                 h1 {
                   font-family: PingFangHK-Semibold;
-                  font-size: 1.4rem;
+                  font-size: .4rem;
                   color: #FF4E00;
                   letter-spacing: 1.9px;
                   font-weight: bold;
-                  padding-bottom: .5rem;
+                  padding-bottom: .1rem;
                 }
 
                 p {
                   font-family: PingFangHK-Regular;
-                  font-size: 1.2rem;
+                  font-size: .32rem;
                   color: #4A4A4A;
                   letter-spacing: 1.8px;
                 }
@@ -650,7 +683,7 @@
 
         .rules_box3 {
           width: 100%;
-          margin-top: 1.5rem;
+          margin-top: .5rem;
 
           img {
             width: 100%;
@@ -675,28 +708,29 @@
         p {
           position: absolute;
           top: 0;
-          width:100%;
+          width: 100%;
           text-align: center;
           line-height: 52.5px;
-          font-size: 1.5rem;
-          color:chocolate
+          font-size: .4rem;
+          color: chocolate
         }
       }
 
       .posterTag {
-        width: 5rem;
-        height: 2rem;
+        width: 2rem;
+        height: .5rem;
         background: #33BEA3;
         position: fixed;
         right: -1%;
         top: 50%;
         margin-top: -1rem;
         text-align: center;
-        line-height: 2rem;
+        line-height: .5rem;
         color: #fff;
         border-radius: 8px;
         font-family: PingFangHK-Regular;
-        z-index: 99
+        z-index: 99;
+        font-size: .32rem;
       }
     }
 
@@ -719,6 +753,7 @@
         /*margin-top: 220px;*/
         color: #FF5500;
         margin-top: 40%;
+        margin-bottom: 1rem;
         width: 100%;
         text-align: center;
       }
@@ -737,8 +772,8 @@
         img {
           width: 25%;
           position: absolute;
-          right: 1rem;
-          top: -1rem;
+          right: .5rem;
+          top: .2rem;
         }
 
         .choseSuss {
@@ -754,9 +789,9 @@
             width: 100%;
             text-align: center;
             line-height: 3rem;
-            margin-top: 1rem;
+            margin-top: .5rem;
             padding-bottom: .6rem;
-            font-size: 1.2rem;
+            font-size: .4rem;
             color: #FE7738;
           }
         }
@@ -769,10 +804,9 @@
       color: #fff;
       margin: 0 auto;
       margin-top: 8%;
-      padding-bottom: .9rem;
 
       p {
-        line-height: 1.4rem;
+        line-height: .5rem;
       }
 
       span {
@@ -801,28 +835,35 @@
         .userInfo {
           position: absolute;
           width: 96%;
-          height: 3rem;
-          top: .5rem;
-          left: .5rem;
+          height: 2rem;
+          top: .2rem;
+          left: .2rem;
           color: #000;
           display: flex;
 
           .header_img {
-            width: 3rem;
-            height: 3rem;
+            width: .8rem;
+            height: .8rem;
             border-radius: 50%;
-            margin-right: .5rem;
+            margin-right: .1rem;
           }
 
           .name {
             width: 100%;
-            height: 3rem;
-            line-height: 1.5rem;
+            height: .4rem;
+            line-height: .4rem;
+            font-size: .4rem;
 
             p {
-              font-size: .7rem;
+              font-size: .26rem;
               color: #000;
+
+              &:nth-child(2) {
+
+                font-size: .14rem;
+              }
             }
+
           }
         }
 
@@ -832,17 +873,17 @@
           left: 0;
           display: flex;
           width: 100%;
-          padding: 0 1rem;
+          padding: 0 .3rem;
           box-sizing: border-box;
-          height: 5rem;
+          height: 1.5rem;
 
           >div {
             width: 100%;
-            margin-right: .5rem;
+            margin-right: .1rem;
 
             h1 {
               color: #fff;
-              font-size: 1.4rem;
+              font-size: .4rem;
 
               span {
                 color: #F6EC71;
@@ -851,14 +892,20 @@
 
             p {
               color: #fff;
-              font-size: .8rem;
-              line-height: 1.5rem;
+              font-size: .26rem;
+              line-height: .5rem;
+              margin-top: .1rem;
+              margin-left: .5rem;
+
+              &:nth-child(3) {
+                margin-left: 0;
+              }
             }
           }
 
           img {
-            width: 5rem;
-            height: 5rem;
+            width: 1.5rem;
+            height: 1.5rem;
           }
         }
       }
@@ -877,6 +924,21 @@
       }
     }
 
+    .report_after {
+      width: 100%;
+      height: 100%;
+      position: relative;
+
+      img {
+        width: 75%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-left: -36%;
+        margin-top: -50%;
+        z-index: 99
+      }
+    }
   }
 
   @keyframes shake {

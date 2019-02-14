@@ -3,7 +3,7 @@
     <div class="top">
       <h1 v-if="!change">还差<span>{{remainNumber}}</span>人拼团成功</h1>
       <h1 v-if="change">拼团成功</h1>
-      <p>
+      <p v-if="!change">
         剩余时间 <span>{{hour}}</span> : <span>{{minute}}</span> : <span>{{second}}</span>
       </p>
       <div class='member'>
@@ -18,7 +18,7 @@
     <main>
       <p>扫码关注<span>“蜜蜂乐园”</span><br>才能<span>正常上课</span>，掌握实时<span>拼团进度</span></p>
       <img src="../../assets/erweima.png" alt="">
-      <p>若拼团失败，48小时立即退款</p>
+      <p>若拼团失败，24小时立即退款</p>
     </main>
     <div class="bottom">
       <img :src="list.imgUrlA" alt="">
@@ -26,7 +26,7 @@
         <h1>{{list.courseName}}</h1>
         <p>3人团/￥{{list.groupPrice}}</p>
         <div>
-          包括《购物清单》、《逛超市》、《购物结账》
+          {{list.groupDescribe}}
         </div>
       </div>
     </div>
@@ -66,7 +66,6 @@
         remainNumber: 0,
         groupDetail: [],
         users: [],
-        randomNum: parseInt(Math.random() * 10) + 15,
         change: false,
         member: [
           'http://b-ssl.duitang.com/uploads/item/201510/14/20151014001324_8R3QB.jpeg',
@@ -86,7 +85,6 @@
       })
       this.times()
       this.wxshare()
-
     },
     methods: {
       goCourse() {
@@ -171,8 +169,8 @@
             wx.ready(function () { //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
               // let mytitle= that.mycourse.courseName;
-              let mytitle = that.randomNum + '个朋友在拼→孩子的第一堂理财课，小蜜蜂逛超市！';
-              let mydesc = '27个问题教会孩子：统筹规划、分类判断、计算推理';
+              let mytitle = '点击领取让孩子受用一生的数理思维课程';
+              let mydesc = '学完9节课让小朋友爱上思考';
               let mylink =
                 'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?sourceId=' +
                 that.$route.query.sourceId + '%26courseid=' + that.$route.query.courseid + '%26invited=' + that
@@ -215,9 +213,7 @@
             wx.error(function (res) { //通过error接口处理失败验证
               // config信息验证失败会执行error函数
             });
-          } else {
-
-          }
+          } else {}
         })
       },
 
@@ -233,25 +229,25 @@
     background: #F1F2F1;
     color: #000;
     overflow: auto;
+    font-size: .32rem;
 
     .top {
       width: 96%;
-      height: 15rem;
       background: #fff;
-      margin: 1rem auto .5rem auto;
-      border-radius: .3rem;
+      margin: .5rem auto .3rem auto;
+      border-radius: .2rem;
       border: 1px solid #c3c3c3;
       box-sizing: border-box;
 
       h1 {
         width: 100%;
-        height: 3rem;
-        line-height: 3rem;
+        height: 1rem;
+        line-height: 1rem;
         text-align: center;
         font-weight: bold;
 
         span {
-          font-size: 1.3rem;
+          font-size: .37rem;
           color: #FC5424;
         }
       }
@@ -259,29 +255,35 @@
       p {
         width: 100%;
         text-align: center;
-        line-height: 1.5rem;
+        height: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         span {
           display: inline-block;
-          width: 1.5rem;
-          height: 1.5rem;
+          margin: 0 .1rem;
+          width: .5rem;
+          height: .5rem;
           background: #FF6125;
           color: #fff;
-          border-radius: .5rem;
+          border-radius: .1rem;
+          line-height: .5rem;
         }
       }
 
       .member {
         width: 100%;
         display: flex;
-        justify-content: space-between;
-        padding: 0 4rem;
+        justify-content: center;
+
         box-sizing: border-box;
-        margin-top: 1rem;
+        margin-top: .3rem;
 
         img {
-          width: 4rem;
-          height: 4rem;
+          width: 1.3rem;
+          margin: 0 .2rem;
+          height: 1.3rem;
           border-radius: 50%;
           border: 1px solid #ccc;
         }
@@ -289,31 +291,32 @@
 
       button {
         width: 50%;
-        height: 2.5rem;
+        height: 1rem;
         color: #fff;
         background: #FF3400;
         display: block;
         margin: 0 auto;
-        margin-top: 1.5rem;
+        margin-top: .5rem;
+        margin-bottom: .5rem;
         border-radius: 3rem;
       }
     }
 
     main {
       width: 96%;
-      height: 15rem;
+      // height: 15rem;
       background: #fff;
       margin: 0 auto;
-      margin-bottom: .5rem;
-      border-radius: .3rem;
+      margin-bottom: .3rem;
+      border-radius: .2rem;
       border: 1px solid #c3c3c3;
       box-sizing: border-box;
 
       p {
-        margin-top: 1rem;
+        // margin-top: 1rem;
         width: 100%;
         text-align: center;
-        line-height: 1.5rem;
+        line-height: .6rem;
 
         span {
           color: #FB4B28;
@@ -324,25 +327,25 @@
         width: 30%;
         display: block;
         margin: 0 auto;
-        margin-top: .8rem;
 
       }
     }
 
     .bottom {
       width: 96%;
-      height: 7rem;
+      // height: 7rem;
       background: #fff;
       margin: 0 auto .5rem auto;
-      border-radius: .3rem;
+      border-radius: .2rem;
       border: 1px solid #c3c3c3;
       box-sizing: border-box;
       display: flex;
       align-items: center;
+      padding: .3rem 0;
 
       img {
-        width: 8rem;
-        margin: 0 .8rem;
+        width: 40%;
+        margin: 0 .2rem;
       }
 
       >div {
@@ -350,17 +353,26 @@
 
         h1 {
           font-weight: bold;
-          font-size: 1.1rem;
+          font-size: .36rem;
         }
 
         p {
-          font-size: 1rem;
+          font-size: .24rem;
           color: #8E8E8E;
         }
 
         div {
-          font-size: .9rem;
+          font-size: .24rem;
           color: #9E9E9E;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          word-break: break-all;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          /*! autoprefixer: off */
+          -webkit-box-orient: vertical;
+          /* autoprefixer: on */
+
         }
       }
     }
@@ -389,8 +401,8 @@
         img {
           width: 25%;
           position: absolute;
-          right: 1rem;
-          top: -1rem;
+          right: .5rem;
+          top: -.1rem;
         }
 
         .choseSuss {
@@ -400,17 +412,15 @@
           position: fixed;
           left: 50%;
           top: 50%;
-          border-radius: .5rem;
+          border-radius: .2rem;
           margin-left: -35%;
-          margin-top: -30%;
+          margin-top: -20%;
 
           .choseSussBottom {
             width: 100%;
             text-align: center;
-            line-height: 3rem;
-            margin-top: 1rem;
-            padding-bottom: .8rem;
-            font-size: 1.2rem;
+            padding: .5rem 0;
+            font-size: .24rem;
             color: #FE7738;
           }
         }

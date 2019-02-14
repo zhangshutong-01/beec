@@ -10,11 +10,11 @@
         <hr>
         <div class="groupon_price">
           <cite>拼团价格：</cite>
-          <em>¥ 3</em>
+          <em>¥ {{course.groupPrice}}</em>
         </div>
         <div class="old_price">
           <cite>原价：</cite>
-          <em>¥ 9.9</em>
+          <em>¥ {{course.goodsPrice}}</em>
         </div>
         <div class="tishi">
           确认支付24小时后没有拼团成功，则支付金额原路返回。
@@ -33,7 +33,7 @@
         <hr>
         <div class="groupon_price">
           <cite>价格：</cite>
-          <em>¥ 9.9</em>
+          <em>¥ {{course.originalPrice}}</em>
         </div>
         <!--<div class="cashcoupon" @click="showCoupon">-->
         <!--<tt>现金券：</tt>-->
@@ -43,7 +43,7 @@
         <!--</div>-->
       </div>
       <div class="pay_button" @click="groupon">
-        确认支付¥<span>{{orderAmount}}</span>
+        确认支付¥<span>{{orderSource===2?course.originalPrice:course.groupPrice}}</span>
       </div>
 
     </div>
@@ -78,7 +78,10 @@
         course: {
           coursename: '',
           coursedesc: '',
-          courseimg: ''
+          courseimg: '',
+          originalPrice: '',
+          groupPrice: '',
+          goodsPrice: ''
         },
         orderid: '', //订单号
         openid: '',
@@ -88,7 +91,8 @@
         orderAmount: 3,
         couponAmount: '',
         couponid: '',
-        orderNo: ''
+        orderNo: '',
+        orderSource: ''
       }
     },
     methods: {
@@ -149,7 +153,7 @@
                       openid: that.openid,
                       sourceId: this.$route.query.sourceId,
                       courseid: this.courseId,
-                      payType: payType,
+                      payType: payType
                     }
                   })
                 }
@@ -173,7 +177,7 @@
                       openid: this.openid,
                       courseid: this.courseId,
                       sourceId: this.$route.query.sourceId,
-                      payType: payType,
+                      payType: payType
                     }
                   });
                 }
@@ -185,7 +189,7 @@
         this.iscoupon = isclose;
       },
       wxshare() {
-        let that = this
+        let that = this;
         //wx是引入的微信sdk
         // wx.config('这里有一些参数');//通过config接口注入权限验证配置
         let mydata = {
@@ -204,12 +208,11 @@
             });
             wx.ready(function () { //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
-              let mytitle = '孩子明年上小学啦，送ta一套蜜蜂乐园思维，爱上思考，变聪明！';
-              let mydesc = '蜜蜂乐园';
+              // let mytitle= that.mycourse.courseName;
+              let mytitle = '点击领取让孩子受用一生的数理思维课程';
+              let mydesc = '学完9节课让小朋友爱上思考';
               let mylink =
-                'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/courseinfo?openid=' +
-                that.$route.query.openid + "%26courseid=" + that.$route.query.courseid; //分享到首页
-              //let mylink='http://test-yunying.coolmath.cn/beec/course';//分享到首页
+                'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/course'
               let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
               wx.hideMenuItems({
                 menuList: [
@@ -225,6 +228,7 @@
                 dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
                 success: function () {
                   // 用户确认分享后执行的回调函数
+                  that.maskHide();
                 },
                 cancel: function () {
                   // 用户取消分享后执行的回调函数
@@ -236,6 +240,7 @@
                 imgUrl: myimgUrl, // 分享图标分享图标
                 success: function () {
                   // 用户确认分享后执行的回调函数
+                  that.maskHide();
                 },
                 cancel: function () {
                   // 用户取消分享后执行的回调函数
@@ -249,6 +254,23 @@
 
           }
         })
+      },
+      noshare() {
+        function onBridgeReady() {
+          console.log('禁用微信分享')
+          WeixinJSBridge.call('hideOptionMenu');
+        }
+
+        if (typeof WeixinJSBridge == "undefined") {
+          if (document.addEventListener) {
+            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+          } else if (document.attachEvent) {
+            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+          }
+        } else {
+          onBridgeReady();
+        }
       },
       getData() {
         let that = this;
@@ -265,6 +287,14 @@
               that.course.coursename = resData.result.courseName;
               that.course.coursedesc = resData.result.courseDescribe;
               that.course.courseimg = resData.result.imgUrlA;
+              that.course.originalPrice = resData.result.originalPrice;
+              that.course.groupPrice = resData.result.groupPrice;
+              that.course.goodsPrice = resData.result.goodsPrice;
+              if (this.orderSource == 2) {
+                this.isgroupon = false
+              } else {
+                this.isgroupon = true
+              }
             } else {
               // console.log("11111111111111111112222222222233333333");
             }
@@ -273,6 +303,7 @@
       }
     },
     created() {
+      this.noshare()
       //显示滚动条
       var mo = function (e) {
         e.preventDefault();
@@ -280,30 +311,10 @@
       document.body.style.overflow = 'auto'; //出现滚动条
       document.removeEventListener("touchmove", mo, false);
       this.openid = this.$route.query.openid;
-      this.groupNo = this.$route.query.groupNo;
       this.courseId = this.$route.query.courseid;
-      this.orderid = this.$route.query.orderid;
       this.orderNo = this.$route.query.orderNo;
-      console.log(this.orderNo)
-      this.zhijie = this.$route.query.zhijie;
-      let name = this.$route.query.names;
-      this.names = name;
-      if (name == 99) {
-        this.isgroupon = true;
-        this.orderAmount = 3;
-      } else {
-        this.isgroupon = false;
-        this.orderAmount = 9.9;
-      }
-      if (this.$route.query.couponid != "" && this.$route.query.couponid != undefined) {
-        this.couponid = this.$route.query.couponid;
-      }
-      if (this.$route.query.orderAmount != "" && this.$route.query.orderAmount != undefined) {
-        this.orderAmount = this.$route.query.orderAmount;
-      }
-      if (this.$route.query.couponAmount != "" && this.$route.query.couponAmount != undefined) {
-        this.couponAmount = this.$route.query.couponAmount;
-      }
+      this.orderSource = this.$route.query.orderSource
+
       this.getData();
       this.wxshare();
     }

@@ -1,23 +1,25 @@
 <template lang="html">
   <div class="course" id="course" ref="course">
+    <v-loading v-if="load"></v-loading>
     <!-- <v-active /> -->
     <!-- <div class="top"></div>
-    <div class="per_course" v-for="item in courselist" @click="gonext(item)">
-      <div class="course_topic"><img :src="item.imgUrl" width="100%" height="199" /></div>
-      <div class="course_desc">
-        <p class="desc">
-          <span>{{item.courseName}}</span>
-          <strong>{{item.courseDescribe}}</strong>
-        </p>
-        <p class="goStudy">
-          <span>去学习</span>
-        </p>
+      <div class="per_course" v-for="item in courselist" @click="gonext(item)">
+        <div class="course_topic"><img :src="item.imgUrl" width="100%" height="199" /></div>
+        <div class="course_desc">
+          <p class="desc">
+            <span>{{item.courseName}}</span>
+            <strong>{{item.courseDescribe}}</strong>
+          </p>
+          <p class="goStudy">
+            <span>去学习</span>
+          </p>
+        </div>
       </div>
-    </div> -->
+     -->
     <div class="background" id="background">
       <img src="http://thyrsi.com/t6/665/1548857508x2890174076.png" class="bj" />
       <div :class="[shopshow?'shop active':'shop']" @click="jump(courselist[0])">
-        <img :src="courselist[0].imgUrl" />
+        <img src="../../assets/honeybeeIndex/csd.png" />
         <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[0].status===0" />
         <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[0].status===1" />
         <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[0].status===2" />
@@ -29,19 +31,19 @@
         <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[1].status===2" />
       </div>
       <div :class="[clockshow?'clock active':'clock']" @click="jump(courselist[2])">
-        <img src="../../assets/honeybeeIndex/zbd.png" />
+        <img src="../../assets/honeybeeIndex/zb.png" />
         <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[2].status===0" />
         <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[2].status===1" />
         <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[2].status===2" />
       </div>
       <div :class="[carshow?'car active':'car']" @click="jump(courselist[3])">
-        <img :src="courselist[3].imgUrl" />
+        <img src="../../assets/honeybeeIndex/dg.png" />
         <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[3].status===0" />
         <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[3].status===1" />
         <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[3].status===2" />
       </div>
       <div :class="[expressshow?'express active':'express']" @click="jump(courselist[4])">
-        <img :src="courselist[4].imgUrl" />
+        <img src="../../assets/honeybeeIndex/kd.png" />
         <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[4].status===0" />
         <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[4].status===1" />
         <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[4].status===2" />
@@ -72,8 +74,8 @@
 
       .rocket {
         position: absolute;
-        right: 13%;
-        bottom: 8.7%;
+        right: 16%;
+        bottom: 6.5%;
         width: 40%;
         text-align: center;
 
@@ -81,41 +83,45 @@
           width: 100%;
 
           &:nth-child(2) {
-            width: 70%;
-            margin-left: .5rem;
+            width: 2rem;
+            margin-top: -16%;
+            margin-left: 1rem;
           }
         }
 
         .gomoney {
-          width: 70% !important;
+          width: 2rem !important;
         }
       }
 
       .shop {
         position: absolute;
         left: 8%;
-        bottom: 22.3%;
+        bottom: 19%;
         width: 25%;
         text-align: center;
 
         img {
+          // width: 130%;
           width: 130%;
 
           &:nth-child(2) {
-            width: 90%;
-            margin-left: 1rem;
+            width: 2rem;
+            margin-left: .3rem;
+            margin-top: -24%;
           }
         }
 
         .gomoney {
-          width: 70% !important;
+          width: 2rem !important;
         }
+
       }
 
       .clock {
         position: absolute;
         right: 5%;
-        bottom: 33.4%;
+        bottom: 29.7%;
         width: 30%;
         text-align: center;
 
@@ -123,13 +129,13 @@
           width: 100%;
 
           &:nth-child(2) {
-            width: 80%;
-            margin-left: .5rem;
+            width: 2rem;
+            margin-top: -37%;
           }
         }
 
         .gomoney {
-          width: 74.3% !important;
+          width: 2rem !important;
         }
       }
 
@@ -144,14 +150,15 @@
           width: 100%;
 
           &:nth-child(2) {
-            width: 80%;
-            margin-left: .5rem;
+            width: 2rem;
+            margin-top: -25%;
           }
         }
 
         .gomoney {
-          width: 70% !important;
+          width: 2rem !important;
         }
+
       }
 
       .express {
@@ -165,14 +172,15 @@
           width: 100%;
 
           &:nth-child(2) {
-            width: 80%;
-            margin-left: .5rem;
+            width: 2rem;
+            margin-top: -20%;
           }
         }
 
         .gomoney {
-          width: 70% !important;
+          width: 2rem !important;
         }
+
       }
     }
   }
@@ -216,6 +224,7 @@
 <script>
   import Footer from "@/components/_footer.vue";
   import Active from "@/components/_active.vue";
+  import Loading from '@/components/_loading.vue';
   import {
     Indicator,
     MessageBox,
@@ -236,7 +245,8 @@
   export default {
     components: {
       "v-footer": Footer,
-      "v-active": Active
+      "v-active": Active,
+      "v-loading": Loading
     },
     data() {
       return {
@@ -256,7 +266,8 @@
         rocketshow: false,
         clockshow: false,
         carshow: false,
-        expressshow: false
+        expressshow: false,
+        load: true
       };
     },
     methods: {
@@ -361,8 +372,10 @@
           pageNum: "",
           openId: this.openid
         };
+        // Indicator.open()
         queryCourse(mydata).then(res => {
           if (res.data.statusCode == "200") {
+            console.log('2231312', res.data)
             this.courselist = res.data.result;
           } else {
             this.$message.error("拉取失败");
@@ -397,8 +410,8 @@
               //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
               let mytitle =
-                "孩子明年上小学啦，送ta一套蜜蜂乐园思维，爱上思考，变聪明！";
-              let mydesc = "蜜蜂乐园";
+                "蜜蜂乐园给孩子最好的数理思维启蒙、生活常识";
+              let mydesc = "让小蜜蜂陪孩子去成长";
               let mylink =
                 "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/course"; //分享到首页
               //let mylink='http://test-yunying.coolmath.cn/beec/course';//分享到首页
@@ -485,6 +498,7 @@
         try {
           var container = this.$refs.course;
           container.scrollTop = container.scrollHeight;
+
         } catch (e) {}
         container.scrollTop = container.scrollHeight;
         // console.log(container.scrollTop, container.scrollHeight + 100);
@@ -493,12 +507,14 @@
     mounted() {
       setTimeout(() => {
         this.scrollToBottom();
-      }, 500);
+        // Indicator.close()
+        this.load = false
+      }, 1000);
+
     },
-    updated() {
-      this.scrollToBottom();
-    },
+
     created: function () {
+      this.load = true
       this.showshare();
       this.useid = this.$route.query.refresh;
       let openid = this.$route.query.openid;

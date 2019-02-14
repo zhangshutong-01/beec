@@ -34,7 +34,8 @@
 <script>
   import '../../assets/evaluate/assets/yellow star.png';
   import {
-    addfeedback
+    addfeedback,
+    checkTradingstate
   } from '@/api/course'
   export default {
     data() {
@@ -43,16 +44,26 @@
         diff: ['太简单了', '有点简单', '刚好', '有点挑战', '难得想哭'],
         stara: require('../../assets/evaluate/assets/yellow star.png'), //亮星星
         starb: require('../../assets/evaluate/assets/brown star.png'), //暗星星
-        xing: 0,
-        Star: 0,
+        xing: 3,
+        Star: 3,
         openid: '',
         num: 0,
-        courseid: ''
+        courseid: '',
+        sourceId: '',
+        payType: ''
       }
     },
     created() {
       this.openid = this.$route.query.openid
       this.courseid = this.$route.query.courseid
+      checkTradingstate({
+        openId: this.openid,
+        courseId: this.courseid
+      }).then(res => {
+        console.log(res)
+        this.sourceId = res.data.result.sourceId
+        this.payType = res.data.result.payType
+      })
     },
     methods: {
       key() {
@@ -66,9 +77,12 @@
       },
       goHome() {
         this.$router.push({
-          path: '/course',
+          path: '/courselist2',
           query: {
-            openid: this.openid
+            openid: this.openid,
+            courseid: this.courseid,
+            sourceId: this.sourceId,
+            payType: this.payType
           }
         })
       },
@@ -81,12 +95,13 @@
         }
         addfeedback(parmas).then(res => {
           if (res.data.statusCode === '200') {
-            alert(this.openid, this.courseid)
             this.$router.push({
               path: '/courselist2',
               query: {
                 openid: this.openid,
-                courseid: this.courseid
+                courseid: this.courseid,
+                sourceId: this.sourceId,
+                payType: this.payType
               }
             })
           }
@@ -104,21 +119,22 @@
     overflow: auto;
     background: #FFDDA6;
     position: relative;
+    font-size: .32rem;
 
     header {
       width: 100%;
-      height: 3rem;
-      margin-top: 1rem;
+      height: 1rem;
+      // margin-top: 1rem;
       position: absolute;
 
 
 
       .homeIcon {
-        width: 3rem;
-        height: 3rem;
+        width: 1rem;
+        height: 1rem;
         position: absolute;
-        top: .5rem;
-        left: .8rem;
+        top: .2rem;
+        left: .2rem;
 
         img {
           width: 100%;
@@ -131,14 +147,15 @@
 
     .evaluateStar {
       width: 100%;
-      margin-top: 2rem;
+      // margin-top: 2rem;
 
       h1 {
         height: 100%;
-        line-height: 4rem;
+        line-height: 1rem;
         text-align: center;
-        font-size: 1.5rem;
+        font-size: .5rem;
         color: #773F25;
+        margin-top: .4rem;
       }
 
       .like {
@@ -152,14 +169,14 @@
           text-align: center;
 
           img {
-            width: 2.5rem;
+            width: .7rem;
 
           }
 
           p {
             color: #773F25;
-            padding: .5rem 0;
-            font-size: .8rem;
+            padding: .2rem 0;
+            font-size: .24rem;
           }
         }
       }
@@ -169,7 +186,7 @@
       width: 85%;
       height: 30%;
       margin: 0 auto;
-      margin-top: 3rem;
+      margin-top: .3rem;
       position: relative;
 
       .evaluate {
@@ -177,9 +194,9 @@
         border-radius: 20px;
         width: 100%;
         height: 100%;
-        padding: 1rem;
+        padding: .2rem;
         box-sizing: border-box;
-        font-size: 1.1rem;
+        font-size: .32rem;
       }
 
       span {
@@ -194,7 +211,7 @@
       width: 35%;
       margin: 0 auto;
       display: block;
-      margin-top: 3rem;
+      margin-top: .8rem;
     }
   }
 

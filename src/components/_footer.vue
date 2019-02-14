@@ -3,40 +3,40 @@
     <div class="baritem" @click="gotoRouter('课程')" v-if="!iscourse">
       <div class="mybox">
         <img src="../assets/common/course.png" />
-        <span>课程</span>
+        <span>首页</span>
       </div>
     </div>
     <div class="baritem" @click="gotoRouter('课程')" v-else>
       <div class="mybox">
         <img src="../assets/common/courseselect.png" />
-        <span class="myspan">课程</span>
+        <span class="myspan">首页</span>
       </div>
     </div>
 
     <div class="baritem" @click="gotoRouter('我的')" v-if="!ismy">
       <div class="mybox">
         <img src="../assets/common/my.png" />
-        <span>我的</span>
+        <span>我的课</span>
       </div>
     </div>
 
     <div class="baritem" @click="gotoRouter('我的')" v-else>
       <div class="mybox">
         <img src="../assets/common/myselect.png" />
-        <span class="myspan">我的</span>
+        <span class="myspan">我的课</span>
       </div>
     </div>
 
     <div class="baritem" @click="gotoRouter('奖学金')" v-if="!ismoney">
       <div class="mybox">
-        <img src="../assets/honeybee/tags/money.png" />
+        <img src="../assets/common/money.png" />
         <span>奖学金</span>
       </div>
     </div>
 
     <div class="baritem" @click="gotoRouter('奖学金')" v-else>
       <div class="mybox">
-        <img src="../assets/common/myselect.png" />
+        <img src="../assets/common/moneyselect.png" />
         <span class="myspan">奖学金</span>
       </div>
     </div>
@@ -125,17 +125,19 @@
       flex: 1;
       height: 50px;
 
+
       .mybox {
         height: 50px;
         margin: 0 auto;
         text-align: center;
+
 
         img {
           width: 20px;
           height: 22px;
           margin: 0 auto;
           vertical-align: top;
-          margin-top: .5rem;
+          margin-top: .1rem;
         }
 
         span {

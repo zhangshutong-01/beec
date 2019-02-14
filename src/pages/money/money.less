@@ -2,23 +2,23 @@
 .money_wrap {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
     overflow: auto;
     color: #000;
-    font-family: PingFangHK-Regular
+    font-family: PingFangHK-Regular;
+    font-size: .32rem;
 }
 
 .tag {
-    width: 5rem;
-    height: 2rem;
+    width: 2rem;
+    height: .5rem;
     background: #33BEA3;
     position: fixed;
     right: -1%;
     top: 50%;
     margin-top: -1rem;
     text-align: center;
-    line-height: 2rem;
+    line-height: .5rem;
+    padding: .1rem 0;
     color: #fff;
     border-radius: 8px;
     font-family: PingFangHK-Regular;
@@ -35,7 +35,7 @@ header {
 
 .money_num {
     width: 84%;
-    height: 13rem;
+    height: 4rem;
     background: #fff;
     background: url('../../assets/honeybee/tags/jiangjinkuang.png');
     background-size: 100% 100%;
@@ -51,22 +51,23 @@ header {
         flex: 1;
         display: flex;
         flex-direction: column;
-        margin-bottom: .5rem;
+        padding-bottom: .2rem;
         p {
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: .5rem;
+            font-size: .5rem;
             b {
-                font-size: 1.6rem;
+                font-size: .38rem;
             }
         }
         .tip {
             width: 100%;
             text-align: center;
-            height: 3rem;
-            line-height: 3rem;
+            height: .5rem;
+            line-height: .5rem;
             color: #fc6313;
             display: block;
         }
@@ -74,17 +75,16 @@ header {
     .money_num_tit {
         width: 100%;
         text-align: center;
-        height: 2.5rem;
-        line-height: 2.5rem;
-        font-size: 1.2rem;
-        margin-top: .5rem;
+        height: 1rem;
+        line-height: 1rem;
+        font-size: .38rem;
+        margin-top: .4rem;
     }
     p {
         text-align: center;
-        font-size: 2.5rem;
+        font-size: .24rem;
         font-weight: bold;
-        color: #ff5606;
-        height: 3.5rem;
+        color: #ff5606; // height: 3.5rem;
     }
     .money_type {
         width: 96%;
@@ -95,6 +95,7 @@ header {
         flex: 1;
         li {
             width: 50%;
+            flex: 1;
             display: flex;
             text-align: center;
             align-items: center;
@@ -107,42 +108,42 @@ header {
             .money_typecons {
                 flex: 7; // span {}
                 b {
-                    font-size: 1.5rem;
+                    font-size: .32rem;
                 }
             }
         }
         .icon_more {
             position: absolute;
-            right: 1rem;
+            right: .3rem;
             img {
-                width: 1rem;
+                width: .4rem;
             }
         }
     }
 }
 
 .box1 {
-    width: 84%;
+    width: 85%;
     display: flex;
     margin: 0 auto;
-    height: 4rem;
+    height: 1.6rem;
     justify-content: space-around;
-    margin-top: 1.5rem;
+    margin-top: .3rem;
     div {
         width: 46%;
         text-align: center;
-        height: 4rem;
+        height: 1.6rem;
         background: url('../../assets/honeybee/tags/yaoqingjilu.png');
         background-size: 100% 100%;
         color: #ff7006;
-        line-height: 4rem;
-        border-radius: 0.5rem;
+        line-height: 1.6rem;
+        border-radius: 0.1rem;
     }
     .active {
         background: url('../../assets/honeybee/tags/jiangliguize.png');
         background-size: 102% 110%;
         color: #fff;
-        height: 4.2rem;
+        height: 1.7rem;
     }
     img {
         width: 1.5rem;
@@ -150,7 +151,7 @@ header {
 }
 
 .invite {
-    width: 94.9%;
+    width: 94.9%; // height: 100%;
     margin: 0 auto;
     position: fixed;
     bottom: 3%;
@@ -160,36 +161,40 @@ header {
     animation: shake .5s infinite;
     img {
         width: 100%;
+        height: auto;
+        display: block;
     }
     p {
         position: absolute;
         top: 0;
         width: 100%;
-        text-align: center;
-        line-height: 52.5px;
-        font-size: 1.5rem;
+        height: 100%;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        font-size: .4rem;
         color: chocolate
     }
 }
 
 .commit {
     width: 100%;
-    height: 5rem;
-    margin-top: 1rem;
+    padding-top: .2rem;
     .commit_main {
-        width: 76%;
+        width: 85%;
         margin: 0 auto;
         .noCommit {
             width: 100%;
             text-align: center;
-            font-size: 1.3rem;
+            font-size: .24rem;
+            line-height: 2rem;
         }
         li {
             width: 100%;
+            height: 1.5rem;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #ff9800;
-            padding: 10px 0;
+            border-bottom: 1px solid #ff9800; // padding: 10px 0;
             .header_img {
                 width: 14%;
                 margin-right: 10px;
@@ -209,29 +214,29 @@ header {
                     display: flex;
                     justify-content: space-between;
                     &:nth-child(1) {
-                        height: 1.5rem;
+                        height: .5rem;
                         display: flex;
                         align-items: center;
                         .userName {
-                            width: 4rem;
-                            font-size: 1.1rem;
+                            width: .8rem;
+                            font-size: .32rem;
                             overflow: hidden;
                             text-overflow: ellipsis;
                             white-space: nowrap;
                         }
                         .time {
-                            font-size: .6rem;
+                            font-size: .32rem;
                         }
                     }
                     &:nth-child(2) {
-                        height: 1.5rem;
+                        height: .5rem;
                         display: flex;
                         align-items: center;
                         .course {
-                            font-size: .6rem;
+                            font-size: .32rem;
                         }
                         .shop_status {
-                            font-size: 1rem;
+                            font-size: .32rem;
                         }
                     }
                 }
@@ -240,7 +245,7 @@ header {
     }
     .rules_box3 {
         width: 100%;
-        margin-top: 1.5rem;
+        margin-top: .2rem;
         img {
             width: 100%;
         }
@@ -251,8 +256,7 @@ header {
     width: 100%;
     height: 1rem;
     flex: 1;
-    margin-top: 1rem;
-    padding-bottom: 3rem;
+    margin-top: .2rem; // padding-bottom: 3rem;
     .rules_box1 {
         width: 61.6%;
         margin: 0 auto;
@@ -265,7 +269,7 @@ header {
         margin: 0 auto;
         .rules_section {
             width: 100%;
-            padding: 1rem 0;
+            padding: .2rem 0;
             &:nth-child(even) {
                 h1 {
                     color: #4A90E2;
@@ -276,7 +280,7 @@ header {
                 display: flex;
                 dt {
                     flex: 2;
-                    padding: 0 1rem;
+                    padding: 0 .2rem;
                     img {
                         width: 100%;
                     }
@@ -285,15 +289,15 @@ header {
                     flex: 7;
                     h1 {
                         font-family: PingFangHK-Semibold;
-                        font-size: 1.4rem;
+                        font-size: .4rem;
                         color: #FF4E00;
                         letter-spacing: 1.9px;
                         font-weight: bold;
-                        padding-bottom: .5rem;
+                        padding-bottom: .1rem;
                     }
                     p {
                         font-family: PingFangHK-Regular;
-                        font-size: 1.2rem;
+                        font-size: .32rem;
                         color: #4A4A4A;
                         letter-spacing: 1.8px;
                     }
@@ -303,7 +307,7 @@ header {
     }
     .rules_box3 {
         width: 100%;
-        margin-top: 1.5rem;
+        margin-top: .5rem;
         img {
             width: 100%;
         }
@@ -325,10 +329,10 @@ header {
     height: 100%;
     position: relative;
     img {
-        width: 7rem;
+        width: 1.9rem;
         position: absolute;
-        right: 1rem;
-        top: 1rem;
+        right: .3rem;
+        top: .3rem;
     }
 }
 
@@ -341,30 +345,27 @@ header {
     top: 50%;
     margin-left: -35%;
     margin-top: -30%;
-    border-radius: .7rem;
+    border-radius: .2rem;
     .choseSussTop {
         width: 100%;
-        padding-top: 1rem;
+        padding-top: .2rem;
         h2 {
             width: 100%;
             text-align: center;
-            font-size: 1.4rem;
+            font-size: .4rem;
         }
         p {
-            text-align: center;
-            line-height: 2rem;
-            font-size: 1.1rem;
-            padding-top: .5rem;
+            text-align: center; // line-height: 2rem;
+            font-size: .32rem; // padding-top: .5rem;
         }
     }
     .choseSussBottom {
         width: 100%;
         text-align: center;
-        line-height: 3rem;
-        margin-top: 1rem;
-        border-top: 1px solid #EAEAEA;
-        padding-bottom: .6rem;
-        font-size: 1.2rem;
+        line-height: 1rem;
+        margin-top: .3rem;
+        border-top: 1px solid #EAEAEA; // padding-bottom: .6rem;
+        font-size: .32rem;
         color: #FE7738;
     }
 }
@@ -378,15 +379,16 @@ header {
     left: 50%;
     margin-top: -23%;
     margin-left: -35%;
-    border-radius: .5rem;
+    border-radius: .2rem;
+    font-size: .36rem;
     p {
         width: 100%;
         text-align: center;
-        line-height: 5rem;
+        line-height: 1.5rem;
     }
     button {
         width: 60%;
-        height: 2rem;
+        height: .8rem;
         background: #fc6313;
         margin: 0 auto;
         display: block;
@@ -406,17 +408,17 @@ header {
     flex-direction: column;
     .recommend_title {
         width: 100%;
-        height: 4rem;
-        line-height: 4rem;
+        height: .8rem;
+        line-height: .8rem;
         text-align: center;
-        font-size: 1.2rem;
+        font-size: .4rem;
         position: relative;
         img {
-            width: 1.4rem;
-            height: 1.4rem;
+            width: .4rem;
+            height: .4rem;
             position: absolute;
-            right: 1rem;
-            top: 1rem;
+            right: .1rem;
+            top: .1rem;
         }
     }
     .recommend_main {
@@ -429,27 +431,28 @@ header {
             width: 44%;
             box-sizing: border-box;
             position: relative;
-            margin-top: 1.2rem;
-            margin-left: 1rem;
+            margin-top: .5rem;
+            margin-left: .2rem;
             .label {
                 position: relative;
                 span {
+                    width: 100%;
                     position: absolute;
                     z-index: 9;
-                    top: -1rem;
+                    top: -.2rem;
                     color: #fff;
                     display: flex;
                     align-items: center;
                     b {
-                        font-size: 1.4rem;
+                        font-size: .32rem;
                     }
                 }
             }
             .courseTag {
                 position: absolute;
-                width: 6.5rem;
-                left: -.3rem;
-                top: -.9rem;
+                width: 2rem;
+                left: -.1rem;
+                top: -.3rem;
             }
             .course_img {
                 width: 100%;
@@ -460,22 +463,22 @@ header {
             }
             .courseName {
                 width: 100%;
-                height: 3rem;
+                height: .8rem;
                 display: flex;
                 position: relative;
                 align-items: center;
                 img {
-                    width: 1.3rem;
-                    height: 1.3rem;
+                    width: .5rem;
+                    height: .5rem;
                     padding-right: .5rem;
                     position: absolute
                 }
             }
             .course_name {
-                height: 2rem;
-                line-height: 2rem;
+                height: .5rem;
+                line-height: .5rem;
                 color: #000;
-                padding-left: 1.6rem;
+                padding-left: .6rem;
             }
         }
     }
@@ -483,11 +486,11 @@ header {
         width: 80%;
         background: #FE7738;
         color: #fff;
-        height: 3rem;
+        height: .8rem;
         margin: 0 auto;
-        font-size: 1.3rem;
+        font-size: .4rem;
         border-radius: 1.5rem;
-        margin-bottom: 3rem;
+        margin-bottom: .5rem;
     }
 }
 
@@ -502,7 +505,7 @@ header {
     flex-direction: column;
     .cashSussTop {
         width: 93%;
-        height: 3rem;
+        height: 1rem;
         border-bottom: 1px solid #EAEAEA;
         display: flex;
         align-items: center;
@@ -531,19 +534,19 @@ header {
         overflow: auto;
         li {
             display: flex;
-            height: 4rem;
-            border-bottom: 1px solid #EAEAEA;
-            padding: .5rem 0;
+            height: 1rem;
+            border-bottom: 1px solid #EAEAEA; // padding: .5rem 0;
             align-items: center;
             justify-content: space-between;
+            padding: .2rem .2rem;
             .colonel {
                 font-size: .32rem;
-                margin-top: .5rem;
+                margin-top: .2rem;
                 display: block;
             }
             .cashTime {
-                font-size: .5rem;
-                padding-top: .5rem;
+                font-size: .32rem;
+                padding-top: .2rem;
                 color: #888888
             }
             b {
@@ -551,19 +554,24 @@ header {
                 font-weight: normal;
             }
         }
+        p {
+            width: 100%;
+            text-align: center;
+            line-height:1rem;
+        }
     }
     .cashSuss_button {
         width: 80%;
-        height: 3rem;
+        height: 1rem;
         background: #FE7738;
         color: #000;
         z-index: 10;
         margin: 0 auto;
         margin-top: .5rem;
         border-radius: 1.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: .8rem;
         color: #fff;
-        font-size: 1.2rem;
+        font-size: .4rem;
     }
 }
 
@@ -573,9 +581,8 @@ header {
     color: #fff;
     margin: 0 auto;
     margin-top: 8%;
-    padding-bottom: .9rem;
     p {
-        line-height: 1.4rem;
+        line-height: .5rem;
     }
     span {
         color: #FE7738;
@@ -600,24 +607,28 @@ header {
         .userInfo {
             position: absolute;
             width: 96%;
-            height: 3rem;
-            top: .5rem;
-            left: .5rem;
+            height: 2rem;
+            top: .2rem;
+            left: .2rem;
             color: #000;
             display: flex;
             .header_img {
-                width: 3rem;
-                height: 3rem;
+                width: .8rem;
+                height: .8rem;
                 border-radius: 50%;
-                margin-right: .5rem;
+                margin-right: .1rem;
             }
             .name {
                 width: 100%;
-                height: 3rem;
-                line-height: 1.5rem;
+                height: .4rem;
+                line-height: .4rem;
+                font-size: .4rem;
                 p {
-                    font-size: .7rem;
+                    font-size: .26rem;
                     color: #000;
+                    &:nth-child(2) {
+                        font-size: .14rem;
+                    }
                 }
             }
         }
@@ -627,28 +638,33 @@ header {
             left: 0;
             display: flex;
             width: 100%;
-            padding: 0 1rem;
+            padding: 0 .3rem;
             box-sizing: border-box;
-            height: 5rem;
+            height: 1.5rem;
             >div {
                 width: 100%;
-                margin-right: .5rem;
+                margin-right: .1rem;
                 h1 {
                     color: #fff;
-                    font-size: 1.4rem;
+                    font-size: .4rem;
                     span {
                         color: #F6EC71;
                     }
                 }
                 p {
                     color: #fff;
-                    font-size: .8rem;
-                    line-height: 1.5rem;
+                    font-size: .26rem;
+                    line-height: .5rem;
+                    margin-top: .1rem;
+                    margin-left: .5rem;
+                    &:nth-child(3) {
+                        margin-left: 0;
+                    }
                 }
             }
             img {
-                width: 5rem;
-                height: 5rem;
+                width: 1.5rem;
+                height: 1.5rem;
             }
         }
     }
@@ -662,6 +678,21 @@ header {
     .close_icon {
         width: 20px;
         height: 20px;
+    }
+}
+
+.report_after {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    img {
+        width: 75%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-left: -36%;
+        margin-top: -50%;
+        z-index: 99
     }
 }
 
@@ -700,30 +731,29 @@ header {
                 display: flex;
                 justify-content: space-between;
                 &:nth-child(1) {
-                    height: 1.5rem;
+                    height: .5rem;
                     display: flex;
                     align-items: center;
                     .userName {
-                        width: 4rem;
-                        font-size: 1.1rem;
+                        width: 1rem;
+                        font-size: .32rem;
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
                     }
                     .time {
-                        font-size: .6rem;
+                        font-size: .24rem;
                     }
                 }
                 &:nth-child(2) {
-                    height: 1.5rem;
+                    height: .5rem;
                     display: flex;
                     align-items: center;
                     .course {
-                        font-size: .6rem;
-                        padding-top: .5rem;
+                        font-size: .32rem; // padding-top: .2rem;
                     }
                     .shop_status {
-                        font-size: 1rem;
+                        font-size: .32rem;
                     }
                 }
             }
@@ -731,13 +761,13 @@ header {
     }
     h2 {
         width: 95%;
-        height: 1.8rem;
-        line-height: 1.8rem;
+        height: .8rem;
+        line-height: .8rem;
         text-align: center;
         margin: 0 auto;
         background: #eee;
-        font-size: .8rem;
-        margin-top: .5rem;
+        font-size: .32rem;
+        margin-top: .2rem;
     }
     .commitTwo {
         width: 100%;
@@ -755,15 +785,15 @@ header {
         margin: 0 auto;
         border-bottom: 1px solid #000;
         p {
-            font-size: .7rem;
-            height: 1.3rem;
+            font-size: .3rem;
+            height: .3rem;
             &:nth-child(1) {
-                font-size: 1.2rem;
+                font-size: .4rem;
                 display: flex;
                 align-items: center;
-                margin-bottom: .5rem;
+                margin-bottom: .2rem;
                 .commitTime {
-                    font-size: .7rem;
+                    font-size: .32rem;
                     margin-left: .6rem;
                     color: #ccc;
                 }
@@ -773,21 +803,20 @@ header {
             }
         }
         div:nth-child(2) {
-            font-size: 1.4rem;
+            font-size: .32rem;
         }
     }
     .commitButton {
         width: 80%;
-        height: 3rem;
+        height: 1rem;
         background: #FE7738;
         color: #000;
         z-index: 10;
         margin: 0 auto;
-        border-radius: 1.5rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
+        border-radius: 1.5rem; // margin-top: 1rem;
+        margin-bottom: .5rem;
         color: #fff;
-        font-size: 1.2rem;
+        font-size: .4rem;
     }
 }
 

@@ -1,5 +1,6 @@
 <template>
   <div class="mycourse">
+    <v-load v-if="load"></v-load>
     <main v-if="this.list.length!==0">
       <section v-for="(item,index) in list" :key="index">
         <div class="top">
@@ -30,7 +31,7 @@
       </section>
     </main>
     <main v-if="this.list.length===0">
-      <p class="nocourse">你还没有购买课程哦</p>
+      <p class="nocourse">您还没有购买课程哦</p>
     </main>
     <v-footer :myopenid='openid' :iscourse='isCourse' :ismy='isMy' />
   </div>
@@ -38,6 +39,10 @@
 
 <script>
   import Footer from '@/components/_footer.vue';
+  import Loading from '@/components/_loading.vue';
+  import {
+    share,
+  } from '@/api/wx'
   import {
     queryOrderInfo
   } from '@/api/mine';
@@ -50,13 +55,16 @@
         isMy: true,
         hour: '',
         minute: '',
-        second: ''
+        second: '',
+        load: true
       }
     },
     components: {
-      "v-footer": Footer
+      "v-footer": Footer,
+      "v-load": Loading
     },
     created() {
+      this.noshare()
       queryOrderInfo({
         openId: this.$route.query.openid
       }).then(res => {
@@ -68,6 +76,9 @@
           }
         })
       })
+
+      this.wxshare()
+
     },
     methods: {
       jump(item) {
@@ -81,8 +92,8 @@
               payType: item.orderSource
             }
           })
-        }else if(item.status===0){
-           this.$router.push({
+        } else if (item.status === 0) {
+          this.$router.push({
             path: '/tourbuy',
             query: {
               openid: item.openId,
@@ -120,6 +131,100 @@
           clearInterval(timer);
         }
       },
+      wxshare() {
+        let that = this;
+        //wx是引入的微信sdk
+        // wx.config('这里有一些参数');//通过config接口注入权限验证配置
+        let mydata = {
+          'url': window.location.href
+        };
+        share(mydata).then(res => {
+          console.log(res)
+          if (res.data.statusCode == '200') {
+            wx.config({
+              debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+              appId: res.data.result.appId, // 必填，公众号的唯一标识
+              timestamp: res.data.result.timestamp, // 必填，生成签名的时间戳
+              nonceStr: res.data.result.noncestr, // 必填，生成签名的随机串
+              signature: res.data.result.signature, // 必填，调用js签名，
+              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'] // 必填，需要使用的JS接口列表，这里只写支付的
+            });
+            wx.ready(function () { //通过ready接口处理成功验证
+              // config信息验证成功后会执行ready方法
+              // let mytitle= that.mycourse.courseName;
+              let mytitle = '点击领取让孩子受用一生的数理思维课程';
+              let mydesc = '学完9节课让小朋友爱上思考';
+              let mylink =
+                'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?sourceId=' +
+                that.$route.query.sourceId + '%26courseid=' + that.$route.query.courseid + '%26invited=' + that
+                .$route
+                .query.openid + '%26payType=' + that
+                .$route
+                .query.payType; //分享购买 团id
+              let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
+              wx.hideMenuItems({
+                menuList: [
+                  'menuItem:copyUrl'
+                ]
+              });
+              wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用
+                title: mytitle, // 分享标题
+                desc: mydesc, // 分享描述
+                link: mylink, // 分享链接
+                imgUrl: myimgUrl, // 分享图标
+                type: '', // 分享类型,music、video或link，不填默认为link
+                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                success: function () {
+                  // 用户确认分享后执行的回调函数
+                  that.maskHide();
+                },
+                cancel: function () {
+                  // 用户取消分享后执行的回调函数
+                }
+              });
+              wx.onMenuShareTimeline({ //分享朋友圈
+                title: mytitle, // 分享标题
+                link: mylink, // 分享链接
+                imgUrl: myimgUrl, // 分享图标分享图标
+                success: function () {
+                  // 用户确认分享后执行的回调函数
+                  that.maskHide();
+                },
+                cancel: function () {
+                  // 用户取消分享后执行的回调函数
+                }
+              });
+            });
+            wx.error(function (res) { //通过error接口处理失败验证
+              // config信息验证失败会执行error函数
+            });
+          } else {
+
+          }
+        })
+      },
+      noshare() {
+        function onBridgeReady() {
+          console.log('禁用微信分享')
+          WeixinJSBridge.call('hideOptionMenu');
+        }
+
+        if (typeof WeixinJSBridge == "undefined") {
+          if (document.addEventListener) {
+            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+          } else if (document.attachEvent) {
+            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+          }
+        } else {
+          onBridgeReady();
+        }
+      },
+    },
+    mounted() {
+      setTimeout(() => {
+        this.load = false
+      }, 1000);
     }
   }
 
@@ -133,42 +238,44 @@
     flex-direction: column;
     color: #000;
     background: #F2F2F2;
+    font-size: .24rem;
 
     main {
       width: 90%;
       display: flex;
       flex-direction: column;
       margin: 0 auto;
-      margin-top: 1rem;
+      margin-top: .3rem;
 
       .nocourse {
         width: 100%;
         text-align: center;
+        font-size: .32rem;
       }
 
       section {
         flex: 1;
         width: 100%;
-        height: 10rem;
+        height: 4rem;
         box-sizing: border-box;
         border: 1px solid #ccc;
-        border-radius: .5rem;
-        margin-bottom: .8rem;
-        padding: .5rem;
+        border-radius: .2rem;
+        // margin-bottom: .8rem;
+        padding: .2rem;
         display: flex;
         flex-direction: column;
 
         .top {
           width: 100%;
-          height: 75%;
+          height: 70%;
           display: flex;
           border-bottom: 1px solid #c3c3c3;
-          padding-bottom: .5rem;
+          padding-bottom: .2rem;
 
           img {
-            width:35%;
+            width: 35%;
             display: block;
-            margin-right: .5rem;
+            margin-right: .2rem;
           }
 
           >div {
@@ -180,12 +287,12 @@
             .describe {
               width: 100%;
               height: 100%;
-              padding: 0 .5rem;
+              padding: 0 .1rem;
               box-sizing: border-box;
               position: relative;
 
               h1 {
-                margin-bottom: .3rem;
+                margin-bottom: .2rem;
                 display: flex;
                 justify-content: space-between;
                 font-weight: 500;
@@ -200,14 +307,14 @@
               }
 
               p {
-                font-size: .9rem;
+                font-size: .24rem;
                 color: #c3c3c3;
               }
 
               >span {
                 position: absolute;
                 bottom: 0;
-                font-size: .9rem;
+                font-size: .24rem;
               }
             }
           }
@@ -219,22 +326,22 @@
           align-items: center;
           display: flex;
           justify-content: space-between;
-          padding: 1rem .6rem;
+          padding: .3rem .1rem;
           box-sizing: border-box;
           margin-top: .3rem;
 
           span:nth-child(1) {
-            padding: .2rem .5rem;
+            padding: .1rem .2rem;
             border: 1px solid #D3D3D3;
           }
 
           span:nth-child(2) {
-            font-size: .8rem;
+            font-size: .24rem;
             color: #909090;
           }
 
           button {
-            padding: .3rem .7rem;
+            padding: .1rem .3rem;
             background: #FE7738;
             border-radius: .5rem;
             color: #fff;

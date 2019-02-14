@@ -98,7 +98,7 @@
 
     &nbsp; &nbsp; 1、如本协议中的任何条款因任何原因完全或部分无效或不具有执行力，均不影响本协议其他条款的效力。<br>
 
-    &nbsp; &nbsp; 2、本协议及本协议任何条款内容的最终解释权及修改权归天赋通术所有。 若您对天赋通及本服务有任何意见，请咨询天赋通客服中心。邮箱：contact@tianfutong.org
+    &nbsp; &nbsp; 2、本协议及本协议任何条款内容的最终解释权及修改权归天赋通术所有。 若您对天赋通及本服务有任何意见，请咨询天赋通客服中心。邮箱:contact@tianfutong.org
 
 
   </div>
@@ -116,17 +116,19 @@
 
 <style lang="less" scoped>
   .protocol {
+    font-size: .24rem;
     width: 100%;
     height: 100;
     overflow: auto;
     padding: 0 .5rem;
     box-sizing: border-box;
-    line-height: 1.5rem;
+    line-height: .5rem;
 
     h1 {
       width: 100%;
-      height: 3rem;
-      line-height: 3rem;
+      height: 1rem;
+      line-height: 1rem;
+      font-size: .36rem;
       font-weight: bold;
       text-align: center;
 

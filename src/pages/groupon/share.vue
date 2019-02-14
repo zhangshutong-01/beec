@@ -193,7 +193,7 @@
           </div>
           <div class="buyBtn">
             <div class="ninemoney" @click="goPaynext('199')">
-              <p class="oldprice"><span>¥9.9</span><span class="through">¥29.9</span></p>
+              <p class="oldprice"><span>¥9.9</span><span class="through">¥29</span></p>
               <p class="onlybuy">单独购买</p>
             </div>
             <div class="threemoney" @click="haopay2">
@@ -323,7 +323,7 @@
         </div>
         <!--<div class="fixedBtn">-->
         <!--<div class="ninemoney" @click="goPaynext('199')">-->
-        <!--<p class="oldprice"><span>¥9.9</span><span class="through">¥29.9</span></p>-->
+        <!--<p class="oldprice"><span>¥9.9</span><span class="through">¥29</span></p>-->
         <!--<p class="onlybuy">单独购买</p>-->
         <!--</div>-->
         <!--<div class="threemoney" @click="goPaynext('99')">-->

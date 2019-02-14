@@ -35,3 +35,22 @@ export function queryPostInfo(params) {
     data: params
   });
 }
+
+// 微信提款
+export function withdrawCash(params) {
+  return request({
+    url: '/beec/wx/withdrawCash',
+    method: 'post',
+    data: params
+  })
+}
+
+// 提现流水
+
+export function queryWithdrawCashLog(params) {
+  return request({
+    url: '/beec/wx/queryWithdrawCashLog',
+    method: 'post',
+    data: params
+  })
+}
