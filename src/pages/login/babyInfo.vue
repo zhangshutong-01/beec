@@ -65,6 +65,9 @@
   import {
     share
   } from "@/api/wx";
+   import {
+    MessageBox
+  } from "mint-ui";
   export default {
     data() {
       return {
@@ -121,6 +124,11 @@
         var monthIndex = this.$refs.babyMonth.selectedIndex
         let monthValue = this.$refs.babyMonth.options[monthIndex].value
         this.nowMonth = monthValue
+        if(this.$refs.babyName.value===""){
+          MessageBox.alert('',{
+            message:"请输入宝宝姓名哦"
+          })
+        }
         const parmas = {
           openId: this.$route.query.openid,
           babyName: this.$refs.babyName.value,

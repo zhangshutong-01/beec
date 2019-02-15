@@ -6,7 +6,7 @@
       </div>
       <span class="tag" @click="courseDetail()">课程介绍</span>
       <section class="member">
-        <div class="menyShop" v-if="payType==1">
+        <div class="menyShop" v-if="payType==1||payType==3">
           <div v-for="(item,index) in user" :key="index">
             <img :src="item.userHeadImgUrl ||'../../assets/groupon/nosuccessicon.png'">
             <span v-if="item.ranking===1">团长</span>
@@ -52,7 +52,7 @@
               </dt>
               <dd>
                 <h1>第一步：购买课程</h1>
-                <p>确保您已经购课成功，获得学习资格</p>
+                <p>确保您已经购课成功，获得学习资格。</p>
               </dd>
             </dl>
           </div>
@@ -131,7 +131,7 @@
           <img class="close_icon" src="../../assets/honeybee/tags/close.png">
         </span>
         <div ref="reportImg" v-show="activess">
-          <img class="active_img" :src="posterList.imgUrl+'?'+new Date().getTime()" crossOrigin="anonymous">
+          <img class="active_img" :src="posterList.imgUrl" crossOrigin="anonymous">
           <div class="userInfo">
             <img :src="posterList.headUrl+'?'+new Date().getTime()" alt="" class="header_img" crossOrigin="anonymous">
             <div class="name">
@@ -145,14 +145,14 @@
               <p>(9节精品课程 永久有效)</p>
               <p>长按二维码，了解详情</p>
             </div>
-            <img :src="posterList.codeUrl+'?'+new Date().getTime()" alt="" crossOrigin="anonymous">
+            <img :src="posterList.codeUrl" alt="" crossOrigin="anonymous">
           </div>
         </div>
         <div class="report_after" :style="{display: state.isDownloadImg ? 'block':'none'}">
           <!-- <span class="close" @click="close">
           <img class="close_icon" src="../../assets/honeybee/tags/close.png">
         </span> -->
-          <img :src="state.imgUrl" id="saveImg" />
+          <img :src="portImg" id="saveImg" />
         </div>
       </div>
 
@@ -183,6 +183,9 @@
     share
   } from '@/api/wx'
   import html2canvas from "html2canvas";
+  import {
+    Indicator
+  } from 'mint-ui';
   export default {
     data() {
       return {
@@ -200,16 +203,23 @@
           isDownloadImg: false,
           imgUrl: ''
         },
-        activess: true
+        activess: true,
+        portImg: ''
       };
     },
     created() {
+      if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        if (window.name != 'open') {
+          window.name = 'open';
+          window.location.reload();
+        }
+      }
       this.courseid = this.$route.query.courseid
       this.openid = this.$route.query.openid
       this.payType = this.$route.query.payType
       console.log(this.payType)
       console.log(this.$route.query.openid)
-      if (this.payType == 1) {
+      if (this.payType == 1 || this.payType == 3) {
         this.getGroupDetails()
       } else {
         this.getshop()
@@ -241,7 +251,7 @@
           id: this.$route.query.sourceId
         }
         queryGroupDetails(parmas).then(res => {
-          console.log(res)
+          console.log('231', res)
           this.user = res.data.result.userList
         })
       },
@@ -318,7 +328,14 @@
         }).then(res => {
           console.log(res.data.result)
           this.posterList = res.data.result
-          this.screenshots()
+          Indicator.open({
+            text: '加载中...',
+            spinnerType: 'fading-circle'
+          });
+          setTimeout(() => {
+            this.screenshots()
+          }, 0);
+
         })
       },
       close() {
@@ -435,6 +452,17 @@
             imgUrl: b64,
             isDownloadImg: true,
           };
+          if (!window.sessionStorage.getItem('portimg')) {
+            window.sessionStorage.setItem('portimg', this.state.imgUrl)
+            this.portImg = window.sessionStorage.getItem('portimg', this.state.imgUrl)
+            console.log(this.portImg)
+            Indicator.close();
+          } else {
+            this.portImg = window.sessionStorage.getItem('portimg', this.state.imgUrl)
+            console.log(this.portImg)
+            Indicator.close();
+          }
+
           console.log(this.state)
           this.activess = false
         });

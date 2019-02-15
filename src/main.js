@@ -7,7 +7,10 @@ import Mint from 'mint-ui' //移动端UI
 import 'mint-ui/lib/style.css'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-
+import {
+  MessageBox
+} from 'mint-ui'
+Vue.prototype.$MessageBox = MessageBox
 Vue.use(Mint);
 Vue.config.productionTip = false
 Vue.use(ElementUI);

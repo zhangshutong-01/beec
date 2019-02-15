@@ -70,7 +70,7 @@
         <div class="empty" v-if="isShow"></div>
       </div>
     </div>
-    <div class="fixedBtn" v-if="isShow&&shopThisCourse===3||shopThisCourse===2">
+    <div class="fixedBtn" v-if="isShow&&shopThisCourse===3||shopThisCourse===4">
       <div class="ninemoney" @click="paynet('199')">
         <p class="oldprice">
           <span>¥ {{courseData.originalPrice}}</span>
@@ -141,6 +141,12 @@
       this.scrollChange();
     },
     created: function () {
+      if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        if (window.name != 'open') {
+          window.name = 'open';
+          window.location.reload();
+        }
+      }
       this.course.courseid = this.$route.query.courseid;
       this.useid = this.$route.query.refresh;
       this.isShare = this.$route.query.isShare;
@@ -317,8 +323,8 @@
             wx.ready(function () {
               //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
-              let mytitle = "和小蜜蜂一起逛超市，情景动画教理财哦！";
-              let mydesc = "27个问题教会孩子：统筹规划、分类判断、计算推理！";
+              let mytitle = "点击领取让孩子受用一生的数理思维课程";
+              let mydesc = "学完9节课让小朋友爱上思考";
               let mylink =
                 "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/courseInfo?isShare=1%26courseid=" +
                 me.course.courseid; //分享到首页

@@ -54,6 +54,12 @@
       }
     },
     created() {
+      if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        if (window.name != 'open') {
+          window.name = 'open';
+          window.location.reload();
+        }
+      }
       this.openid = this.$route.query.openid
       this.courseid = this.$route.query.courseid
       checkTradingstate({

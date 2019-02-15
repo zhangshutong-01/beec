@@ -75,6 +75,12 @@
       }
     },
     created() {
+      if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        if (window.name != 'open') {
+          window.name = 'open';
+          window.location.reload();
+        }
+      }
       const params = {
         id: this.$route.query.courseid
       }

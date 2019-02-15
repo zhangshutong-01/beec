@@ -28,9 +28,9 @@
           <img class="close_icon" src="../../assets/honeybee/tags/close.png">
         </span>
         <div ref="reportImg">
-          <img class="active_img" :src="posterList.imgUrl+'?'+new Date().getTime()"  crossOrigin="anonymous">
+          <img class="active_img" :src="posterList.imgUrl+'?'+new Date().getTime()" crossOrigin="anonymous">
           <div class="userInfo">
-            <img :src="posterList.headUrl+'?'+new Date().getTime()" alt="" class="header_img"  crossOrigin="anonymous">
+            <img :src="posterList.headUrl+'?'+new Date().getTime()" alt="" class="header_img" crossOrigin="anonymous">
             <div class="name">
               <p>{{posterList.nickName}}</p>
               <p>我发现一个超棒的课程！推荐给你~</p>
@@ -42,14 +42,11 @@
               <p>(9节精品课程 永久有效)</p>
               <p>长按二维码，了解详情</p>
             </div>
-            <img :src="posterList.codeUrl+'?'+new Date().getTime()" alt=""  crossOrigin="anonymous">
+            <img :src="posterList.codeUrl+'?'+new Date().getTime()" alt="" crossOrigin="anonymous">
           </div>
         </div>
         <div class="report_after" :style="{display: state.isDownloadImg ? 'block':'none'}">
-          <!-- <span class="close" @click="close">
-          <img class="close_icon" src="../../assets/honeybee/tags/close.png">
-        </span> -->
-          <img :src="state.imgUrl" id="saveImg" />
+          <img :src="portImg" id="saveImg" />
         </div>
       </div>
     </div>
@@ -92,6 +89,9 @@
     share
   } from "@/api/wx";
   import html2canvas from "html2canvas";
+  import {
+    Indicator
+  } from 'mint-ui';
   export default {
     data() {
       return {
@@ -109,10 +109,22 @@
           isDownloadImg: false,
           imgUrl: ''
         },
-        activess: true
+        activess: true,
+        portImg: ''
       }
     },
     created() {
+      // if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+      //   if (window.name != 'open') {
+      //     window.name = 'open';
+      //     window.location.reload();
+      //   }
+      // }
+      console.log('123')
+      if (window.sessionStorage.getItem('afterPay') === undefined) {
+        window.sessionStorage.setItem('afterPay', 'afterPay')
+        window.location.reload();
+      }
       const parmas = {
         openId: this.$route.query.openid,
         courseId: this.$route.query.courseid
@@ -141,6 +153,16 @@
             imgUrl: b64,
             isDownloadImg: true,
           };
+          if (!window.sessionStorage.getItem('portimg')) {
+            window.sessionStorage.setItem('portimg', this.state.imgUrl)
+            this.portImg = window.sessionStorage.getItem('portimg', this.state.imgUrl)
+            console.log(this.portImg)
+            Indicator.close();
+          } else {
+            this.portImg = window.sessionStorage.getItem('portimg', this.state.imgUrl)
+            console.log(this.portImg)
+            Indicator.close();
+          }
           console.log(this.state)
           this.activess = false
         });
@@ -169,7 +191,14 @@
         }).then(res => {
           console.log(res.data.result)
           this.posterList = res.data.result
-          this.screenshots()
+          Indicator.open({
+            text: '加载中...',
+            spinnerType: 'fading-circle'
+          });
+          setTimeout(() => {
+            this.screenshots()
+          }, 500);
+
         })
       },
       close() {
@@ -210,13 +239,11 @@
               //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
               let mytitle =
-                "孩子明年上小学啦，送ta一套蜜蜂乐园思维，爱上思考，变聪明！";
-              let mydesc = "蜜蜂乐园";
+                "点击领取让孩子受用一生的数理思维课程";
+              let mydesc = "学完9节课让小朋友爱上思考";
               let mylink =
-                "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?openid=" +
-                that.$route.query.openid + "%26courseid=" + that.$route.query.courseid + "%26sourceId=" + that.$route
-                .query.sourceId + "%26payType=" + that.$route
-                .query.payType; //分享到首页
+                "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?invited=" +
+                that.$route.query.openid + "%26courseid=" + that.$route.query.courseid //分享到首页
               //let mylink='http://test-yunying.coolmath.cn/beec/course';//分享到首页
               let myimgUrl = "http://thyrsi.com/t6/665/1548835210x2728279033.png";
               // wx.hideMenuItems({
@@ -303,6 +330,7 @@
       height: auto;
       margin-top: .5rem;
       margin-bottom: .5rem;
+      padding-bottom: 2.2rem;
 
       .courselists {
         width: 100%;

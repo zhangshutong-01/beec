@@ -10,12 +10,12 @@
               <h1>
                 {{item.courseName}}
                 <p>
-                  <span>{{item.orderSource===1?'3人团':'直购'}}</span>
+                  <span>{{item.orderSource===1||item.orderSource===3?'3人团':'直购'}}</span>
                   <span>￥{{item.orderAmount}}</span>
                 </p>
               </h1>
               <p>{{item.courseDescribe}}</p>
-              <span v-if="item.orderSource===1&&item.status===1">成团日期:{{item.endTime}}</span>
+              <span v-if="item.orderSource===1||item.orderSource===3&&item.status===1">成团日期:{{item.endTime}}</span>
               <span v-if="item.status===0">剩余时间:{{hour}}:{{minute}}:{{second}}</span>
               <span v-if="item.orderSource===2">购买日期:{{item.endTime}}</span>
             </div>
@@ -23,7 +23,7 @@
         </div>
         <div class="bottom">
           <p>
-            <span v-if="item.status===1">{{item.orderSource===1?'拼团成功':'直购成功'}}</span>
+            <span v-if="item.status===1">{{item.orderSource===1||item.orderSource===3?'拼团成功':'直购成功'}}</span>
             <span v-if="item.status===0">拼团中</span>
           </p>
           <button @click="jump(item)">{{item.status===0?"拼团详情":"赚奖金"}}</button>
@@ -76,9 +76,7 @@
           }
         })
       })
-
       this.wxshare()
-
     },
     methods: {
       jump(item) {
@@ -256,7 +254,7 @@
       section {
         flex: 1;
         width: 100%;
-        height: 4rem;
+        height: 3rem;
         box-sizing: border-box;
         border: 1px solid #ccc;
         border-radius: .2rem;

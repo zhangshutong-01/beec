@@ -16,12 +16,14 @@
         let r = window.location.search.substr(1).match(reg);
         if (r != null) {
           sessionStorage.setItem('code', unescape(r[2]))
-          location.href = 'http://test-yunying.coolmath.cn/beec/money'
+          location.href =
+            'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/money'
         } else {
           return null;
         }
       } else {
-        location.href = 'http://test-yunying.coolmath.cn/beec/money'
+        location.href =
+          'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/money'
       }
     }
   }

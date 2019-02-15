@@ -213,54 +213,45 @@
             </div>
             <b>-{{item.amount}}</b>
           </li>
-          <p v-if="tixian===null">您还没有提现记录哦</p>
+          <p v-if="tixian.length===0">您还没有提现记录哦</p>
         </div>
         <button class="cashSuss_button" @click="cashClose">关闭</button>
       </div>
     </div>
-    <div class="shareMask" v-if="activeImg">
+    <!-- <div class="shareMask" v-if="activeImg">
       <div class="save">
         <p>已经为您生成专属海报，</p>
-        <p>
-          <span>98%的家长</span>转发后成功获得奖学金，
-        </p>
-        <p>
-          <span>长按图片保存海报</span>
-        </p>
+        <p><span>98%的家长</span>转发后成功获得奖学金，</p>
+        <p><span>长按图片保存海报室系列</span></p>
       </div>
       <div class="activeImg">
         <span class="close" @click="close">
           <img class="close_icon" src="../../assets/honeybee/tags/close.png">
         </span>
-        <div ref="reportImg" v-show="activess">
+        <div ref="reportImg">
           <img class="active_img" :src="posterList.imgUrl+'?'+new Date().getTime()" crossOrigin="anonymous">
           <div class="userInfo">
-            <img :src="posterList.headUrl+'?'+new Date().getTime()" alt class="header_img" crossOrigin="anonymous">
+            <img :src="posterList.headUrl+'?'+new Date().getTime()" alt="" class="header_img" crossOrigin="anonymous">
             <div class="name">
-              <p>我是 {{posterList.nickName}}</p>
+              <p>{{posterList.nickName}}</p>
               <p>我发现一个超棒的课程！推荐给你~</p>
             </div>
           </div>
           <div class="posterBottom">
             <div>
-              <h1>
-                限时特价
-                <span>￥29</span>
-              </h1>
+              <h1>限时特价<span>￥29</span></h1>
               <p>(9节精品课程 永久有效)</p>
               <p>长按二维码，了解详情</p>
             </div>
-            <img :src="posterList.codeUrl+'?'+new Date().getTime()" crossOrigin="anonymous">
+            <img :src="posterList.codeUrl+'?'+new Date().getTime()" alt="" crossOrigin="anonymous">
           </div>
         </div>
         <div class="report_after" :style="{display: state.isDownloadImg ? 'block':'none'}">
-          <!-- <span class="close" @click="close">
-          <img class="close_icon" src="../../assets/honeybee/tags/close.png">
-          </span>-->
-          <img :src="state.imgUrl" id="saveImg">
+          <img :src="portImg" id="saveImg" />
         </div>
       </div>
-    </div>
+    </div> -->
+    <v-port v-if="activeImg"></v-port>
     <div class="shareMask" v-if="showCommit">
       <div class="commitMan">
         <div class="commitMater">
@@ -299,6 +290,7 @@
         <button class="commitButton" @click="closeCommit">关闭</button>
       </div>
     </div>
+    <!-- <v-footer :myopenid='openid' :iscourse='isCourse' :ismy='isMy' :ismoney='ismoney' /> -->
   </div>
 </template>
 
@@ -307,6 +299,8 @@
     share
   } from "@/api/wx";
   import Loading from '@/components/_loading.vue';
+  import Port from '@/components/_port.vue';
+  // import Footer from "@/components/_footer.vue";
   import {
     MessageBox
   } from "mint-ui";
@@ -325,7 +319,8 @@
   // import ElasticFrame from '@/components/_ElasticFrame';
   export default {
     components: {
-      "v-loading": Loading
+      "v-loading": Loading,
+      "v-port": Port,
     },
     data() {
       return {
@@ -355,9 +350,19 @@
         activess: true,
         tixian: [],
         load: true,
+        portImg: '',
+        // ismoney: true,
+        // isCourse: false,
+        // isMy: false
       };
     },
     created() {
+      if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        if (window.name != 'open') {
+          window.name = 'open';
+          window.location.reload();
+        }
+      }
       // if (!window.sessionStorage.getItem('code')) {
       //   location.href = 'http://test-yunying.coolmath.cn/beec/logins'
       // }
@@ -377,7 +382,7 @@
           this.isShop = true;
         } else {
           this.courseDetail = res.data.result;
-          this.courseid=this.courseDetail[0].id
+          this.courseid = this.courseDetail[0].id
         }
       });
       queryAccountAmount({
@@ -398,7 +403,7 @@
         console.log("12321312", res);
         this.tixian = res.data.result;
       });
-      
+
     },
     mounted() {
       setTimeout(() => {
@@ -422,13 +427,14 @@
           this.courseName = item.courseName;
           this.courseid = item.id;
           // this.course = item.id
-          queryPostInfo({
-            openId: this.$route.query.openid,
-            courseId: this.courseid
-          }).then(res => {
-            console.log(res.data.result);
-            this.posterList = res.data.result;
-          });
+          // queryPostInfo({
+          //   openId: this.$route.query.openid,
+          //   courseId: this.courseid
+          // }).then(res => {
+          //   console.log(res.data.result);
+          //   this.posterList = res.data.result;
+          //   this.screenshots();
+          // });
         } else if (index === 1) {
           this.isSelect2 = true;
           this.isSelect = false;
@@ -437,17 +443,17 @@
           // this.course = item.id
         }
       },
-      close() {
-        //  点击关闭海报
-        if (this.activeImg === true) {
-          this.activeImg = false;
-          this.courseName = "";
-        }
-      },
+      // close() {
+      //   //  点击关闭海报
+      //   if (this.activeImg === true) {
+      //     this.activeImg = false;
+      //     this.courseName = "";
+      //   }
+      // },
       poster() {
         //  出现海报
         this.activeImg = true
-        this.screenshots();
+
       },
       cashSussess() {
         // 点击弹起已提现详情
@@ -475,11 +481,11 @@
       },
       cash() {
         // 去提现弹框
-        // if (this.schoolMoney.totalAmount >= 100) {
+        // if (this.schoolMoney.totalAmount >= 30) {
 
         // } else {
         //   MessageBox.alert("", {
-        //     message: "大于100才可提现哦，快去邀请好友吧"
+        //     message: "满30才可提现哦！快去邀请好友~"
         //   });
         // }
         MessageBox.confirm("", {
@@ -494,13 +500,20 @@
               code: window.sessionStorage.getItem("code")
             }).then(res => {
               if (res.data.statusCode === '14004') {
-                MessageBox.alert("应提现" + res.data.result.should + "元，实际提现" + res.data.result.actual +
-                  "元，奖学金会在1-2个工作日内放入您的微信零钱中").then(action => {
-                  location.reload()
+                MessageBox.alert("成功提现" + res.data.result.actual + "元，奖学金会在1~2个工作日内放入您的微信零钱中").then(action => {
+                  window.location.reload()
+                })
+              } else if (res.data.statusCode === '14001') {
+                MessageBox.alert("每天最多提现5次哦，明天再来！").then(action => {
+                  window.location.reload()
+                })
+              } else if (res.data.statusCode === '14005') {
+                MessageBox.alert("每天最多提现500哦，明天再来！").then(action => {
+                  window.location.reload()
                 })
               } else {
                 MessageBox.alert(res.data.message).then(action => {
-                  location.reload()
+                  window.location.reload()
                 });
               }
             });
@@ -556,28 +569,7 @@
           this.commit_show = true;
         }
       },
-      screenshots() {
-        //生成图片；
-        let b64;
-        html2canvas(this.$refs.reportImg, {
-          useCORS: true
-        }).then(canvas => {
-          try {
-            b64 = canvas.toDataURL("image/png");
-            // console.log(b64);
-          } catch (err) {
-            console.log(err);
-            // alert(err)
-          }
-          this.state = {
-            imgUrl: b64,
-            isDownloadImg: true
-          };
-          console.log(this.state);
-          this.activess = false;
-        });
-      },
-       wxshare() {
+      wxshare() {
         let that = this
         console.log(that.courseid)
         //wx是引入的微信sdk
@@ -610,7 +602,7 @@
               let mydesc = " 学完9节课让小朋友爱上思考";
               let mylink =
                 "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?invited=" +
-                that.$route.query.openid + "%26courseid=10002" ; //分享到首页
+                that.$route.query.openid + "%26courseid=10002"; //分享到首页
               let myimgUrl = "http://thyrsi.com/t6/665/1548835210x2728279033.png";
               // wx.hideMenuItems({
               //   menuList: ["menuItem:copyUrl"]

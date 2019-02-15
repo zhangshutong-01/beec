@@ -52,9 +52,9 @@
           <div class="successTip">
             <p v-if="!mySuccess&&timeOut">该团已拼课成功！自己开团试试吧~</p>
             <p v-if="mySuccess&&timeOut">您已拼团成功，可以去上课啦</p>
-            <p v-if="!timeOut">该团已超时，请重新购买</p>
+            <p v-if="!mySuccess&&!timeOut">该团已超时，请重新购买</p>
           </div>
-          <div class="buyBtn" v-if="!mySuccess&&!timeOut">
+          <div class="buyBtn" v-if="!mySuccess||!timeOut">
             <div class="ninemoney" @click="paynet('199')">
               <p class="oldprice"><span>¥{{courseData.originalPrice}}</span></p>
               <p class="onlybuy">单独购买</p>
@@ -431,7 +431,8 @@
         }, 1000);
         if (times <= 0) {
           clearInterval(timer);
-
+        } else if (times === 0) {
+          window.location.reload()
         }
       },
       paynet(names) {
@@ -564,17 +565,15 @@
                 this.success = true
               }
             }
-
           })
         } else if (res.data.result.isPay === 3) {
-          this.payType = 1
           this.groupState = false
-          this.groupState = true
           this.sourceId = res.data.result.sourceId
           checkTradingstate({
             openId: this.invited,
             courseId: this.$route.query.courseid
           }).then(res => {
+            this.payType = res.data.result.payType
             console.log('yaoqingrenxinxi', res)
             if (res.data.result.payType === 1) {
               this.payType = res.data.result.payType
@@ -617,9 +616,15 @@
                   if (this.groupDetail.times === 0) {
                     this.success = true
                   }
+                } else {
+                  this.success = true
+                  this.mySuccess = false
+                  this.timeOut = true
+                  this.groupState = true
                 }
               })
             } else if (res.data.result.payType === 2) {
+              this.groupState = true
               this.payType = res.data.result.payType
               queryUserInfo({
                 openId: this.invited
@@ -629,44 +634,158 @@
                 this.onePeo = res.data.result
                 this.oneshop = false
               })
-            } else if (res.data.result.payType === '') {
-              // console.log(123)
-              // this.sourceId = this.$route.query.sourceId
-              // const parmas = {
-              //   id: this.$route.query.sourceId
-              // }
-              // queryGroupDetails(parmas).then(res => {
-              //   console.log(res)
-              //   this.groupDetail = res.data.result
-              //   this.users = res.data.result.userList
-              //   this.remainNumber = 3 - this.users.length
-              //   this.countDown(this.groupDetail.times)
-              //   if (this.groupDetail.groupStatus === 3) {
-              //     this.timeOut = false
-              //     this.mySuccess = false
-              //     this.success = true
-              //   } else if (this.groupDetail.groupStatus === 1) {
-              //     this.users.forEach(element => {
-              //       this.hasBuyId.push(element.openId)
-              //     });
-              //     if (this.hasBuyId.indexOf(this.$route.query.openid) >= 0) {
-              //       this.mySuccess = true
-              //       this.groupState = false
-              //     } else {
-              //       this.groupState = true
-              //     }
-              //     if (this.groupDetail.times === 0) {
-              //       this.success = true
-              //     }
-              //   }
-
-              // })
+            } else {
+              this.payType = 1
+              this.sourceId = res.data.result.sourceId
+              queryUserInfo({
+                openId: this.invited
+              }).then(res => {
+                console.log(res)
+                this.faqiUser = res.data.result
+                this.onePeo = res.data.result
+                this.oneshop = true
+              })
+              const parmas = {
+                id: res.data.result.sourceId
+              }
+              queryGroupDetails(parmas).then(res => {
+                console.log(res)
+                this.groupDetail = res.data.result
+                this.users = res.data.result.userList
+                this.remainNumber = 3 - this.users.length
+                this.countDown(this.groupDetail.times)
+                if (this.groupDetail.groupStatus === 3) {
+                  this.timeOut = false
+                  this.mySuccess = false
+                  this.success = true
+                  this.groupState = false
+                  this.sourceId = this.$route.query.sourceId
+                  this.openid = this.$route.query.invited
+                  console.log(this.openid)
+                } else if (this.groupDetail.groupStatus === 1) {
+                  this.users.forEach(element => {
+                    this.hasBuyId.push(element.openId)
+                  });
+                  if (this.hasBuyId.indexOf(this.$route.query.openid) >= 0) {
+                    this.mySuccess = true
+                    this.groupState = false
+                  } else {
+                    this.groupState = true
+                  }
+                  if (this.groupDetail.times === 0) {
+                    this.success = true
+                  }
+                } else {
+                  this.success = true
+                  this.mySuccess = false
+                  this.timeOut = true
+                  this.groupState = true
+                }
+              })
             }
           })
+        } else if (res.data.result.isPay === 4) {
+          checkTradingstate({
+            openId: this.invited,
+            courseId: this.$route.query.courseid
+          }).then(res => {
+            console.log("yaoqngre", res)
+            if (res.data.result.isPay === 1) {
+              this.payType = res.data.result.payType
+              this.groupState = true
+              this.sourceId = res.data.result.sourceId
+              if (this.payType === 2) {
+                queryUserInfo({
+                  openId: this.invited
+                }).then(res => {
+                  this.faqiUser = res.data.result
+                  this.onePeo = res.data.result
+                })
+              } else {
+                queryUserInfo({
+                  openId: this.invited
+                }).then(res => {
+                  this.faqiUser = res.data.result
+                  this.onePeo = res.data.result
+                })
+                const parmas = {
+                  id: res.data.result.sourceId
+                }
+                queryGroupDetails(parmas).then(res => {
+                  console.log(res)
+                  this.groupDetail = res.data.result
+                  this.users = res.data.result.userList
+                  this.remainNumber = 3 - this.users.length
+                  this.countDown(this.groupDetail.times)
+                  // this.faqiUser = this.users[0]
+                  if (this.groupDetail.groupStatus === 3) {
+                    console.log(123)
+                    this.timeOut = false
+                    this.mySuccess = false
+                    this.success = true
+                  } else if (this.groupDetail.groupStatus === 1) {
+                    this.users.forEach(element => {
+                      this.hasBuyId.push(element.openId)
+                    });
+                    if (this.hasBuyId.indexOf(this.$route.query.openid) >= 0) {
+                      this.mySuccess = true
+                      this.groupState = false
+                    } else {
+                      this.groupState = true
+                    }
+                    if (this.groupDetail.times === 0) {
+                      this.success = true
+                    }
+                  } else if (this.groupDetail.groupStatus === 2) {
+                    this.success = true
+                  }
+                })
+              }
 
+            } else if (res.data.result.isPay === 2) {
+              this.payType = 1
+              this.groupState = false
+              this.sourceId = res.data.result.sourceId
+              queryUserInfo({
+                openId: this.invited
+              }).then(res => {
+                this.faqiUser = res.data.result
+                this.onePeo = res.data.result
+              })
+              const parmas = {
+                id: res.data.result.sourceId
+              }
+              queryGroupDetails(parmas).then(res => {
+                console.log(res)
+                this.groupDetail = res.data.result
+                this.users = res.data.result.userList
+                this.remainNumber = 3 - this.users.length
+                this.countDown(this.groupDetail.times)
+                // this.faqiUser = this.users[0]
+                if (this.groupDetail.groupStatus === 3) {
+                  console.log(123)
+                  this.timeOut = false
+                  this.mySuccess = false
+                  this.success = true
+                } else if (this.groupDetail.groupStatus === 1) {
+                  this.users.forEach(element => {
+                    this.hasBuyId.push(element.openId)
+                  });
+                  if (this.hasBuyId.indexOf(this.$route.query.openid) >= 0) {
+                    this.mySuccess = true
+                    this.groupState = false
+                  } else {
+                    this.groupState = true
+                  }
+                  if (this.groupDetail.times === 0) {
+                    this.success = true
+                  }
+                }
+              })
+            } else if (res.data.result.isPay === 4) {}
+          })
         }
       })
-
       this.scrollChange()
       this.getCourseDetail()
       this.wxshare()

@@ -274,7 +274,7 @@ const router = new Router({
       name: 'logins',
       component: logins,
       meta: {
-        title: "登录"
+        title: "奖学金"
       }
     }, {
       path: '/babyInfo',

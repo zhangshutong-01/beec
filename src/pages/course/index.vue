@@ -20,9 +20,10 @@
       <img src="http://thyrsi.com/t6/665/1548857508x2890174076.png" class="bj" />
       <div :class="[shopshow?'shop active':'shop']" @click="jump(courselist[0])">
         <img src="../../assets/honeybeeIndex/csd.png" />
-        <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[0].status===0" />
+        <!-- <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[0].status===0" />
         <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[0].status===1" />
-        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[0].status===2" />
+        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[0].status===2" /> -->
+        <img src="../../assets/honeybeeIndex/jqqdd.png" />
       </div>
       <div :class="[rocketshow?'rocket active':'rocket']" @click="jump(courselist[1])">
         <img :src="courselist[1].imgUrl" />
@@ -32,21 +33,24 @@
       </div>
       <div :class="[clockshow?'clock active':'clock']" @click="jump(courselist[2])">
         <img src="../../assets/honeybeeIndex/zb.png" />
-        <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[2].status===0" />
+        <!-- <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[2].status===0" />
         <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[2].status===1" />
-        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[2].status===2" />
+        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[2].status===2" /> -->
+        <img src="../../assets/honeybeeIndex/jqqdd.png" />
       </div>
       <div :class="[carshow?'car active':'car']" @click="jump(courselist[3])">
         <img src="../../assets/honeybeeIndex/dg.png" />
-        <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[3].status===0" />
+        <!-- <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[3].status===0" />
         <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[3].status===1" />
-        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[3].status===2" />
+        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[3].status===2" /> -->
+        <img src="../../assets/honeybeeIndex/jqqdd.png" />
       </div>
       <div :class="[expressshow?'express active':'express']" @click="jump(courselist[4])">
         <img src="../../assets/honeybeeIndex/kd.png" />
-        <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[4].status===0" />
+        <!-- <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[4].status===0" />
         <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[4].status===1" />
-        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[4].status===2" />
+        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[4].status===2" /> -->
+        <img src="../../assets/honeybeeIndex/jqqdd.png" />
       </div>
     </div>
     <v-footer :myopenid='openid' :iscourse='isCourse' :ismy='isMy' :ismoney='ismoney' />
@@ -277,9 +281,15 @@
           if (item.id === '10001') {
             if (item.isOldUser === 0) {
               this.shopshow = true
-              MessageBox.alert('', {
-                message: '敬请期待'
-              })
+              // MessageBox.alert('', {
+              //   message: '敬请期待'
+              // })
+              this.$MessageBox({
+                title: '',
+                message: '敬请期待', // 提示的内容，作为参数，传进来
+                closeOnClickModal: true, // 表示不只是点击确定按钮才能关闭弹窗，点击页面的任何地方都可以关闭弹窗
+                confirmButtonClass: 'typesbtn' //给确定按钮加一个class类名（因为在页面上显示的效果是'确定'二字字体比别的字体小很多，很奇怪，所以要对它的样式单独进行调整）
+              });
               setInterval(() => {
                 this.shopshow = false
               }, 500);
@@ -415,7 +425,7 @@
               let mylink =
                 "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/course"; //分享到首页
               //let mylink='http://test-yunying.coolmath.cn/beec/course';//分享到首页
-              let myimgUrl = "http://thyrsi.com/t6/665/1548835210x2728279033.png";
+              let myimgUrl = "http://thyrsi.com/t6/670/1550222880x2728278638.png";
               // wx.hideMenuItems({
               //   menuList: ["menuItem:copyUrl"]
               // });
@@ -514,6 +524,12 @@
     },
 
     created: function () {
+      if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        if (window.name != 'open') {
+          window.name = 'open';
+          window.location.reload();
+        }
+      }
       this.load = true
       this.showshare();
       this.useid = this.$route.query.refresh;

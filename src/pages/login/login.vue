@@ -76,12 +76,18 @@
       },
       identifying() {
         if (this.phone === '') {
-          MessageBox.alert("", {
-            message: "请输入手机号"
+          this.$MessageBox({
+            title: '',
+            message: '请输入手机号', // 提示的内容，作为参数，传进来
+            closeOnClickModal: true, // 表示不只是点击确定按钮才能关闭弹窗，点击页面的任何地方都可以关闭弹窗
+            confirmButtonClass: 'typesbtn' //给确定按钮加一个class类名（因为在页面上显示的效果是'确定'二字字体比别的字体小很多，很奇怪，所以要对它的样式单独进行调整）
           });
         } else if (this.isPhone === true) {
-          MessageBox.alert("", {
-            message: "您输入的手机格式不正确"
+          this.$MessageBox({
+            title: '',
+            message: '您输入的手机格式不正确', // 提示的内容，作为参数，传进来
+            closeOnClickModal: true, // 表示不只是点击确定按钮才能关闭弹窗，点击页面的任何地方都可以关闭弹窗
+            confirmButtonClass: 'typesbtn' //给确定按钮加一个class类名（因为在页面上显示的效果是'确定'二字字体比别的字体小很多，很奇怪，所以要对它的样式单独进行调整）
           });
         } else {
           const parmas = {
@@ -90,13 +96,19 @@
           }
           getSMSCode(parmas).then(res => {
             if (res.data.statusCode === "13002") {
-              MessageBox.alert("", {
-                message: "一分钟内请勿重复发送"
+              this.$MessageBox({
+                title: '',
+                message: '一分钟内请勿重复发送', // 提示的内容，作为参数，传进来
+                closeOnClickModal: true, // 表示不只是点击确定按钮才能关闭弹窗，点击页面的任何地方都可以关闭弹窗
+                confirmButtonClass: 'typesbtn' //给确定按钮加一个class类名（因为在页面上显示的效果是'确定'二字字体比别的字体小很多，很奇怪，所以要对它的样式单独进行调整）
               });
             } else {
               if (res.data.result) {
-                MessageBox.alert("", {
-                  message: "验证码发送成功"
+                this.$MessageBox({
+                  title: '',
+                  message: '验证码发送成功', // 提示的内容，作为参数，传进来
+                  closeOnClickModal: true, // 表示不只是点击确定按钮才能关闭弹窗，点击页面的任何地方都可以关闭弹窗
+                  confirmButtonClass: 'typesbtn' //给确定按钮加一个class类名（因为在页面上显示的效果是'确定'二字字体比别的字体小很多，很奇怪，所以要对它的样式单独进行调整）
                 });
                 clearInterval(this.timer);
                 this.isTime = true
@@ -113,8 +125,11 @@
                   }
                 }, 1000);
               } else {
-                MessageBox.alert("", {
-                  message: "验证码发送失败，稍后重试"
+                this.$MessageBox({
+                  title: '',
+                  message: '验证码发送失败，稍后重试', // 提示的内容，作为参数，传进来
+                  closeOnClickModal: true, // 表示不只是点击确定按钮才能关闭弹窗，点击页面的任何地方都可以关闭弹窗
+                  confirmButtonClass: 'typesbtn' //给确定按钮加一个class类名（因为在页面上显示的效果是'确定'二字字体比别的字体小很多，很奇怪，所以要对它的样式单独进行调整）
                 });
               }
             }
