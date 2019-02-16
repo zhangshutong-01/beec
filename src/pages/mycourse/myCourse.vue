@@ -2,7 +2,7 @@
   <div class="mycourse">
     <v-load v-if="load"></v-load>
     <main v-if="this.list.length!==0">
-      <section v-for="(item,index) in list" :key="index">
+      <section v-for="(item,index) in list" :key="index" @click="jump(item)">
         <div class="top">
           <img :src="item.imgUrlG">
           <div>
@@ -26,7 +26,7 @@
             <span v-if="item.status===1">{{item.orderSource===1||item.orderSource===3?'拼团成功':'直购成功'}}</span>
             <span v-if="item.status===0">拼团中</span>
           </p>
-          <button @click="jump(item)">{{item.status===0?"拼团详情":"赚奖金"}}</button>
+          <button>{{item.status===0?"拼团详情":"去上课"}}</button>
         </div>
       </section>
     </main>
@@ -40,6 +40,9 @@
 <script>
   import Footer from '@/components/_footer.vue';
   import Loading from '@/components/_loading.vue';
+  import {
+    checkConcerned
+  } from '@/api/pay'
   import {
     share,
   } from '@/api/wx'
@@ -80,14 +83,54 @@
     },
     methods: {
       jump(item) {
+        console.log(item)
         if (item.status === 1) {
-          this.$router.push({
-            path: '/moneyDetail',
-            query: {
-              openid: item.openId,
-              courseid: item.courseId,
-              sourceId: item.sourceId,
-              payType: item.orderSource
+          // this.$router.push({
+          //   path: '/moneyDetail',
+          //   query: {
+          //     openid: item.openId,
+          //     courseid: item.courseId,
+          //     sourceId: item.sourceId,
+          //     payType: item.orderSource
+          //   }
+          // })
+          let params = {
+            openId: this.$route.query.openid
+          }
+          console.log('22222222', params)
+          checkConcerned(params).then(res => {
+            console.log('333333333', res)
+            if (!res.data.result.concerned) {
+              this.actionMask = true
+            } else if (!res.data.result.hasPhone) {
+              this.$router.push({
+                path: "/login",
+                query: {
+                  openid: item.openId,
+                  courseid: item.courseId,
+                  sourceId: item.sourceId
+                }
+              })
+            } else if (!res.data.result.hasBabyInfo) {
+              this.$router.push({
+                path: "/login",
+                query: {
+                  openid: item.openId,
+                  courseid: item.courseId,
+                  sourceId: item.sourceId
+                }
+              })
+            } else {
+              this.$router.push({
+                path: "/courselist2",
+                query: {
+                  openid: item.openId,
+                  courseid: item.courseId,
+                  sourceId: item.sourceId,
+                  payType: item.orderSource,
+                  isShow: false
+                }
+              })
             }
           })
         } else if (item.status === 0) {
@@ -151,7 +194,7 @@
               // config信息验证成功后会执行ready方法
               // let mytitle= that.mycourse.courseName;
               let mytitle = '点击领取让孩子受用一生的数理思维课程';
-              let mydesc = '学完9节课让小朋友爱上思考';
+              let mydesc = '9大生活场景让小朋友爱上数学';
               let mylink =
                 'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?sourceId=' +
                 that.$route.query.sourceId + '%26courseid=' + that.$route.query.courseid + '%26invited=' + that

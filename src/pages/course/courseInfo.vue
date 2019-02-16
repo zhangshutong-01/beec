@@ -24,6 +24,7 @@
     <div class="courserDesc">
       <div class="desc_top">
         <p>¥{{courseData.groupPrice}}</p>
+        <span>单独购买￥{{courseData.originalPrice}}</span>
         <div class="desc_line">
           <span>{{courseData.courseTote}}节课</span>
           <span class="line"></span>
@@ -49,7 +50,7 @@
       </div>
       <div class="classDetail">
         <div class="tabcContent">
-          <img src="../../assets/courseinfo/11.png">
+          <img src="../../assets/courseinfo/new/11.png">
           <img src="../../assets/courseinfo/22.png">
         </div>
         <div class="tabDetails_nine">
@@ -57,13 +58,8 @@
           <video src="../../assets/courseinfo/WeChat_20190125150648.mp4" controls></video>
         </div>
         <div class="tabDetails_ten">
+          <img src="../../assets/courseinfo/2 2.png">
           <img src="../../assets/courseinfo/33.png">
-          <img src="../../assets/courseinfo/44.png">
-          <img src="../../assets/courseinfo/55.png">
-          <div>
-            <img src="../../assets/courseinfo/66.png">
-          </div>
-
         </div>
         <img src="../../assets/courseinfo/77.png" class="img18">
         <img src="../../assets/courseinfo/18.png" class="img18">
@@ -85,6 +81,7 @@
     <div class="gocourse" v-if="shopThisCourse===1" @click="gocourse">
       去上课
     </div>
+    <v-teacher></v-teacher>
   </div>
 </template>
 <script>
@@ -94,6 +91,7 @@
     Swipe,
     SwipeItem
   } from "mint-ui";
+  import Teacher from '@/components/_teacher.vue';
   import Footer from "@/components/_footer.vue";
   import {
     querySectionForC,
@@ -112,7 +110,8 @@
   export default {
     components: {
       "mt-swipe": Swipe,
-      "mt-swipe-item": SwipeItem
+      "mt-swipe-item": SwipeItem,
+      "v-teacher": Teacher
     },
     data() {
       return {
@@ -324,7 +323,7 @@
               //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
               let mytitle = "点击领取让孩子受用一生的数理思维课程";
-              let mydesc = "学完9节课让小朋友爱上思考";
+              let mydesc = "9大生活场景让小朋友爱上数学";
               let mylink =
                 "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/courseInfo?isShare=1%26courseid=" +
                 me.course.courseid; //分享到首页
@@ -426,7 +425,10 @@
         align-items: center;
         justify-content: space-between;
         border-bottom: 1px solid #e9e9e9;
-
+        >span{
+          font-size: .26rem;
+          margin-left:-.7rem;
+        }
         p {
           font-size: 23px;
           color: #f85430;

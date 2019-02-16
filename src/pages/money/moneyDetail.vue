@@ -102,7 +102,8 @@
           </div>
         </div>
         <div class="rules_box3">
-          <img src="../../assets/honeybee/tags/bottom banner.png" alt="">
+          <img src="../../assets/honeybee/tags/bottom banner.png" alt>
+          <p class="explain">本活动最终解释权归你拍一蜜蜂乐园所有</p>
         </div>
       </section>
       <div class="invite" @click="choseCourse">
@@ -111,52 +112,12 @@
       </div>
     </div>
     <div class="shareMask" v-if="isShareMask" @click="maskHide()">
-      <div class="choseSussBox">
-        <img src="../../assets/honeybee/tags/arroow.png" alt="">
-        <div class="choseSuss">
-          <div class="choseSussBottom">
-            邀请好友一起学习
-          </div>
-        </div>
+      <img src="../../assets/honeybee/tags/arroow.png" alt="">
+      <div class="choseSussBottom">
+        邀请好友一起学习
       </div>
     </div>
-    <div class="shareMask" v-if="activeImg">
-      <div class="save">
-        <p>已经为您生成专属海报，</p>
-        <p><span>98%的家长</span>转发后成功获得奖学金，</p>
-        <p><span>长按图片保存海报</span></p>
-      </div>
-      <div class="activeImg">
-        <span class="close" @click="close">
-          <img class="close_icon" src="../../assets/honeybee/tags/close.png">
-        </span>
-        <div ref="reportImg" v-show="activess">
-          <img class="active_img" :src="posterList.imgUrl" crossOrigin="anonymous">
-          <div class="userInfo">
-            <img :src="posterList.headUrl+'?'+new Date().getTime()" alt="" class="header_img" crossOrigin="anonymous">
-            <div class="name">
-              <p>我是 {{posterList.nickName}}</p>
-              <p>我发现一个超棒的课程！推荐给你~</p>
-            </div>
-          </div>
-          <div class="posterBottom">
-            <div>
-              <h1>限时特价<span>￥29</span></h1>
-              <p>(9节精品课程 永久有效)</p>
-              <p>长按二维码，了解详情</p>
-            </div>
-            <img :src="posterList.codeUrl" alt="" crossOrigin="anonymous">
-          </div>
-        </div>
-        <div class="report_after" :style="{display: state.isDownloadImg ? 'block':'none'}">
-          <!-- <span class="close" @click="close">
-          <img class="close_icon" src="../../assets/honeybee/tags/close.png">
-        </span> -->
-          <img :src="portImg" id="saveImg" />
-        </div>
-      </div>
-
-    </div>
+    <v-port v-if="activeImg" v-on:active="isShowImg"></v-port>
     <div class="shareMask" v-if="actionMask" @click="actionMaskHide">
       <p class="action_one">关注"你拍一蜜蜂乐园"<br>才能正常上课</p>
       <img src="../../assets/erweima.png" />
@@ -182,11 +143,15 @@
   import {
     share
   } from '@/api/wx'
-  import html2canvas from "html2canvas";
+  import Port from '@/components/_port.vue';
   import {
     Indicator
   } from 'mint-ui';
   export default {
+    components: {
+      // "v-loading": Loading,
+      "v-port": Port,
+    },
     data() {
       return {
         openid: '',
@@ -228,6 +193,10 @@
       this.wxshare()
     },
     methods: {
+      isShowImg(data) {
+        console.log(data)
+        this.activeImg = data
+      },
       getshop() {
         queryUserInfo({
           openId: this.openid
@@ -320,29 +289,8 @@
         this.isShareMask = false;
         this.poster()
       },
-      poster() {
+      poster() { // 打开海报
         this.activeImg = true
-        queryPostInfo({
-          openId: this.$route.query.openid,
-          courseId: this.$route.query.courseid
-        }).then(res => {
-          console.log(res.data.result)
-          this.posterList = res.data.result
-          Indicator.open({
-            text: '加载中...',
-            spinnerType: 'fading-circle'
-          });
-          setTimeout(() => {
-            this.screenshots()
-          }, 0);
-
-        })
-      },
-      close() {
-        this.activeImg = false
-        this.state = {
-          isDownloadImg: false,
-        };
       },
       wxshare() {
         let that = this
@@ -373,7 +321,7 @@
               // config信息验证成功后会执行ready方法
               let mytitle =
                 "点击领取让孩子受用一生的数理思维课程";
-              let mydesc = " 学完9节课让小朋友爱上思考";
+              let mydesc = " 9大生活场景让小朋友爱上数学";
               let mylink =
                 "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?invited=" +
                 that.$route.query.openid + "%26courseid=" + that.$route.query.courseid + "%26payType=" + that.$route
@@ -436,37 +384,7 @@
           } else {}
         });
       },
-      screenshots() { //生成图片；
-        let b64;
-        html2canvas(this.$refs.reportImg, {
-          useCORS: true
-        }).then(canvas => {
-          try {
-            b64 = canvas.toDataURL("image/png");
-            // console.log(b64);
-          } catch (err) {
-            console.log(err)
-            // alert(err)
-          }
-          this.state = {
-            imgUrl: b64,
-            isDownloadImg: true,
-          };
-          if (!window.sessionStorage.getItem('portimg')) {
-            window.sessionStorage.setItem('portimg', this.state.imgUrl)
-            this.portImg = window.sessionStorage.getItem('portimg', this.state.imgUrl)
-            console.log(this.portImg)
-            Indicator.close();
-          } else {
-            this.portImg = window.sessionStorage.getItem('portimg', this.state.imgUrl)
-            console.log(this.portImg)
-            Indicator.close();
-          }
-
-          console.log(this.state)
-          this.activess = false
-        });
-      },
+     
     }
   };
 
@@ -487,7 +405,7 @@
       text-align: center;
       line-height: .5rem;
       color: #ff4700;
-      font-size: .32rem;
+      font-size: .35rem;
       font-weight: bolder;
       margin-top: .6rem;
 
@@ -564,7 +482,7 @@
       width: 100%;
       display: flex;
       justify-content: space-between;
-      padding: 0 1.7rem;
+      padding: 0 1rem;
       box-sizing: border-box;
 
       .getCourse {
@@ -574,16 +492,18 @@
         text-align: center;
         border-radius: 1.2rem;
         color: #fff;
-        padding: 0 .3rem;
+        padding: 0 .5rem;
+        font-size: .34rem;
       }
 
       .getMoney {
         background: #ff6c1b;
         height: .7rem;
         line-height: .7rem;
-        padding: 0 .2rem;
+        padding: 0 .5rem;
         border-radius: 1.2rem;
         color: #fff;
+        font-size: .34rem;
       }
     }
 
@@ -711,10 +631,22 @@
 
         .rules_box3 {
           width: 100%;
-          margin-top: .5rem;
+          margin-top: .2rem;
+          position: relative;
 
           img {
             width: 100%;
+          }
+
+          .explain {
+            position: absolute;
+            bottom: .3rem;
+            color: #fff;
+            z-index: 11;
+            font-size: .23rem;
+            width: 100%;
+            text-align: center;
+
           }
         }
       }
@@ -772,9 +704,10 @@
       z-index: 999;
 
       img {
-        display: block;
-        width: 116px;
-        margin: 0 auto;
+        width: 25%;
+        position: absolute;
+        right: .5rem;
+        top: .2rem;
       }
 
       .action_one {
@@ -792,38 +725,48 @@
         text-align: center;
       }
 
-      .choseSussBox {
-        width: 100%;
-        height: 100%;
-        position: relative;
-
-        img {
-          width: 25%;
-          position: absolute;
-          right: .5rem;
-          top: .2rem;
-        }
-
-        .choseSuss {
-          width: 70%;
-          height: auto;
-          position: fixed;
-          left: 50%;
-          top: 50%;
-          margin-left: -35%;
-          margin-top: -30%;
-
-          .choseSussBottom {
-            width: 100%;
-            text-align: center;
-            line-height: 3rem;
-            margin-top: .5rem;
-            padding-bottom: .6rem;
-            font-size: .4rem;
-            color: #FE7738;
-          }
-        }
+      .choseSussBottom {
+        width: 60%;
+        // height: 5rem;
+        background: #fff;
+        text-align: center;
+        // line-height: 5rem;
+        padding: .5rem;
+        border-radius: .2rem;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -35%;
+        margin-top: -20%;
       }
+
+      // .choseSussBox {
+      //   width: 100%;
+      //   height: 100%;
+      //   position: relative;
+
+      //  
+
+      //   .choseSuss {
+      //     width: 70%;
+      //     height: auto;
+      //     position: fixed;
+      //     left: 50%;
+      //     top: 50%;
+      //     margin-left: -35%;
+      //     margin-top: -30%;
+
+      //     .choseSussBottom {
+      //       width: 100%;
+      //       text-align: center;
+      //       line-height: 3rem;
+      //       margin-top: .5rem;
+      //       padding-bottom: .6rem;
+      //       font-size: .4rem;
+      //       color: #FE7738;
+      //     }
+      //   }
+      // }
     }
 
     .save {

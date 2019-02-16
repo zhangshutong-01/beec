@@ -230,7 +230,7 @@
               // config信息验证成功后会执行ready方法
               // let mytitle= that.mycourse.courseName;
               let mytitle = '点击领取让孩子受用一生的数理思维课程';
-              let mydesc = '学完9节课让小朋友爱上思考';
+              let mydesc = '9大生活场景让小朋友爱上数学';
               let mylink =
                 'http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/course'
               let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';

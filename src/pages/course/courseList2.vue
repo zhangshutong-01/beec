@@ -17,45 +17,14 @@
         </div>
       </div>
     </main>
-    <div class="shareMask" v-if="activeImg">
-      <div class="save">
-        <p>已经为您生成专属海报，</p>
-        <p><span>98%的家长</span>转发后成功获得奖学金，</p>
-        <p><span>长按图片保存海报室系列</span></p>
-      </div>
-      <div class="activeImg">
-        <span class="close" @click="close">
-          <img class="close_icon" src="../../assets/honeybee/tags/close.png">
-        </span>
-        <div ref="reportImg">
-          <img class="active_img" :src="posterList.imgUrl+'?'+new Date().getTime()" crossOrigin="anonymous">
-          <div class="userInfo">
-            <img :src="posterList.headUrl+'?'+new Date().getTime()" alt="" class="header_img" crossOrigin="anonymous">
-            <div class="name">
-              <p>{{posterList.nickName}}</p>
-              <p>我发现一个超棒的课程！推荐给你~</p>
-            </div>
-          </div>
-          <div class="posterBottom">
-            <div>
-              <h1>限时特价<span>￥29</span></h1>
-              <p>(9节精品课程 永久有效)</p>
-              <p>长按二维码，了解详情</p>
-            </div>
-            <img :src="posterList.codeUrl+'?'+new Date().getTime()" alt="" crossOrigin="anonymous">
-          </div>
-        </div>
-        <div class="report_after" :style="{display: state.isDownloadImg ? 'block':'none'}">
-          <img :src="portImg" id="saveImg" />
-        </div>
-      </div>
-    </div>
+    <v-port v-if="activeImg" v-on:active="isShowImg"></v-port>
     <div class="shareMask" v-if="ifShare" @click="maskHide">
       <img src="../../assets/honeybee/tags/arroow.png" alt="">
       <div class="choseSussBottom">
         邀请好友一起学习
       </div>
     </div>
+    <v-teacher></v-teacher>
     <footer @click="wantShare">
       <img src="../../assets/courseList/assets/Bbutton.png">
       <div class="footerCon">
@@ -88,11 +57,16 @@
   import {
     share
   } from "@/api/wx";
-  import html2canvas from "html2canvas";
   import {
     Indicator
   } from 'mint-ui';
+  import Port from '@/components/_port.vue';
+  import Teacher from '@/components/_teacher.vue';
   export default {
+    components: {
+      "v-port": Port,
+      "v-teacher": Teacher
+    },
     data() {
       return {
         list: [],
@@ -114,12 +88,12 @@
       }
     },
     created() {
-      // if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
-      //   if (window.name != 'open') {
-      //     window.name = 'open';
-      //     window.location.reload();
-      //   }
-      // }
+      if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+        if (window.name != 'open') {
+          window.name = 'open';
+          window.location.reload();
+        }
+      }
       console.log('123')
       if (window.sessionStorage.getItem('afterPay') === undefined) {
         window.sessionStorage.setItem('afterPay', 'afterPay')
@@ -137,39 +111,20 @@
       this.wxshare()
     },
     methods: {
-      screenshots() { //生成图片；
-        let b64;
-        html2canvas(this.$refs.reportImg, {
-          useCORS: true
-        }).then(canvas => {
-          try {
-            b64 = canvas.toDataURL("image/png");
-            // console.log(b64);
-          } catch (err) {
-            console.log(err)
-            // alert(err)
-          }
-          this.state = {
-            imgUrl: b64,
-            isDownloadImg: true,
-          };
-          if (!window.sessionStorage.getItem('portimg')) {
-            window.sessionStorage.setItem('portimg', this.state.imgUrl)
-            this.portImg = window.sessionStorage.getItem('portimg', this.state.imgUrl)
-            console.log(this.portImg)
-            Indicator.close();
-          } else {
-            this.portImg = window.sessionStorage.getItem('portimg', this.state.imgUrl)
-            console.log(this.portImg)
-            Indicator.close();
-          }
-          console.log(this.state)
-          this.activess = false
-        });
+      isShowImg(data) {
+        console.log(data)
+        this.activeImg = data
       },
       jump(item) {
+        console.log(item)
         if (item.isUnlock == 0) {
-          alert("请先完成之前的课程哦")
+          // alert("请先完成之前的课程哦")
+          this.$MessageBox({
+            title: '',
+            message: '请先完成之前的课程哦', // 提示的内容，作为参数，传进来
+            closeOnClickModal: true, // 表示不只是点击确定按钮才能关闭弹窗，点击页面的任何地方都可以关闭弹窗
+            confirmButtonClass: 'typesbtn' //给确定按钮加一个class类名（因为在页面上显示的效果是'确定'二字字体比别的字体小很多，很奇怪，所以要对它的样式单独进行调整）
+          });
         } else if (item.isUnlock == 1) {
           this.$router.push({
             name: 'test2',
@@ -185,24 +140,6 @@
       },
       poster() {
         this.activeImg = true
-        queryPostInfo({
-          openId: this.$route.query.openid,
-          courseId: this.$route.query.courseid
-        }).then(res => {
-          console.log(res.data.result)
-          this.posterList = res.data.result
-          Indicator.open({
-            text: '加载中...',
-            spinnerType: 'fading-circle'
-          });
-          setTimeout(() => {
-            this.screenshots()
-          }, 500);
-
-        })
-      },
-      close() {
-        this.activeImg = false
       },
       wantShare() {
         this.ifShare = true
@@ -233,6 +170,7 @@
               jsApiList: [
                 "onMenuShareAppMessage",
                 "onMenuShareTimeline",
+                'hideMenuItems'
               ] // 必填，需要使用的JS接口列表，这里只写支付的
             });
             wx.ready(function () {
@@ -240,15 +178,15 @@
               // config信息验证成功后会执行ready方法
               let mytitle =
                 "点击领取让孩子受用一生的数理思维课程";
-              let mydesc = "学完9节课让小朋友爱上思考";
+              let mydesc = "9大生活场景让小朋友爱上数学";
               let mylink =
                 "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?invited=" +
                 that.$route.query.openid + "%26courseid=" + that.$route.query.courseid //分享到首页
               //let mylink='http://test-yunying.coolmath.cn/beec/course';//分享到首页
               let myimgUrl = "http://thyrsi.com/t6/665/1548835210x2728279033.png";
-              // wx.hideMenuItems({
-              //   menuList: ["menuItem:copyUrl"]
-              // });
+              wx.hideMenuItems({
+                menuList: ["menuItem:copyUrl"]
+              });
               wx.onMenuShareAppMessage({
                 // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用
                 title: mytitle, // 分享标题
@@ -422,7 +360,7 @@
 
         .mainCourse:nth-child(5) {
           top: 40%;
-          left: 2%
+          left: 70%
         }
 
         .mainCourse:nth-child(6) {
@@ -432,7 +370,7 @@
 
         .mainCourse:nth-child(7) {
           top: 40%;
-          left: 70%
+          left: 2%
         }
 
         .mainCourse:nth-child(8) {

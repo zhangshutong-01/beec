@@ -1,5 +1,6 @@
 <template lang="html">
   <div class="course" id="course" ref="course">
+    <v-teacher></v-teacher>
     <v-loading v-if="load"></v-loading>
     <!-- <v-active /> -->
     <!-- <div class="top"></div>
@@ -20,9 +21,6 @@
       <img src="http://thyrsi.com/t6/665/1548857508x2890174076.png" class="bj" />
       <div :class="[shopshow?'shop active':'shop']" @click="jump(courselist[0])">
         <img src="../../assets/honeybeeIndex/csd.png" />
-        <!-- <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[0].status===0" />
-        <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[0].status===1" />
-        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[0].status===2" /> -->
         <img src="../../assets/honeybeeIndex/jqqdd.png" />
       </div>
       <div :class="[rocketshow?'rocket active':'rocket']" @click="jump(courselist[1])">
@@ -33,23 +31,14 @@
       </div>
       <div :class="[clockshow?'clock active':'clock']" @click="jump(courselist[2])">
         <img src="../../assets/honeybeeIndex/zb.png" />
-        <!-- <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[2].status===0" />
-        <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[2].status===1" />
-        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[2].status===2" /> -->
         <img src="../../assets/honeybeeIndex/jqqdd.png" />
       </div>
       <div :class="[carshow?'car active':'car']" @click="jump(courselist[3])">
         <img src="../../assets/honeybeeIndex/dg.png" />
-        <!-- <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[3].status===0" />
-        <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[3].status===1" />
-        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[3].status===2" /> -->
         <img src="../../assets/honeybeeIndex/jqqdd.png" />
       </div>
       <div :class="[expressshow?'express active':'express']" @click="jump(courselist[4])">
         <img src="../../assets/honeybeeIndex/kd.png" />
-        <!-- <img src="../../assets/honeybeeIndex/4_06.png" v-if="courselist[4].status===0" />
-        <img src="../../assets/honeybeeIndex/4_03.png" v-if="courselist[4].status===1" />
-        <img src="../../assets/honeybeeIndex/4_09.png" class="gomoney" v-if="courselist[4].status===2" /> -->
         <img src="../../assets/honeybeeIndex/jqqdd.png" />
       </div>
     </div>
@@ -112,7 +101,7 @@
           &:nth-child(2) {
             width: 2rem;
             margin-left: .3rem;
-            margin-top: -24%;
+            margin-top: -25%;
           }
         }
 
@@ -125,7 +114,7 @@
       .clock {
         position: absolute;
         right: 5%;
-        bottom: 29.7%;
+        bottom: 30.4%;
         width: 30%;
         text-align: center;
 
@@ -134,7 +123,7 @@
 
           &:nth-child(2) {
             width: 2rem;
-            margin-top: -37%;
+            margin-top: -25%;
           }
         }
 
@@ -229,6 +218,7 @@
   import Footer from "@/components/_footer.vue";
   import Active from "@/components/_active.vue";
   import Loading from '@/components/_loading.vue';
+  import Teacher from '@/components/_teacher.vue';
   import {
     Indicator,
     MessageBox,
@@ -250,7 +240,8 @@
     components: {
       "v-footer": Footer,
       "v-active": Active,
-      "v-loading": Loading
+      "v-loading": Loading,
+      "v-teacher": Teacher
     },
     data() {
       return {
@@ -281,9 +272,6 @@
           if (item.id === '10001') {
             if (item.isOldUser === 0) {
               this.shopshow = true
-              // MessageBox.alert('', {
-              //   message: '敬请期待'
-              // })
               this.$MessageBox({
                 title: '',
                 message: '敬请期待', // 提示的内容，作为参数，传进来

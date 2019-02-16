@@ -109,6 +109,7 @@
       </div>
       <div class="rules_box3">
         <img src="../../assets/honeybee/tags/bottom banner.png" alt>
+        <p class="explain">本活动最终解释权归你拍一蜜蜂乐园所有</p>
       </div>
     </section>
     <section class="commit" v-if="commit_show">
@@ -136,6 +137,7 @@
       </ul>
       <div class="rules_box3">
         <img src="../../assets/honeybee/tags/bottom banner.png" alt>
+        <p class="explain">本活动最终解释权归你拍一蜜蜂乐园所有</p>
       </div>
     </section>
     <div class="tag" @click="choseCourse">专属海报</div>
@@ -218,40 +220,7 @@
         <button class="cashSuss_button" @click="cashClose">关闭</button>
       </div>
     </div>
-    <!-- <div class="shareMask" v-if="activeImg">
-      <div class="save">
-        <p>已经为您生成专属海报，</p>
-        <p><span>98%的家长</span>转发后成功获得奖学金，</p>
-        <p><span>长按图片保存海报室系列</span></p>
-      </div>
-      <div class="activeImg">
-        <span class="close" @click="close">
-          <img class="close_icon" src="../../assets/honeybee/tags/close.png">
-        </span>
-        <div ref="reportImg">
-          <img class="active_img" :src="posterList.imgUrl+'?'+new Date().getTime()" crossOrigin="anonymous">
-          <div class="userInfo">
-            <img :src="posterList.headUrl+'?'+new Date().getTime()" alt="" class="header_img" crossOrigin="anonymous">
-            <div class="name">
-              <p>{{posterList.nickName}}</p>
-              <p>我发现一个超棒的课程！推荐给你~</p>
-            </div>
-          </div>
-          <div class="posterBottom">
-            <div>
-              <h1>限时特价<span>￥29</span></h1>
-              <p>(9节精品课程 永久有效)</p>
-              <p>长按二维码，了解详情</p>
-            </div>
-            <img :src="posterList.codeUrl+'?'+new Date().getTime()" alt="" crossOrigin="anonymous">
-          </div>
-        </div>
-        <div class="report_after" :style="{display: state.isDownloadImg ? 'block':'none'}">
-          <img :src="portImg" id="saveImg" />
-        </div>
-      </div>
-    </div> -->
-    <v-port v-if="activeImg"></v-port>
+    <v-port v-if="activeImg" v-on:active="isShowImg"></v-port>
     <div class="shareMask" v-if="showCommit">
       <div class="commitMan">
         <div class="commitMater">
@@ -266,7 +235,7 @@
             </div>
             <div>
               <span class="course">课程:《{{secondPeo.courseName}}》</span>
-              <span class="shop_status" v-if="secondPeo.payType===1">{{secondPeo.successFlag===1?'团购成功':'团购失败'}}</span>
+              <span class="shop_status" v-if="secondPeo.payType===1||secondPeo.payType===3">{{secondPeo.successFlag===1?'团购成功':'团购失败'}}</span>
               <span class="shop_status" v-if="secondPeo.payType===2">{{secondPeo.successFlag===1?'直购成功':'直购失败'}}</span>
             </div>
           </div>
@@ -281,7 +250,8 @@
               </p>
               <p>
                 《{{value.courseName}}》
-                <span>{{secondPeo.successFlag===1?'团购成功':'团购失败'}}</span>
+                <span v-if="value.payType===1||value.payType===3">{{value.successFlag===1?'团购成功':'团购失败'}}</span>
+                <span v-if="value.payType===2">{{value.successFlag===1?'直购成功':'直购失败'}}</span>
               </p>
             </div>
             <div>+{{value.thisAmount}}</div>
@@ -290,7 +260,6 @@
         <button class="commitButton" @click="closeCommit">关闭</button>
       </div>
     </div>
-    <!-- <v-footer :myopenid='openid' :iscourse='isCourse' :ismy='isMy' :ismoney='ismoney' /> -->
   </div>
 </template>
 
@@ -300,7 +269,6 @@
   } from "@/api/wx";
   import Loading from '@/components/_loading.vue';
   import Port from '@/components/_port.vue';
-  // import Footer from "@/components/_footer.vue";
   import {
     MessageBox
   } from "mint-ui";
@@ -315,8 +283,6 @@
   import {
     checkTradingstate
   } from '@/api/course';
-  import html2canvas from "html2canvas";
-  // import ElasticFrame from '@/components/_ElasticFrame';
   export default {
     components: {
       "v-loading": Loading,
@@ -363,9 +329,9 @@
           window.location.reload();
         }
       }
-      // if (!window.sessionStorage.getItem('code')) {
-      //   location.href = 'http://test-yunying.coolmath.cn/beec/logins'
-      // }
+      if (!window.sessionStorage.getItem('code')) {
+        location.href = 'http://test-yunying.coolmath.cn/beec/logins'
+      }
       this.wxshare();
       if (this.$route.query.share === 1) {
         this.openid = this.$route.query.openid; // 如果从分享页面进入 替换openid
@@ -412,6 +378,10 @@
 
     },
     methods: {
+      isShowImg(data) {
+        console.log(data)
+        this.activeImg = data
+      },
       closeCommit() {
         this.showCommit = false;
       },
@@ -426,15 +396,6 @@
           this.isSelect2 = false;
           this.courseName = item.courseName;
           this.courseid = item.id;
-          // this.course = item.id
-          // queryPostInfo({
-          //   openId: this.$route.query.openid,
-          //   courseId: this.courseid
-          // }).then(res => {
-          //   console.log(res.data.result);
-          //   this.posterList = res.data.result;
-          //   this.screenshots();
-          // });
         } else if (index === 1) {
           this.isSelect2 = true;
           this.isSelect = false;
@@ -443,13 +404,6 @@
           // this.course = item.id
         }
       },
-      // close() {
-      //   //  点击关闭海报
-      //   if (this.activeImg === true) {
-      //     this.activeImg = false;
-      //     this.courseName = "";
-      //   }
-      // },
       poster() {
         //  出现海报
         this.activeImg = true
@@ -481,43 +435,43 @@
       },
       cash() {
         // 去提现弹框
-        // if (this.schoolMoney.totalAmount >= 30) {
-
-        // } else {
-        //   MessageBox.alert("", {
-        //     message: "满30才可提现哦！快去邀请好友~"
-        //   });
-        // }
-        MessageBox.confirm("", {
-            message: "奖学金提现后会进入微信钱包",
-            title: "提现确认",
-            confirmButtonText: "稍后再提",
-            cancelButtonText: "立即提现"
-          })
-          .then(action => {})
-          .catch(res => {
-            withdrawCash({
-              code: window.sessionStorage.getItem("code")
-            }).then(res => {
-              if (res.data.statusCode === '14004') {
-                MessageBox.alert("成功提现" + res.data.result.actual + "元，奖学金会在1~2个工作日内放入您的微信零钱中").then(action => {
-                  window.location.reload()
-                })
-              } else if (res.data.statusCode === '14001') {
-                MessageBox.alert("每天最多提现5次哦，明天再来！").then(action => {
-                  window.location.reload()
-                })
-              } else if (res.data.statusCode === '14005') {
-                MessageBox.alert("每天最多提现500哦，明天再来！").then(action => {
-                  window.location.reload()
-                })
-              } else {
-                MessageBox.alert(res.data.message).then(action => {
-                  window.location.reload()
-                });
-              }
+        if (this.schoolMoney.totalAmount >= 30) {
+          MessageBox.confirm("", {
+              message: "奖学金提现后会进入微信钱包",
+              title: "提现确认",
+              confirmButtonText: "稍后再提",
+              cancelButtonText: "立即提现"
+            })
+            .then(action => {})
+            .catch(res => {
+              withdrawCash({
+                code: window.sessionStorage.getItem("code")
+              }).then(res => {
+                if (res.data.statusCode === '14004') {
+                  MessageBox.alert("成功提现" + res.data.result.actual + "元，奖学金会在1~2个工作日内放入您的微信零钱中").then(action => {
+                    window.location.reload()
+                  })
+                } else if (res.data.statusCode === '14001') {
+                  MessageBox.alert("每天最多提现5次哦，明天再来！").then(action => {
+                    window.location.reload()
+                  })
+                } else if (res.data.statusCode === '14005') {
+                  MessageBox.alert("每天最多提现500哦，明天再来！").then(action => {
+                    window.location.reload()
+                  })
+                } else {
+                  MessageBox.alert(res.data.message).then(action => {
+                    window.location.reload()
+                  });
+                }
+              });
             });
+        } else {
+          MessageBox.alert("", {
+            message: "满30才可提现哦！快去邀请好友~"
           });
+        }
+
       },
       shopCourse() {
         // 未购买课程进入页面 点击跳转首页
@@ -599,7 +553,7 @@
               // config信息验证成功后会执行ready方法
               let mytitle =
                 "点击领取让孩子受用一生的数理思维课程";
-              let mydesc = " 学完9节课让小朋友爱上思考";
+              let mydesc = " 9大生活场景让小朋友爱上数学";
               let mylink =
                 "http://test-yunying.coolmath.cn/beec/wx/authorize?returnUrl=http://test-yunying.coolmath.cn/beec/tourbuy?invited=" +
                 that.$route.query.openid + "%26courseid=10002"; //分享到首页
