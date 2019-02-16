@@ -119,9 +119,11 @@
     </div>
     <v-port v-if="activeImg" v-on:active="isShowImg"></v-port>
     <div class="shareMask" v-if="actionMask" @click="actionMaskHide">
-      <p class="action_one">关注"你拍一蜜蜂乐园"<br>才能正常上课</p>
-      <img src="../../assets/erweima.png" />
-      <p class="changan">长按二维码识别关注</p>
+      <div class="guanzhu">
+        <p class="action_one">关注"你拍一蜜蜂乐园"<br>才能正常上课</p>
+        <img src="../../assets/erweima.png" class="erweima" />
+        <p class="changan">长按二维码识别关注</p>
+      </div>
     </div>
   </div>
 </template>
@@ -384,7 +386,7 @@
           } else {}
         });
       },
-     
+
     }
   };
 
@@ -703,21 +705,35 @@
       left: 0;
       z-index: 999;
 
-      img {
+     > img {
         width: 25%;
         position: absolute;
         right: .5rem;
         top: .2rem;
       }
 
-      .action_one {
-        /*margin-top: 220px;*/
-        color: #FF5500;
-        margin-top: 40%;
-        margin-bottom: 1rem;
-        width: 100%;
+      .guanzhu {
+        width:100%;
         text-align: center;
+        .erweima {
+          width: 25%;
+          // position: absolute;
+          // left: 50%;
+          // top: 50%;
+          // margin-left: -12.5%;
+          // margin-top: -12.5%
+        }
+
+        .action_one {
+          /*margin-top: 220px;*/
+          color: #FF5500;
+          margin-top: 40%;
+          margin-bottom: 1rem;
+          width: 100%;
+          text-align: center;
+        }
       }
+
 
       .changan {
         margin-top: 30px;

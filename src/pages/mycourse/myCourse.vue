@@ -17,7 +17,7 @@
               <p>{{item.courseDescribe}}</p>
               <span v-if="item.orderSource===1||item.orderSource===3&&item.status===1">成团日期:{{item.endTime}}</span>
               <span v-if="item.status===0">剩余时间:{{hour}}:{{minute}}:{{second}}</span>
-              <span v-if="item.orderSource===2">购买日期:{{item.endTime}}</span>
+              <span v-if="item.orderSource===2&&item.status==1">购买日期:{{item.endTime}}</span>
             </div>
           </div>
         </div>
@@ -33,6 +33,13 @@
     <main v-if="this.list.length===0">
       <p class="nocourse">您还没有购买课程哦</p>
     </main>
+    <div class="shareMask" v-if="actionMask" @click="actionMaskHide">
+      <div class='guanzhu'>
+        <div class="action_one">关注"你拍一蜜蜂乐园"<br>才能正常上课</div>
+        <img src="../../assets/erweima.png" class="erweima" />
+        <p class="changan">长按二维码识别关注</p>
+      </div>
+    </div>
     <v-footer :myopenid='openid' :iscourse='isCourse' :ismy='isMy' />
   </div>
 </template>
@@ -59,7 +66,8 @@
         hour: '',
         minute: '',
         second: '',
-        load: true
+        load: true,
+        actionMask: false
       }
     },
     components: {
@@ -144,6 +152,9 @@
             }
           })
         }
+      },
+      actionMaskHide() {
+        this.actionMask = false;
       },
       countDown(times) {
         var timer = null;
@@ -389,6 +400,40 @@
           }
         }
       }
+    }
+
+    .shareMask {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      top: 0;
+      left: 0;
+      z-index: 999;
+
+      .guanzhu {
+        width: 100%;
+        text-align: center;
+
+        .erweima {
+          width: 25%;
+        }
+
+        .action_one {
+          /*margin-top: 220px;*/
+          color: #FF5500;
+          margin-top: 40%;
+          margin-bottom: 1rem;
+          width: 100%;
+          text-align: center;
+        }
+
+        p {
+          line-height: 1.3rem;
+          color: #FF5500;
+        }
+      }
+
     }
   }
 

@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="count_down" v-if="payType==1">
+      <div class="count_down" v-if="payType==1||payType==3">
         <div class="group2_count_down" v-if="!success">
           <div class="remaining_time">还差<span class="shengyuhaoyou">{{remainNumber}}</span>人拼团成功</div>
           <div class="shengyu">
@@ -356,7 +356,7 @@
               timestamp: res.data.result.timestamp, // 必填，生成签名的时间戳
               nonceStr: res.data.result.noncestr, // 必填，生成签名的随机串
               signature: res.data.result.signature, // 必填，调用js签名，
-              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'] // 必填，需要使用的JS接口列表，这里只写支付的
+              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'hideMenuItems'] // 必填，需要使用的JS接口列表，这里只写支付的
             });
             wx.ready(function () { //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
@@ -368,11 +368,11 @@
                 that.sourceId + '%26courseid=' + that.$route.query.courseid + '%26invited=' + that.openid +
                 '%26payType=' + that.payType; //分享购买 团id
               let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
-              // wx.hideMenuItems({
-              //   menuList: [
-              //     'menuItem:copyUrl'
-              //   ]
-              // });
+              wx.hideMenuItems({
+                menuList: [
+                  'menuItem:copyUrl'
+                ]
+              });
               wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用
                 title: mytitle, // 分享标题
                 desc: mydesc, // 分享描述
@@ -586,14 +586,62 @@
               }
               queryGroupDetails(parmas).then(res => {
                 console.log("weigoumai", res)
-                this.groupState = true
-                this.payType = 1
-                this.faqiUser = res.data.result.userList[0]
-                this.onePeo = res.data.result.userList[0]
-                this.users = res.data.result.userList
-                this.sourceId = this.$route.query.sourceId
-                this.countDown(res.data.result.times)
+                if (res.data.result.groupStatus === 3) {
+                  this.groupState = false
+                  this.success = true
+                  this.mySuccess = false
+                  this.timeOut = false
+                  this.payType = 1
+                  this.faqiUser = res.data.result.userList[0]
+                  this.onePeo = res.data.result.userList[0]
+                  this.users = res.data.result.userList
+                  this.sourceId = this.$route.query.sourceId
+                } else {
+                  this.groupState = true
+                  this.payType = 1
+                  this.faqiUser = res.data.result.userList[0]
+                  this.onePeo = res.data.result.userList[0]
+                  this.users = res.data.result.userList
+                  this.sourceId = this.$route.query.sourceId
+                  this.countDown(res.data.result.times)
+                }
+
               })
+            } else if (res.data.result.isPay === 4) {
+              this.payType = res.data.result.payType
+              if (res.data.result.payType == 3) {
+
+                const parmas = {
+                  id: res.data.result.sourceId
+                }
+                queryGroupDetails(parmas).then(res => {
+                  console.log('时效信息111', res)
+                  if (res.data.result.groupStatus === 3) {
+                    this.success = true
+                    this.users = res.data.result.userList
+                    this.mySuccess = false
+                    this.timeOut = false
+                  } else {
+                    this.success = true
+                    this.users = res.data.result.userList
+                    this.mySuccess = false
+                    this.timeOut = false
+                  }
+
+                })
+              } else {
+                const parmas = {
+                  id: res.data.result.sourceId
+                }
+                queryGroupDetails(parmas).then(res => {
+                  console.log('时效信息', res)
+                  this.success = true
+                  this.users = res.data.result.userList
+                  this.mySuccess = false
+                  this.timeOut = false
+                })
+              }
+
             } else {
               if (res.data.result.payType === 1) {
                 this.payType = res.data.result.payType
@@ -819,7 +867,18 @@
                 this.sourceId = this.$route.query.sourceId
                 this.countDown(res.data.result.times)
               })
-            } else if (res.data.result.isPay === 4) {}
+            } else if (res.data.result.isPay === 4) {
+              const parmas = {
+                id: res.data.result.sourceId
+              }
+              queryGroupDetails(parmas).then(res => {
+                console.log('邀请人失效', res)
+                this.mySuccess = false
+                this.timeOut = false
+                this.users = res.data.result.userList
+                this.success = true
+              })
+            }
           })
         }
       })

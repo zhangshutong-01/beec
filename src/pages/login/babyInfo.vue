@@ -49,7 +49,7 @@
         </li>
       </ul>
     </main>
-    <button class="add" @click="push">完成</button>
+    <button class="add" @click="push">完 成</button>
   </div>
 </template>
 
@@ -65,7 +65,7 @@
   import {
     share
   } from "@/api/wx";
-   import {
+  import {
     MessageBox
   } from "mint-ui";
   export default {
@@ -124,9 +124,9 @@
         var monthIndex = this.$refs.babyMonth.selectedIndex
         let monthValue = this.$refs.babyMonth.options[monthIndex].value
         this.nowMonth = monthValue
-        if(this.$refs.babyName.value===""){
-          MessageBox.alert('',{
-            message:"请输入宝宝姓名哦"
+        if (this.$refs.babyName.value === "") {
+          MessageBox.alert('', {
+            message: "请输入宝宝姓名哦"
           })
         }
         const parmas = {
@@ -253,7 +253,7 @@
 
     header {
       width: 100%;
-      height: 3rem;
+      height: 2rem;
       margin-top: 1rem;
 
       >div {
@@ -308,7 +308,7 @@
         margin: 0 auto;
 
         li {
-          margin-bottom: .5rem;
+          margin-bottom: .2rem;
           width: 100%;
           height: 1rem;
 
@@ -370,6 +370,7 @@
           &:nth-child(4) {
             display: flex;
             align-items: center;
+            margin-top: -.2rem;
 
             div {
               flex: 1;
@@ -395,12 +396,13 @@
     .add {
       width: 80%;
       height: 1rem;
-      margin: 1rem auto;
+      margin: 0 auto;
       display: block;
       background: coral;
       margin-bottom: 1rem;
       color: #fff;
       border-radius: 1.5rem;
+      font-size: .36rem;
     }
   }
 

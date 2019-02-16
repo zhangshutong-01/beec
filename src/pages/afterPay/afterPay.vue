@@ -170,7 +170,7 @@
               timestamp: res.data.result.timestamp, // 必填，生成签名的时间戳
               nonceStr: res.data.result.noncestr, // 必填，生成签名的随机串
               signature: res.data.result.signature, // 必填，调用js签名，
-              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline'] // 必填，需要使用的JS接口列表，这里只写支付的
+              jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline','hideMenuItems'] // 必填，需要使用的JS接口列表，这里只写支付的
             });
             wx.ready(function () { //通过ready接口处理成功验证
               // config信息验证成功后会执行ready方法
@@ -183,11 +183,11 @@
                 .$route
                 .query.openid + '%26payType=' + that.$route.query.payType; //分享购买 团id
               let myimgUrl = 'http://thyrsi.com/t6/665/1548835210x2728279033.png';
-              // wx.hideMenuItems({
-              //   menuList: [
-              //     'menuItem:copyUrl'
-              //   ]
-              // });
+              wx.hideMenuItems({
+                menuList: [
+                  'menuItem:copyUrl'
+                ]
+              });
               wx.onMenuShareAppMessage({ // 分享给朋友  ,在config里面填写需要使用的JS接口列表，然后这个方法才可以用
                 title: mytitle, // 分享标题
                 desc: mydesc, // 分享描述
